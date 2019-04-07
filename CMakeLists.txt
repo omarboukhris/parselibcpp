@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(parselib)
 
-set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_STATIC_LIBS OFF) 
 set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(Boost 1.58 COMPONENTS regex system filesystem) 
 
@@ -11,12 +11,14 @@ file(GLOB_RECURSE SOURCE_FILES
 	parselib/datastructure/*.cpp
  	parselib/operations/*.cpp
  	parselib/utils/*.cpp
+ 	parselib/parsers/*.cpp
 )
 
 file(GLOB_RECURSE HEADER_FILES
 	parselib/datastructure/*.hpp
 	parselib/operations/*.hpp
 	parselib/utils/*.hpp
+	parselib/parsers/*.hpp
 )
 
 set(APP parcexlib)

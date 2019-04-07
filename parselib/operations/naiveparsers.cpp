@@ -1,5 +1,7 @@
 #include <parselib/operations/naiveparsers.hpp>
 
+using namespace std ;
+
 namespace parselib {
 
 namespace operations {
@@ -84,7 +86,7 @@ void SequentialParser::checkaxiom () {
 		i = this->i, 
 		j = this->j ;
 	
-	if (!i < grammar.size()) {
+	if (i >= grammar.size()) {
 		return ;
 	}
 	
@@ -93,6 +95,7 @@ void SequentialParser::checkaxiom () {
 	if (grammar[i].second == std::string("AXIOM") && axiomflag ) {
 		lexer::Lexer::Token axiom = parsedtokens[j+2] ;
 		production_rules["AXIOM"] = {{axiom}} ;
+// 		cout << production_rules["AXIOM"][0][0].first << endl ;
 		axiomflag = false ;
 		i += 1 ;
 		j += 3 ;
@@ -106,7 +109,7 @@ void SequentialParser::checkfortoken () {
 		i = this->i, 
 		j = this->j ;
 	
-	if (!i < grammar.size()) {
+	if (i >= grammar.size()) {
 		return ;
 	}
 	
@@ -130,7 +133,7 @@ void SequentialParser::checkleftside () {
 		i = this->i, 
 		j = this->j ;
 	
-	if (!i < grammar.size()) {
+	if (i >= grammar.size()) {
 		return ;
 	}
 	if (grammar[i].second == "LSIDE") {
@@ -153,7 +156,7 @@ void SequentialParser::checkoperators () {
 		i = this->i, 
 		j = this->j ;
 	
-	if (!i < grammar.size()) {
+	if (i >= grammar.size()) {
 		return ;
 	}
 
@@ -181,7 +184,7 @@ void SequentialParser::checkrightside() {
 		i = this->i, 
 		j = this->j ;
 	
-	if (!i < grammar.size()) {
+	if (i >= grammar.size()) {
 		return ;
 	}
 
@@ -191,14 +194,13 @@ void SequentialParser::checkrightside() {
 		if (parsedtokens[j].second == std::string("TERMINAL")) {
 			parsedtokens[j].first = utils::cleanIfTerminal(parsedtokens[j].first) ;
 		}
-
 		if (parsedtokens[j].second == std::string("STR")) {
 			addtostr(j) ;
 			addtokeeper(j) ;
 		} else if (parsedtokens[j].second == std::string("LIST")) {
 			makelist() ;
 		} else if (parsedtokens[j].second == std::string("AREGEX")) {
-			makeregex(j) ;
+			makeregex(j) ; //couille ici
 		} else if (parsedtokens[j].second == std::string("EXCL")) {
 			
 			// naming process
@@ -226,7 +228,8 @@ void SequentialParser::checkrightside() {
 
 				processlabel(label, operand) ;
 			}
-			production_rules[current_rule].back().push_back(parsedtokens[j]) ;
+			
+ 			production_rules = addoperandtocurrentrule(parsedtokens[j]) ;
 		}
 		i += 1 ;
 		j += 1 ;
@@ -263,11 +266,11 @@ void SequentialParser::makelist(){
 void SequentialParser::makeregex(int j) {
 	std::string regex= utils::escapeRegex(
 		parsedtokens[j].first.substr(
-			1, 
+			1,
 			parsedtokens[j].first.length()-2
 		) //eliminate the ["..."]
 	) ;
-
+	
 	std::string label = 
 		std::string("__") + current_rule + 
 		std::string("[") + regex + std::string("]__") ;
@@ -277,28 +280,86 @@ void SequentialParser::makeregex(int j) {
 	) ; 
 
 	lexer::Lexer::Token thisnode ("TERMINAL", label) ;
-	production_rules[current_rule].back().push_back(thisnode) ;
+	production_rules = addoperandtocurrentrule(thisnode) ;
+}
+
+SequentialParser::ProductionRules SequentialParser::addoperandtocurrentrule(lexer::Lexer::Token tok) {
+	// adding an operand to the current running rule
+	if (production_rules[current_rule].size() != 0) {
+		production_rules[current_rule].back().push_back(tok) ;
+	} else {
+		production_rules[current_rule].push_back({tok}) ;
+	}
+	return production_rules ;
 }
 
 void SequentialParser::addtokeeper(int j) {
+	string entry = utils::cleanIfTerminal(parsedtokens[j + 1].first) ;
 	if (keeper.find(current_rule) != keeper.end()) {
-		keeper[current_rule].push_back(parsedtokens[j + 1].first) ;
+		if (std::find (keeper[current_rule].begin(), keeper[current_rule].end(), entry) == keeper[current_rule].end()) {
+			keeper[current_rule].push_back(entry);
+		}
 	} else {
 		keeper[current_rule] = StrList() ;
-		keeper[current_rule].push_back(parsedtokens[j + 1].first) ;
+		keeper[current_rule].push_back(entry) ;
 	}
 }
 
 void SequentialParser::addtostr(int j) {
-	std::string nodename = parsedtokens[j + 1].first ;
-	if (parsedtokens[j + 1].second == "TERMINAL") {
-		nodename = nodename.substr(0, nodename.length()-1) ; //eliminate last char '.'
-	}
+	std::string nodename = utils::cleanIfTerminal(parsedtokens[j + 1].first) ;
 	// add to strnodes
-	if (std::find(strnodes.begin(), strnodes.end(), nodename) != strnodes.end()) {
+	if (std::find(strnodes.begin(), strnodes.end(), nodename) == strnodes.end()) {
 		strnodes.push_back(nodename) ;
 	}
 }
+
+string SequentialParser::getstr () {
+	string text_rule = "" ;
+
+	for (auto item : production_rules) {
+		string key = item.first ;
+		SequentialParser::Rules rules = item.second ;
+		
+		text_rule += "\nRULE " + key + " = [\n\t" ;
+		
+		SequentialParser::StrList rule_in_a_line = SequentialParser::StrList () ;
+		
+		for (SequentialParser::Rule rule : rules) {
+			SequentialParser::StrList ruletxt = SequentialParser::StrList () ;
+			for (lexer::Lexer::Token opr : rule) {
+				ruletxt.push_back(opr.second+"("+opr.first+")");
+			}
+			string thisrule = utils::join(ruletxt, " ") ;
+			rule_in_a_line.push_back(thisrule);
+		}
+		text_rule += utils::join(rule_in_a_line, "\n\t") + "\n]" ;		
+	}
+	
+	text_rule += "\n\n" ;
+	
+// 	text_rule += "LABELS = " + json.dumps (self.labels, indent=2) + '\n\n'
+
+	text_rule += "STRUCT = [\n" ;
+	for (auto item : keeper) {
+		string key = item.first ;
+		SequentialParser::StrList listkeep = item.second ;
+		text_rule += "\t" + key + " {\n\t" ;
+		text_rule += utils::join(listkeep, "\n\t") ;
+		text_rule += "}\n" ;
+	}
+	text_rule += "\n]\n\n" ;
+	
+	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
+
+	for (lexer::Lexer::Token tok : tokens) {
+		string label = tok.second ;
+		string regx = tok.first ;
+		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;
+	}
+
+	return text_rule ;
+}
+
 
 
 } //namespace operations

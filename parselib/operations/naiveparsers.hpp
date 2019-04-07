@@ -51,6 +51,9 @@ public :
 
 
 	void parse () ;
+	
+	std::string getstr () ;
+
 
 private :
 
@@ -59,6 +62,8 @@ private :
 	
 	lexer::Lexer::TokenList grammar ;
 	lexer::Lexer::TokenList parsedtokens ;
+	
+	ProductionRules addoperandtocurrentrule (lexer::Lexer::Token tok) ;
 
 	bool stillparsing () ;
 	

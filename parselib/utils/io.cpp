@@ -1,6 +1,9 @@
 
 #include <parselib/utils/io.hpp>
 
+#include <bits/stdc++.h> 
+#include <boost/algorithm/string.hpp>
+
 #include <fstream>
 #include <streambuf>
 #include <string>
@@ -15,6 +18,10 @@ using namespace std ;
 /// \brief read a whole file (path @ string filename) in a string
 string gettextfilecontent (string filename) {
 	ifstream filestream (filename) ;
+	if (!filestream.is_open()) {
+		utils::Printer::showerr("can't read file : " + filename );
+		return "" ;
+	}
 	
 	string out (
 		(istreambuf_iterator<char>(filestream)),
@@ -79,19 +86,26 @@ StrList split (string target, string delim) {
 		return StrList() ;
 	}
 
-    vector<string> v;
-	string::size_type start = 0;
-	size_t x ;
-	while ((x = target.find(delim, start)) != string::npos) {
-		v.push_back(target.substr(start, x-start));
-		start = x+1;
-	}
-
-	v.push_back(target.substr(start));
-
+    StrList v = StrList() ;
+	boost::split(v, target, boost::is_any_of(delim)) ;
 	return v;
 }
 
+string join (StrList strlist, string delim) {
+	string out = "" ;
+	for (string s : strlist) {
+		out += s + delim ;
+	}
+	return out ;
+}
+
+string transformtosource (lexer::Lexer::TokenList tokenizedgrammar) {
+	string source = "" ;
+	for (lexer::Lexer::Token token : tokenizedgrammar) {
+		source += token.second + " " ;
+	}
+	return source ;
+}
 
 
 } //namespace utils

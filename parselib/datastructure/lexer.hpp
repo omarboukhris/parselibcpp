@@ -17,9 +17,11 @@ public :
 	//				  1st:Value  | 2nd:Key(type)
 	typedef std::pair<std::string, std::string> Token ;
 	typedef std::vector<Token> TokenList ;
-	typedef std::vector<std::pair<std::string,std::string> > PatternsMap ;
+	
+	typedef std::pair<std::string,std::string> Pattern ;
+	typedef std::vector<Pattern> PatternsMap ;
+
 	typedef std::map<size_t, Token> MatchesMap ;
-	typedef std::vector<std::string> StrList ;
 
 	/// output tokenlist
 	TokenList tokens ;

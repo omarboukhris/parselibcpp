@@ -1,0 +1,12 @@
+
+//classdec.("class")
+visibility.("(public|private|protected)")
+type.("int")
+lcrch.("\{")
+rcrch.("\}")
+semic.('\;')
+comma.("\,")
+// lpar.("\(")
+// rpar.("\)")
+identifier.("[a-z_A-Z]\w*")
+

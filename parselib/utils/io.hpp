@@ -6,13 +6,16 @@ namespace parselib {
 
 namespace utils {
 
+std::string transformtosource (lexer::Lexer::TokenList tokenizedgrammar) ;
 std::string gettextfilecontent (std::string filename) ;
+
 std::string cleanIfTerminal (std::string token) ;
 std::string cleanRegex (std::string regx) ;
 std::string escapeRegex (std::string regx) ;
 
 typedef std::vector<std::string> StrList ; 
 StrList split (std::string target, std::string delim) ;
+std::string join (StrList strlist, std::string delim) ;
 
 class Printer {
 public :

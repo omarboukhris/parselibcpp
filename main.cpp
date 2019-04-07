@@ -2,6 +2,8 @@
 #include <parselib/operations/naiveparsers.hpp>
 #include <parselib/datastructure/lexer.hpp>
 #include <parselib/utils/io.hpp>
+#include <utils/preprocessor.hpp>
+#include <parsers/grammarparser.hpp>
 
 using namespace std;
 using namespace parselib ;
@@ -21,25 +23,11 @@ int main(int argc, char** argv){
 		string grammarfilename = argvlex.get("--gsrc") ;
 		//read file
 		string grammarsource = utils::gettextfilecontent(grammarfilename) ;
-		
-		lexer::Lexer myLexer (
-			operations::GenericGrammarTokenizer::grammartokens
-		) ;
-		operations::GenericGrammarTokenizer::tokenize (
-			myLexer,
-			grammarsource,
-			verbose
-		) ;
 
-		/* add function to turn tokenlist to source for 2nd parsing pass
-		lexer::Lexer gramLexer (
-			operations::GenericGrammarTokenizer::genericgrammarprodrules
-		) ;
-		operations::GenericGrammarTokenizer::tokenize (
-			gramLexer,
-			grammarsource,
-			verbose
-		) ; //*/
+		utils::OnePassPreprocessor preproc = utils::OnePassPreprocessor() ;
+		myparsers::GenericGrammarParser ggp (preproc) ;
+		ggp.parse (grammarfilename, verbose) ;
+
 		
 	}
 
