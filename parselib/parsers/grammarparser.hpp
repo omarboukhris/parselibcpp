@@ -50,7 +50,7 @@ public :
 	 * \param txt_grammar : raw textual grammar source code filename
 	 * \param verbose true to make it talk. false by default
 	 */
-	void parse (std::string filename, bool verbose=false) ;
+	Grammar parse (std::string filename, bool verbose=false) ;
 } ;
 
 

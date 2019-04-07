@@ -16,9 +16,6 @@ public :
 	
 	static lexer::Lexer tokenize (lexer::Lexer tokObj, std::string source, bool verbose=false) {
 		tokObj.tokenize (source, verbose) ;
-		if (verbose) {
-// 			std::cout << tokObj ;
-		}
 		return tokObj ;
 	}
 } ;

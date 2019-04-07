@@ -107,7 +107,6 @@ void Grammar::makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexe
 	
 
 	*this = grammaroperators::eliminatedoubles (*this) ;
-//  	cout << getstr() << endl ;
 	//gramtest = checkproductionrules(self.production_rules) #is fuckedup
 	//return gramtest
 	return ;
@@ -232,7 +231,7 @@ GenericGrammarParser::GenericGrammarParser (utils::OnePassPreprocessor preproc) 
 	* \param txt_grammar : raw textual grammar source code filename
 	* \param verbose true to make it talk. false by default
 	*/
-void GenericGrammarParser::parse (std::string filename, bool verbose) {
+Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 	Grammar out_grammar = Grammar() ;
 	preproc.addToQueue (filename) ;
 
@@ -259,25 +258,18 @@ void GenericGrammarParser::parse (std::string filename, bool verbose) {
 
 		// make production rules
 		Grammar grammar = Grammar () ;
-// 		bool result = 
+
 		grammar.makegrammar (
 			gram.tokens,
 			lang.tokens
 		) ;
-// 		cout << grammar.getstr() ;
-// 			if (result) {
-// 				if (verbose) {
-// 					print (grammar) ;
-// 				}
+
 		out_grammar.merge (grammar) ;
-// 		cout << grammar.getstr() ;
-// 			} else {
-// 				utils::Printer::showerr (result) ;
-// 				return Grammar() ;
-//			}
 	}
-	cout << out_grammar.getstr() ;
-// 		return out_grammar
+	if (verbose) {
+		cout << out_grammar.getstr() ;
+	}
+	return out_grammar ;
 }
 
 } // parsers namespace 
