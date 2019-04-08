@@ -6,12 +6,15 @@
 
 namespace parselib {
 
+using namespace operations ;
+
 namespace myparsers {
 
-using namespace operations ;
+
 class Grammar {
 
 public :
+	typedef std::map<std::string, SequentialParser::StrList> UnitRelation ;
 
 	SequentialParser::ProductionRules production_rules ;
 	
@@ -21,6 +24,8 @@ public :
 	SequentialParser::LabelReplacementMap labels ;
 	
 	lexer::Lexer::TokenList tokens ;
+	
+	UnitRelation unitrelation ;
 
 	Grammar () ;
 	

@@ -34,7 +34,6 @@ public :
 	typedef std::map<std::string, std::string> LabelReplacement ;
 	typedef std::map<std::string, LabelReplacement> LabelReplacementMap ;
 
-	bool axiomflag ;
 	ProductionRules production_rules ;
 	
 	StrList strnodes ;
@@ -46,7 +45,6 @@ public :
 
 	SequentialParser (lexer::Lexer::TokenList grammar, lexer::Lexer::TokenList parsedtokens) ;
 
-
 	void parse () ;
 	
 	std::string getstr () ;
@@ -55,6 +53,7 @@ public :
 private :
 
 	int i, j ;
+	bool axiomflag ;
 	std::string current_rule ;
 	
 	lexer::Lexer::TokenList grammar ;

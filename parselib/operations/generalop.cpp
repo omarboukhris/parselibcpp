@@ -64,6 +64,7 @@ bool samerule (SequentialParser::Rule rulea, SequentialParser::Rule ruleb) {
 				opa->first == opb->first)) { 
 				return false ;
 			}
+			opa++ ; opb++ ;
 		}
 		return true ;
 	} else {

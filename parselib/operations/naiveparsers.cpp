@@ -44,7 +44,7 @@ lexer::Lexer::PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 // 	{"LCRCH",		"LCRCH"},
 // 	{"RCRCH",		"RCRCH"}
 } ;
-	
+
 SequentialParser::SequentialParser (
 	lexer::Lexer::TokenList grammar, 
 	lexer::Lexer::TokenList parsedtokens) 
@@ -313,6 +313,7 @@ void SequentialParser::addtostr(int j) {
 	}
 }
 
+/// \brief Screaming results for debug resons or verbose
 string SequentialParser::getstr () {
 	string text_rule = "" ;
 
@@ -332,18 +333,28 @@ string SequentialParser::getstr () {
 			string thisrule = utils::join(ruletxt, " ") ;
 			rule_in_a_line.push_back(thisrule);
 		}
-		text_rule += utils::join(rule_in_a_line, "\n\t") + "\n]" ;		
+		text_rule += utils::join(rule_in_a_line, "\n\t") + "]" ;		
 	}
 	
 	text_rule += "\n\n" ;
 	
-// 	text_rule += "LABELS = " + json.dumps (self.labels, indent=2) + '\n\n'
+	text_rule += "LABELS = [\n" ;
+	for (auto item : labels) {
+		string key = item.first ;
+		SequentialParser::LabelReplacement labmap = item.second ;
+		text_rule += key + " {\n" ;
+		for (auto lab : labmap) {
+			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
+		}
+		text_rule += "}\n" ;
+	}
+	text_rule += "]\n" ;
 
 	text_rule += "STRUCT = [\n" ;
 	for (auto item : keeper) {
 		string key = item.first ;
 		SequentialParser::StrList listkeep = item.second ;
-		text_rule += "\t" + key + " {\n\t" ;
+		text_rule += "" + key + " {\n\t" ;
 		text_rule += utils::join(listkeep, "\n\t") ;
 		text_rule += "}\n" ;
 	}
@@ -359,8 +370,6 @@ string SequentialParser::getstr () {
 
 	return text_rule ;
 }
-
-
 
 } //namespace operations
 

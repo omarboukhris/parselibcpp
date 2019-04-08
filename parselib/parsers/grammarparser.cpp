@@ -2,6 +2,7 @@
 
 #include <parselib/utils/io.hpp>
 #include <parselib/operations/generalop.hpp>
+#include <parselib/operations/normop.hpp>
 
 using namespace std ;
 
@@ -16,17 +17,17 @@ Grammar::Grammar () {
 	production_rules = SequentialParser::ProductionRules () ;
 	labels = SequentialParser::LabelReplacementMap () ;
 	keeper = SequentialParser::KeepingList () ;
-// 		self.unitrelation = odict() ; // we'll get back here
+	unitrelation = UnitRelation() ; 
 	strnodes = SequentialParser::StrList () ;
 	tokens = lexer::Lexer::TokenList () ;
 }
 	
 void Grammar::merge (Grammar grammar) {
-	// unitrelation in computed later
+	// unitrelation is computed later
 	for (lexer::Lexer::Token token : grammar.tokens) {
 		tokens.push_back (token) ;
 	}
-	
+
 	// loop through production_rules and merge
 	for (auto item : grammar.production_rules) {
 	
@@ -227,10 +228,10 @@ GenericGrammarParser::GenericGrammarParser (utils::OnePassPreprocessor preproc) 
 }
 
 /*!
-	* \brief lex a grammar from textual form to tokenized
-	* \param txt_grammar : raw textual grammar source code filename
-	* \param verbose true to make it talk. false by default
-	*/
+ * \brief lex a grammar from textual form to tokenized
+ * \param txt_grammar : raw textual grammar source code filename
+ * \param verbose true to make it talk. false by default
+ */
 Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 	Grammar out_grammar = Grammar() ;
 	preproc.addToQueue (filename) ;
@@ -266,6 +267,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 
 		out_grammar.merge (grammar) ;
 	}
+	out_grammar = normoperators::get2nf(out_grammar) ;
 	if (verbose) {
 		cout << out_grammar.getstr() ;
 	}
