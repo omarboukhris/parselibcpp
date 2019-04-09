@@ -38,6 +38,13 @@ public :
 	 */
 	void makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexer::TokenList grammartokens) ;
 	
+	
+	friend std::ostream & operator<< (std::ostream & out, Grammar str) {
+		out << str.getstr() ;
+		return out ;
+	}
+
+private :
 	std::string getstr () ;
 	
 } ; // end class Grammar
@@ -46,9 +53,9 @@ class GenericGrammarParser {
 
 public :
 	
-	utils::OnePassPreprocessor preproc ;
+	utils::Preprocessor *preproc ;
 	
-	GenericGrammarParser (utils::OnePassPreprocessor preproc) ;
+	GenericGrammarParser (utils::Preprocessor *preproc) ;
 
 	/*!
 	 * \brief lex a grammar from textual form to tokenized

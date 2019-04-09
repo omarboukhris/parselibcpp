@@ -187,8 +187,15 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 			}
 		}
 	}
-
-	return nullables ;
+	
+	//remove duplicates
+	SequentialParser::StrList nulls = SequentialParser::StrList() ;
+	for (std::string str : nullables) {
+		if (std::find (nulls.begin(), nulls.end(), str) == nulls.end()) {
+			nulls.push_back(str);
+		}
+	}
+	return nulls ;
 }
 
 /*!

@@ -7,23 +7,12 @@ namespace parselib {
 
 namespace utils {
 
-class OnePassPreprocessor {
-
+class Preprocessor {
 public :
 	typedef std::vector<std::string> ImportQueue ;
-	typedef std::vector<std::string> ProcessedFiles ;
-
-	std::string pwd ;
-	
 	ImportQueue queue ;
-	ProcessedFiles processed ;
-	
-	OnePassPreprocessor () {
-		pwd = "" ;
-		queue = ImportQueue () ;
-		processed = ProcessedFiles () ; // to avoid nested imports
-	}
-	
+
+	virtual lexer::Lexer::TokenList preprocess (std::string filename, lexer::Lexer::TokenList tokenlist) = 0 ;
 	void addToQueue (std::string filename) {
 		queue.push_back(filename) ;
 	}
@@ -32,24 +21,29 @@ public :
 		// remove filename from queue
 		ImportQueue newqueue = ImportQueue () ;
 		
-// 		std::cout << "before : " << filename << std::endl ;
-// 		for (auto i : queue)
-// 			std::cout << i << " " ;
-		
 		for (std::string itr : queue) {
-// 			std::cout << itr << std::endl ;
 			if (itr != filename) {
 				newqueue.push_back (itr);
 			} 
 		}
 		queue = newqueue ;
-// 		std::cout << "after : " << filename << std::endl ;
-// 		for (auto i : queue)
-// 			std::cout << i << " " ;
 	}
 	
 	bool queueIsEmpty () {
 		return queue.size() == 0 ;
+	}
+} ;
+
+class OnePassPreprocessor : public Preprocessor {
+
+public :
+	typedef std::vector<std::string> ProcessedFiles ;
+
+	
+	OnePassPreprocessor () {
+		pwd = "" ;
+		queue = ImportQueue () ;
+		processed = ProcessedFiles () ; // to avoid nested imports
 	}
 	
 	bool isProcessed (std::string filename) {
@@ -63,16 +57,14 @@ public :
 
 	lexer::Lexer::TokenList preprocess (std::string filename, lexer::Lexer::TokenList tokenlist) {
 		removeFromQueue (filename) ;
-// 		bug is up here !!!
 		if (isProcessed(filename)) {
 			return lexer::Lexer::TokenList() ;
 		}
 
 		// get grammar directory 
-		utils::StrList x = utils::split(filename, "/") ; // x looks good, go check pwd, it's f*ed up
+		utils::StrList x = utils::split(filename, "/") ;
 		x.pop_back() ;
 
-		// looks good now (almost : adds a last /, maybe will cause bugs
 		pwd = utils::join(x, "/") ; 
 
 		lexer::Lexer::TokenList out_tokenlist = processimports (tokenlist) ;
@@ -82,6 +74,9 @@ public :
 	}
 
 protected :
+	std::string pwd ;
+	
+	ProcessedFiles processed ;
 
 	lexer::Lexer::TokenList processimports (lexer::Lexer::TokenList tokenlist) {
 		lexer::Lexer::TokenList outtok = lexer::Lexer::TokenList () ;

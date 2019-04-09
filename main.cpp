@@ -21,14 +21,16 @@ int main(int argc, char** argv){
 	if (argvlex.get("--gsrc") != "False") {
 		//parse argument
 		string grammarfilename = argvlex.get("--gsrc") ;
-		//read file
-		string grammarsource = utils::gettextfilecontent(grammarfilename) ;
 
-		utils::OnePassPreprocessor preproc = utils::OnePassPreprocessor() ;
+		utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
 		myparsers::GenericGrammarParser ggp (preproc) ;
-		ggp.parse (grammarfilename, verbose) ;
 
+		myparsers::Grammar grammar = ggp.parse (grammarfilename, verbose) ;
+		cout << grammar ;
 		
+// 		CYK cyk = CYK(grammar) ;
+// 		ParseTree tree = cyc.membership (text) ;
+// 		tree.get(0).unfold () //or something
 	}
 
 }

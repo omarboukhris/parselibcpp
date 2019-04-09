@@ -222,7 +222,7 @@ string Grammar::getstr () {
 	return text_rule ;
 }
 
-GenericGrammarParser::GenericGrammarParser (utils::OnePassPreprocessor preproc) {
+GenericGrammarParser::GenericGrammarParser (utils::Preprocessor *preproc) {
 	//preprocessor class
 	this->preproc = preproc ;
 }
@@ -234,11 +234,11 @@ GenericGrammarParser::GenericGrammarParser (utils::OnePassPreprocessor preproc) 
  */
 Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 	Grammar out_grammar = Grammar() ;
-	preproc.addToQueue (filename) ;
+	preproc->addToQueue (filename) ;
 
-	while (!preproc.queueIsEmpty()) {
+	while (!preproc->queueIsEmpty()) {
 
-		filename = preproc.queue[0] ;
+		filename = preproc->queue[0] ;
 		utils::Printer::showinfo("now processing : " + filename);
 		std::string source = utils::gettextfilecontent (filename) ;
 		
@@ -247,7 +247,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 		lang = operations::GenericGrammarTokenizer::tokenize (lang, source, verbose) ;
 		
 		//preprocessor here (one pass preprocessor)
-		lang.tokens = preproc.preprocess (filename, lang.tokens) ; //segfault here
+		lang.tokens = preproc->preprocess (filename, lang.tokens) ; //segfault here
 
 		// text tokens are needed for next step
 		std::string txtok = utils::transformtosource (lang.tokens) ; 
@@ -269,7 +269,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 	}
 	out_grammar = normoperators::get2nf(out_grammar) ;
 	if (verbose) {
-		cout << out_grammar.getstr() ;
+		cout << out_grammar ;
 	}
 	return out_grammar ;
 }

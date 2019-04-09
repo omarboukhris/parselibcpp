@@ -264,12 +264,13 @@ void SequentialParser::makelist(){
 }
 
 void SequentialParser::makeregex(int j) {
-	std::string regex= utils::escapeRegex(
-		parsedtokens[j].first.substr(
-			1,
-			parsedtokens[j].first.length()-2
-		) //eliminate the ["..."]
-	) ;
+	std::string regex = 
+	//utils::escapeRegex( //escapeRegex gives weird results
+	parsedtokens[j].first.substr(
+		1,
+		parsedtokens[j].first.length()-2
+	) ; //eliminate the ["..."]
+	// 	) ;
 	
 	std::string label = 
 		std::string("__") + current_rule + 
@@ -279,7 +280,7 @@ void SequentialParser::makeregex(int j) {
 		lexer::Lexer::Token(regex, label)
 	) ; 
 
-	lexer::Lexer::Token thisnode ("TERMINAL", label) ;
+	lexer::Lexer::Token thisnode (label, "TERMINAL") ;
 	production_rules = addoperandtocurrentrule(thisnode) ;
 }
 

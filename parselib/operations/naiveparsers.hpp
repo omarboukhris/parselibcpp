@@ -46,8 +46,11 @@ public :
 	SequentialParser (lexer::Lexer::TokenList grammar, lexer::Lexer::TokenList parsedtokens) ;
 
 	void parse () ;
-	
-	std::string getstr () ;
+
+	friend std::ostream & operator<< (std::ostream & out, SequentialParser str) {
+		out << str.getstr() ;
+		return out ;
+	}
 
 
 private :
@@ -60,6 +63,8 @@ private :
 	lexer::Lexer::TokenList parsedtokens ;
 	
 	ProductionRules addoperandtocurrentrule (lexer::Lexer::Token tok) ;
+
+	std::string getstr () ;
 
 	bool stillparsing () ;
 	
