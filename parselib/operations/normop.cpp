@@ -152,19 +152,15 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 	
 	SequentialParser::StrList nullables = SequentialParser::StrList() ;
 	size_t lenG = 0 ;
-	
 	for (auto item : production_rules) {
 		std::string key = item.first ;
 		SequentialParser::Rules rules = item.second ;
-		if (rules.size() == 0) {
-			nullables.push_back(key) ;
-			continue ;
-		}
 		for (SequentialParser::Rule rule : rules) {
-			lenG ++ ;
-			bool isruleempty = (rule.size() == 1 and rule[0].second == "EMPTY") ;
+			lenG += 1 ;
+			
+			bool isruleempty = (rule.size() == 1 && rule[0].first == "EMPTY") ;
 			if (isruleempty) {
-				nullables.push_back(key) ;
+				nullables.push_back (key) ;
 			}
 		}
 	}
@@ -173,14 +169,11 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 		for (auto item : production_rules) {
 			std::string key = item.first ;
 			SequentialParser::Rules rules = item.second ;
+			
 			for (SequentialParser::Rule rule : rules) {
-				if (rule.size() != 2) {
-					continue ;
-				}
 				bool isruleempty = (
 					std::find(nullables.begin(), nullables.end(), rule[0].first) != nullables.end() &&
-					std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end() 
-				) ;
+					std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end()) ;
 				if (isruleempty) {
 					nullables.push_back (key) ;
 				}

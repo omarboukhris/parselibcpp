@@ -219,6 +219,16 @@ string Grammar::getstr () {
 		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;
 	}
 
+	text_rule += "UNIT = [\n" ;
+	for (auto item : unitrelation) {
+		string key = item.first ;
+		SequentialParser::StrList listkeep = item.second ;
+		text_rule += "" + key + " {\n\t" ;
+		text_rule += utils::join(listkeep, "\n\t") ;
+		text_rule += "}\n" ;
+	}
+	text_rule += "\n]\n\n" ;
+	
 	return text_rule ;
 }
 

@@ -257,8 +257,8 @@ void SequentialParser::processlabel(std::__cxx11::string label, std::__cxx11::st
 }
 
 void SequentialParser::makelist(){
-	lexer::Lexer::Token thisnode (std::string("NONTERMINAL"), current_rule) ;
-	lexer::Lexer::Token eps (std::string("EMPTY"), std::string("''")) ;
+	lexer::Lexer::Token thisnode (current_rule, std::string("NONTERMINAL")) ;
+	lexer::Lexer::Token eps (std::string("''"), std::string("EMPTY")) ;
 	production_rules[current_rule].back() = {thisnode, thisnode} ;
 	production_rules[current_rule].push_back({eps}) ;
 }
