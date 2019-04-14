@@ -28,6 +28,7 @@ public :
 	operations::SequentialParser::ProductionRules production_rules ;
 	Grammar::UnitRelation unitrelation ;
 	
+	CYK () {} 
 	CYK (Grammar grammar) ;
 
 	Frame membership (lexer::Lexer::TokenList word) ;

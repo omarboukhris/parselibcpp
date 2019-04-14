@@ -158,7 +158,7 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 		for (SequentialParser::Rule rule : rules) {
 			lenG += 1 ;
 			
-			bool isruleempty = (rule.size() == 1 && rule[0].first == "EMPTY") ;
+			bool isruleempty = (rule.size() == 1 && rule[0].second == "EMPTY") ;
 			if (isruleempty) {
 				nullables.push_back (key) ;
 			}
@@ -255,7 +255,21 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 			}
 		}
 	}
- 	grammar.unitrelation = unitrelation ;
+
+	myparsers::Grammar::UnitRelation outunit = myparsers::Grammar::UnitRelation () ;
+	for (auto item : unitrelation) {
+		std::string key = item.first ;
+		SequentialParser::StrList unitrel = item.second ;
+		outunit[key] = SequentialParser::StrList () ;
+		for (std::string unit : unitrel) {
+			if (std::find(outunit[key].begin(), outunit[key].end(), unit) == outunit[key].end()) {
+				//key doesn't exist
+				outunit[key].push_back(unit);
+			}
+		}
+	}
+	
+ 	grammar.unitrelation = outunit ;
 	return grammar ;
 }
 
