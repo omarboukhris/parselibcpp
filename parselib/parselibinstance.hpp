@@ -3,6 +3,12 @@
 
 namespace parselib {
 	
+/*!
+ * \brief eliminates the last char of a string if it's a dot (.)
+ * \param name : node name to process
+ */
+std::string processnodename (std::string name) ;
+
 class ParseSession {
 public :
 	myparsers::Grammar grammar ;
@@ -18,8 +24,13 @@ public :
 	 */
 	void loadGrammar (std::string filename, bool verbose=false) ;
 
-	void processSource (std::string filename, bool verbose=false) ;
+	/*!
+	 * \brief parses source code in filename
+	 * \param filename : string path to file containing text to load
+	 */
+	parsetree::Tree* processSource (std::string filename, bool verbose=false) ;
 	
+private :
 	/*!
 	 * \brief Unfolds the parse tree and optionnaly prints it
 	 * \param x : UnitNode, TokenNode, BinNode from parselib.parsetree
@@ -27,78 +38,21 @@ public :
 	 * \param verbose : bool
 	 * True (by default) to print results, otherwise False
 	 */
-	void __processResults (myparsers::Frame x, bool verbose=false) ;
+	parsetree::Tree* __processResults (myparsers::Frame x, bool verbose=false, size_t index=0) ;
 
-	static std::string __processnodename (std::string name) {
-		if (name.back() == '.') {
-			name.pop_back() ;
-		}
-		return name ;
-	}
+	/*!
+	 * \brief unfolds parse tree in a factory generated dataformat
+	 * \param code : parse tree => result from membership method
+	 * \param parent : str => node's parent name
+	 * \param verbose : bool true to talk
+	 */
+	parsetree::Tree* __parse (
+		parsetree::Tree* code=new parsetree::Tree(), 
+		std::string parent="", 
+		bool verbose=false
+	) ;
 
-// def __parse (self, code=[], parent="", verbose=False) :
-// 	"""unfolds parse tree in a factory generated dataformat
-// 	
-// 		Parameters
-// 		----------
-// 		code : parse tree
-// 			result from membership method
-// 		
-// 		parent : str 
-// 			node's parent name
-// 		
-// 		verbose : bool
-// 			True to talk
-// 	"""
-// 	i = 0
-// 	out = odict()
-// 	while i < len(code) :
-// 		element = code[i]
-// 		out_element = None
-// 		
-// 		if element.type == "AXIOM" :
-// 			return self.__parse (element.val, "AXIOM", verbose)
-// 		
-// 		element.type = ParselibInstance.__processnodename(element.type)
-// 		
-// 		#part that handles labels changing (aliases)
-// 		if parent in self.grammar.labels.keys() :
-// 			if element.type in self.grammar.labels[parent].keys() :
-// 				element.type = self.grammar.labels[parent][element.type]
-// 
-// 
-// 		if StructFactory.keyInFactory(parent, element.type) : #is savable
-// 
-// 			if StructFactory.keyIsStr(element.type): # node is str
-// 				out_element = StructFactory.strUnfold (element.val)
-// 			else :
-// 				out_element = self.processnode (element, verbose)
-// 			
-// 			#appending to result
-// 			if element.type in out.keys() :
-// 				out[element.type].append(out_element)
-// 			else :
-// 				#out[element.type]=out_element
-// 				out[element.type]=[out_element]
-// 		i += 1
-// 	#print(out)
-// 
-// 	return out
-// 
-// def processnode(self, element, verbose):
-// 	# check if object in factory
-// 	tmpClass = StructFactory.getStruct(element.type)
-// 	# object is non terminal
-// 	if tmpClass != None or type(element.val) == list:
-// 		lst = self.__parse(
-// 			code=element.val,
-// 			parent=element.type,
-// 			verbose=verbose
-// 		)  # recurse
-// 		return tmpClass(**lst)
-// 
-// 	else:  # terminal node
-// 		return element.val
+	parsetree::Token processnode(parsetree::Token element, bool verbose=false);
 
 } ; //class ParseSession
 } ; //namespace parselib

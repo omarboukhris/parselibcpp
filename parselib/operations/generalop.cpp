@@ -6,7 +6,6 @@ using namespace operations ;
 
 namespace grammaroperators {
 
-
 /*! 
  * \brief eliminates duplicate rules in a grammar
  * \param grammar : grammar in
