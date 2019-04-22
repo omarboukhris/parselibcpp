@@ -32,7 +32,8 @@ public :
 	CYK (Grammar grammar) ;
 
 	Frame membership (lexer::Lexer::TokenList word) ;
-	
+
+private :
 	Frame getterminal (lexer::Lexer::Token token) ;
 	Frame getAxiomNodes (Frame nodes) ;
 	Frame getbinproductions (Row AB) ;

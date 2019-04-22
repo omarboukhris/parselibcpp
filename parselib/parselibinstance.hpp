@@ -38,7 +38,7 @@ private :
 	 * \param verbose : bool
 	 * True (by default) to print results, otherwise False
 	 */
-	parsetree::Tree* __processResults (myparsers::Frame x, bool verbose=false, size_t index=0) ;
+	parsetree::Tree* processResults (myparsers::Frame x, bool verbose=false, size_t index=0) ;
 
 	/*!
 	 * \brief unfolds parse tree in a factory generated dataformat

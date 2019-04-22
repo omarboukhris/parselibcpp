@@ -34,10 +34,10 @@ parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose)
 	tokenizer.tokenize (source) ;
 
 	myparsers::Frame result = parser.membership (tokenizer.tokens) ;
-	return __processResults(result, verbose) ;
+	return processResults(result, verbose) ;
 }
 
-parsetree::Tree* ParseSession::__processResults(myparsers::Frame x, bool verbose, size_t index) {
+parsetree::Tree* ParseSession::processResults(myparsers::Frame x, bool verbose, size_t index) {
 	if (x.size() == 0) {
 		if (verbose) {
 			// x should point errors out if parsing failed
