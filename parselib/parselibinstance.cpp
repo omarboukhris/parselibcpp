@@ -49,7 +49,7 @@ parsetree::Tree* ParseSession::__processResults(myparsers::Frame x, bool verbose
 			utils::Printer::showinfo ("Parsetree found") ;
 		}
 		index = (index >= 0 && index < x.size()) ? index : 0 ;
-		std::cout << x[index]->unfold() << std::endl ;
+// 		std::cout << x[index]->unfold() << std::endl ;
 		return __parse (x[index]->unfold(), "",  verbose) ;
 	}
 }

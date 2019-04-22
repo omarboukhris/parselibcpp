@@ -86,7 +86,8 @@ private :
 				ss += tab + tok.first + ":" + tok.second->getval() + "\n";
 			} else {
 				ss += tab + tok.first + " = {\n" 
-				   + display(tok.second, tab+"\t") + "\n"  + tab + "}\n" ;
+				   + display(tok.second, tab+"\t")  
+				   + tab + "}\n" ;
 			}
 		}
 		return ss ;
