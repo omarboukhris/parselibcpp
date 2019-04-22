@@ -45,49 +45,44 @@ parsetree::Tree* ParseSession::__processResults(myparsers::Frame x, bool verbose
 		}
 		return nullptr ;
 	} else {
+		index = (index >= 0 && index < x.size()) ? index : 0 ;
 		if (verbose) {
 			utils::Printer::showinfo ("Parsetree found") ;
+			std::cout << x[index]->unfold() << std::endl ;
 		}
-		index = (index >= 0 && index < x.size()) ? index : 0 ;
-// 		std::cout << x[index]->unfold() << std::endl ;
-		return __parse (x[index]->unfold(), "",  verbose) ;
+		return parse (x[index]->unfold(), "",  verbose) ;
 	}
 }
 
-parsetree::Tree* ParseSession::__parse(parsetree::Tree* code, std::string parent, bool verbose) {
+parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent, bool verbose) {
 
-	parsetree::Tree out = parsetree::Tree() ;
-	
-	for (size_t i = 0 ; i < code->size() ; i++) {
-// 		parsetree::Token element = code->at(i) ;
-// 	
-// 		parsetree::Token out_element = parsetree::Token() ;
-// 		
-// 		if (element.first == "AXIOM") {
-// 			parsetree::Tree* newnode = new parsetree::Tree() ;
-// 			newnode->push_back(element) ;
-// 			return __parse (newnode, "AXIOM", verbose) ;
-// 		}
-// 		
-// 		element.first = processnodename(element.first) ;
-// 		
-// 		//part that handles labels changing (aliases)
-// 		for (auto item : grammar.labels) {
-// 			std::string key = item.first ;
-// 			if (parent == key) { //parent in labels.keys()
-// 				
-// 				for (auto subitem : grammar.labels[parent]) { 
-// 					std::string subkey = subitem.first ;
-// 					if (element.first == subkey) { //element type in label[parent]
-// 						element.first = grammar.labels[parent][element.first] ;
-// 						break ;
-// 					}
-// 				}
-// 			} 
-// 		}
-// 
+	parsetree::Tree* out = new parsetree::Tree() ;
+// 	std::cout << code << std::endl ;
+	for (parsetree::AbsNode::Token element : code->tokens) {
+
+		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
+		if (element.first == "AXIOM") {
+			return parse (new parsetree::Tree(element.second), "AXIOM", verbose) ;
+		}
+		
+		element.first = processnodename(element.first) ;
+		
+		//part that handles labels changing (aliases)
+		for (auto item : grammar.labels) {
+			std::string key = item.first ;
+			if (parent == key) { //parent in labels.keys()
+				for (auto subitem : grammar.labels[parent]) { 
+					std::string subkey = subitem.first ;
+					if (element.first == subkey) { //element type in label[parent]
+						element.first = grammar.labels[parent][element.first] ;
+						break ;
+					}
+				}
+			} 
+		}
+
 // 		if StructFactory.keyInFactory(parent, element.type) : #is savable
-// 
+
 // 			if StructFactory.keyIsStr(element.type): # node is str
 // 				out_element = StructFactory.strUnfold (element.val)
 // 			else :
@@ -100,7 +95,7 @@ parsetree::Tree* ParseSession::__parse(parsetree::Tree* code, std::string parent
 // 				#out[element.type]=out_element
 // 				out[element.type]=[out_element]
 	}
-	return new parsetree::Tree (out) ;
+	return out ;
 }
 
 parsetree::AbsNode::Token ParseSession::processnode(parsetree::AbsNode::Token element, bool verbose) {

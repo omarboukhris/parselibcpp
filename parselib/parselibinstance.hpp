@@ -46,7 +46,7 @@ private :
 	 * \param parent : str => node's parent name
 	 * \param verbose : bool true to talk
 	 */
-	parsetree::Tree* __parse (
+	parsetree::Tree* parse (
 		parsetree::Tree* code=new parsetree::Tree(), 
 		std::string parent="", 
 		bool verbose=false
