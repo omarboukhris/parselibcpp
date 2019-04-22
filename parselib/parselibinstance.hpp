@@ -52,7 +52,7 @@ private :
 		bool verbose=false
 	) ;
 
-	parsetree::Token processnode(parsetree::Token element, bool verbose=false);
+	parsetree::AbsNode::Token processnode(parsetree::AbsNode::Token element, bool verbose=false);
 
 } ; //class ParseSession
 } ; //namespace parselib

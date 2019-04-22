@@ -1,5 +1,6 @@
 
 #include <parselib/parsers/cyk.hpp>
+#include <parselib/datastructure/parsetree.hpp>
 #include <boost/iterator/iterator_concepts.hpp>
 
 #define DEBUG

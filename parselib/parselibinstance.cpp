@@ -41,14 +41,15 @@ parsetree::Tree* ParseSession::__processResults(myparsers::Frame x, bool verbose
 	if (x.size() == 0) {
 		if (verbose) {
 			// x should point errors out if parsing failed
-			utils::Printer::showerr ("Empty result : no parse tree found") ; 
+			utils::Printer::showerr ("Empty result : no parse tree found") ;
 		}
+		return nullptr ;
 	} else {
 		if (verbose) {
 			utils::Printer::showinfo ("Parsetree found") ;
 		}
 		index = (index >= 0 && index < x.size()) ? index : 0 ;
-// 		std::cout << x[index]->unfold() << std::endl ;
+		std::cout << x[index]->unfold() << std::endl ;
 		return __parse (x[index]->unfold(), "",  verbose) ;
 	}
 }
@@ -102,7 +103,7 @@ parsetree::Tree* ParseSession::__parse(parsetree::Tree* code, std::string parent
 	return new parsetree::Tree (out) ;
 }
 
-parsetree::Token ParseSession::processnode(parsetree::Token element, bool verbose) {
+parsetree::AbsNode::Token ParseSession::processnode(parsetree::AbsNode::Token element, bool verbose) {
 // 	# check if object in factory
 // 	tmpClass = StructFactory.getStruct(element.type)
 // 	# object is non terminal

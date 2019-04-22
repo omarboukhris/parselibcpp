@@ -20,7 +20,7 @@ int main(int argc, char** argv){
 	bool verbose = (argvlex.get("-v") == "True") ? true : false ;
 	parselib::utils::Printer::showinfo("verbose : " + argvlex.get("-v"));
 	parselib::utils::Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
-	parselib::utils::Printer::showinfo("src    : " + argvlex.get("--src"));
+	parselib::utils::Printer::showinfo("src     : " + argvlex.get("--src"));
 	
 	parselib::ParseSession parsesession = parselib::ParseSession() ;
 	
@@ -35,5 +35,6 @@ int main(int argc, char** argv){
 			parsesession.processSource(sourcefilename, verbose);
 		}
 	}
-
 }
+
+
