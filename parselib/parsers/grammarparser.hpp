@@ -38,6 +38,10 @@ public :
 	 */
 	void makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexer::TokenList grammartokens) ;
 	
+	bool inKeeperKeys (std::string toktype) ;
+	bool inLabelsKeys(std::string toktype) ;
+	bool keyIsStr (std::string toktype) ;
+	bool isTokenSavable(std::string parent, std::string child) ;
 	
 	friend std::ostream & operator<< (std::ostream & out, Grammar str) {
 		out << str.getstr() ;

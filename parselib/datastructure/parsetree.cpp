@@ -11,10 +11,6 @@ void AbsNode::push_back(AbsNode::Token tok) {
 	tokens.push_back(tok) ;
 }
 
-AbsNode::Token AbsNode::back() {
-	return tokens.back();
-}
-
 void AbsNode::clear() {
 	tokens.clear() ;
 }
@@ -29,6 +25,18 @@ AbsNode::TokenList::iterator AbsNode::end() {
 
 size_t AbsNode::size() {
 	return tokens.size() ;
+}
+
+std::string AbsNode::strUnfold() {
+	std::string ss = "" ;
+	for (AbsNode::Token tok : tokens) {
+		if (tok.second->type == "leaf") {
+			ss += tok.second->getval() + " ";
+		} else { //type is tree
+			ss += tok.second->strUnfold() ;
+		}
+	}
+	return ss ;
 }
 
 
@@ -59,6 +67,19 @@ Tree* Tree::merge(Tree* tree) {
 	return this ;
 }
 
+size_t Tree::keyInTree(std::string key) {
+	size_t i = 0 ;
+	for (auto item : tokens) {
+		std::string tokentype = item.first ;
+		if (tokentype == key) {
+			return i ;
+		}
+		i++ ;
+	}
+	return -1 ; 
+}
+
+
 std::string Tree::getval() {
 	return "" ;
 }
@@ -72,7 +93,7 @@ std::string Tree::display(AbsNode* tree, std::string tab) {
 	std::string ss = "" ;
 	for (AbsNode::Token tok : tree->tokens) {
 		if (tok.second->type == "leaf") {
-			ss += tab + tok.first + ":" + tok.second->getval() + "\n";
+			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
 		} else {
 			ss += tab + tok.first + " = {\n" 
 				+ display(tok.second, tab+"\t")  
@@ -119,8 +140,8 @@ Tree* TokenNode::unfold(std::string) {
 	Tree *tree = new Tree() ;
 	tree->push_back(
 		AbsNode::Token(
-			val, 
-			new Leaf(nodetype)
+			nodetype, 
+			new Leaf(val)
 		)
 	) ;
 	return tree ;

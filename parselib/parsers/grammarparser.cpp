@@ -113,6 +113,48 @@ void Grammar::makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexe
 	return ;
 }
 
+bool Grammar::inKeeperKeys(string toktype) {
+	for (auto item : keeper) {
+		std::string key = item.first ;
+		if (toktype == key) { //element type in keeper.keys()
+			return true ;			
+		}
+	}
+	return false ;
+}
+
+bool Grammar::inLabelsKeys(string toktype) {
+	for (auto item : labels) {
+		std::string key = item.first ;
+		if (toktype == key) { //element type in keeper.keys()
+			return true ;			
+		}
+	}
+	return false ;
+}
+
+bool Grammar::keyIsStr(string toktype) {
+	for (std::string token : strnodes) {
+		if (token == toktype) {
+			return true ;
+		}
+	}
+	return false ;
+}
+
+bool Grammar::isTokenSavable(string parent, string child) {
+	if (!inKeeperKeys(parent)) {
+		return false ;
+	}
+	for (string token : keeper[parent]) {
+		if (child == token) {
+			return true ;
+		}
+	}
+	return false ;
+}
+
+
 // 	void saveGraph (self, filename) {
 // 		"""generates dot graph from a grammar and stores it in filename.png
 // 		this should be updated .. and moved

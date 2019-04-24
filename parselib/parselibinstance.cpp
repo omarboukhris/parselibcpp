@@ -1,4 +1,5 @@
 #include <parselib/parselibinstance.hpp>
+#include "operations/generalop.hpp"
 
 namespace parselib {
 
@@ -50,11 +51,11 @@ parsetree::Tree* ParseSession::processResults(myparsers::Frame x, bool verbose, 
 			utils::Printer::showinfo ("Parsetree found") ;
 			std::cout << x[index]->unfold() << std::endl ;
 		}
-		return parse (x[index]->unfold(), "",  verbose) ;
+		return parse (x[index]->unfold(), "") ;
 	}
 }
 
-parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent, bool verbose) {
+parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
 
 	parsetree::Tree* out = new parsetree::Tree() ;
 // 	std::cout << code << std::endl ;
@@ -62,59 +63,69 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent, 
 
 		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
 		if (element.first == "AXIOM") {
-			return parse (new parsetree::Tree(element.second), "AXIOM", verbose) ;
+			return parse (new parsetree::Tree(element.second), "AXIOM") ;
 		}
 		
 		element.first = processnodename(element.first) ;
 		
 		//part that handles labels changing (aliases)
-		for (auto item : grammar.labels) {
-			std::string key = item.first ;
-			if (parent == key) { //parent in labels.keys()
-				for (auto subitem : grammar.labels[parent]) { 
-					std::string subkey = subitem.first ;
-					if (element.first == subkey) { //element type in label[parent]
-						element.first = grammar.labels[parent][element.first] ;
-						break ;
-					}
+		if (grammar.inLabelsKeys(parent)) {
+			for (auto subitem : grammar.labels[parent]) { 
+				std::string subkey = subitem.first ;
+				if (element.first == subkey) { //element type in label[parent]
+					element.first = grammar.labels[parent][element.first] ;
+					break ;
 				}
-			} 
-		}
+			}
+		} //element.first is type, .second is val
 
-// 		if StructFactory.keyInFactory(parent, element.type) : #is savable
-
+// 		check if element.first in keeper
+		if (grammar.inKeeperKeys(element.first)) {
+			parsetree::AbsNode* out_element = new parsetree::Tree();
 // 			if StructFactory.keyIsStr(element.type): # node is str
+			if (grammar.keyIsStr(element.first)) {
 // 				out_element = StructFactory.strUnfold (element.val)
-// 			else :
-// 				out_element = self.processnode (element, verbose)
-// 			
-// 			#appending to result
+// 				should be
+				std::string out_elementstr = element.second->strUnfold () ;
+				//std::cout << out_elementstr ;
+				out_element = new parsetree::Leaf(out_elementstr) ;
+			} else if (grammar.isTokenSavable(element.first, parent)) {
+				out_element = processnode (element) ;
+			} else { //not savable, pass
+				delete out_element ;
+				continue ;
+			}
+
+			// appending to result
 // 			if element.type in out.keys() :
-// 				out[element.type].append(out_element)
-// 			else :
-// 				#out[element.type]=out_element
-// 				out[element.type]=[out_element]
+			size_t pos = out->keyInTree(element.first) ;
+			if (pos != -1) {
+// 				insert @ element.first => out_element
+				parsetree::AbsNode::Token& refouttok = out->tokens[pos] ;
+				refouttok.second->push_back(
+					std::make_pair(element.first, out_element)); //or something
+			} else {
+// 				create element.first's entry and push_back out_element
+				out->push_back(
+					std::make_pair(element.first, out_element));
+// 				out[element.first]=[out_element]
+			}
+		}
 	}
 	return out ;
 }
 
-parsetree::AbsNode::Token ParseSession::processnode(parsetree::AbsNode::Token element, bool verbose) {
-// 	# check if object in factory
-// 	tmpClass = StructFactory.getStruct(element.type)
-// 	# object is non terminal
-// 	if tmpClass != None or type(element.val) == list:
-// 		lst = self.__parse(
-// 			code=element.val,
-// 			parent=element.type,
-// 			verbose=verbose
-// 		)  # recurse
-// 		return tmpClass(**lst)
-// 
-// 	else:  # terminal node
-// 		return element.val
+parsetree::AbsNode* ParseSession::processnode(parsetree::AbsNode::Token element) {
+// 	for each comp in element => copy element.second in result if Leaf
+// 								call parse() if com is Tree
+	if (element.second->type == "tree") {
+		return parse(
+			new parsetree::Tree(element.second),
+			element.first
+		) ;
+	} else { // terminal node
+		return element.second ;
+	}
 }
 
-
-
 } //namespace parselib
-

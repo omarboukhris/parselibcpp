@@ -193,7 +193,7 @@ Frame CYK::invUnitRelation(Frame M) {
 			std::string key = item.first ;
 			SequentialParser::StrList units = item.second ;
 			if (std::find(units.begin(), units.end(), node->nodetype) != units.end()) {
-				parsetree::Node* nodeOut = (parsetree::Node*) new parsetree::UnitNode (key, node) ;
+				parsetree::Node* nodeOut = /*(parsetree::Node*)*/ new parsetree::UnitNode (key, node) ;
 				rulenames.push_back (nodeOut) ;
 			}
 		}

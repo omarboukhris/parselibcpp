@@ -1,4 +1,5 @@
 #pragma once
+
 #include <parselib/parsers/parsers.hpp>
 
 namespace parselib {
@@ -46,13 +47,9 @@ private :
 	 * \param parent : str => node's parent name
 	 * \param verbose : bool true to talk
 	 */
-	parsetree::Tree* parse (
-		parsetree::Tree* code=new parsetree::Tree(), 
-		std::string parent="", 
-		bool verbose=false
-	) ;
+	parsetree::Tree* parse (parsetree::Tree* code=new parsetree::Tree(), std::string parent="") ;
 
-	parsetree::AbsNode::Token processnode(parsetree::AbsNode::Token element, bool verbose=false);
+	parsetree::AbsNode* processnode(parsetree::AbsNode::Token element);
 
 } ; //class ParseSession
 } ; //namespace parselib

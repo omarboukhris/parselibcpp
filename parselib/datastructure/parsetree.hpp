@@ -19,8 +19,8 @@ public :
 
 	AbsNode () ;
 	virtual std::string getval () = 0 ;
+	std::string strUnfold() ;
 	void push_back (Token tok) ;
-	Token back () ;
 	void clear () ;
 	TokenList::iterator begin () ;
 	TokenList::iterator end () ;
@@ -40,6 +40,7 @@ public :
 	Tree() ;
 	Tree(AbsNode* node) ;
 	Tree * merge (Tree *tree) ;
+	size_t keyInTree (std::string key) ;
 	virtual std::string getval () ;
 	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
 private :

@@ -1,14 +1,8 @@
 
-#include <parselib/operations/naiveparsers.hpp>
-#include <parselib/datastructure/lexer.hpp>
 #include <parselib/utils/io.hpp>
-#include <parselib/utils/preprocessor.hpp>
-#include <parselib/parsers/grammarparser.hpp>
-#include <parselib/parsers/cyk.hpp>
-
 #include <parselib/parselibinstance.hpp>
 
-using namespace std;
+// using namespace std;
 // using namespace parselib ;
 
 int main(int argc, char** argv){
@@ -26,15 +20,18 @@ int main(int argc, char** argv){
 	
 	if (argvlex.get("--gsrc") != "False") {
 	//parse argument
-		string grammarfilename = argvlex.get("--gsrc") ;
+		std::string grammarfilename = argvlex.get("--gsrc") ;
 		parsesession.loadGrammar(grammarfilename, verbose);
 
 		if (argvlex.get("--src") != "False") { 
 		// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
-			parsesession.processSource(sourcefilename, verbose);
+			parselib::parsetree::Tree* tree = parsesession.processSource(sourcefilename, verbose);
+			std::cout << tree << 0 ;
 		}
 	}
+	
+	return 0 ;
 }
 
 
