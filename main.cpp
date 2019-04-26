@@ -27,7 +27,9 @@ int main(int argc, char** argv){
 		// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
 			parselib::parsetree::Tree* tree = parsesession.processSource(sourcefilename, verbose);
-			std::cout << tree << 0 ;
+			if (verbose) {
+				std::cout << tree ;
+			}
 		}
 	}
 	

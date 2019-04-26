@@ -56,7 +56,7 @@ parsetree::Tree* ParseSession::processResults(myparsers::Frame x, bool verbose, 
 }
 
 parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
-
+	//needs a do over
 	parsetree::Tree* out = new parsetree::Tree() ;
 // 	std::cout << code << std::endl ;
 	for (parsetree::AbsNode::Token element : code->tokens) {
@@ -82,14 +82,10 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) 
 // 		check if element.first in keeper
 		if (grammar.inKeeperKeys(element.first)) {
 			parsetree::AbsNode* out_element = new parsetree::Tree();
-// 			if StructFactory.keyIsStr(element.type): # node is str
 			if (grammar.keyIsStr(element.first)) {
-// 				out_element = StructFactory.strUnfold (element.val)
-// 				should be
 				std::string out_elementstr = element.second->strUnfold () ;
-				//std::cout << out_elementstr ;
 				out_element = new parsetree::Leaf(out_elementstr) ;
-			} else if (grammar.isTokenSavable(element.first, parent)) {
+			} else if (grammar.isTokenSavable(parent, element.first)) {
 				out_element = processnode (element) ;
 			} else { //not savable, pass
 				delete out_element ;
@@ -97,19 +93,8 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) 
 			}
 
 			// appending to result
-// 			if element.type in out.keys() :
-			size_t pos = out->keyInTree(element.first) ;
-			if (pos != -1) {
-// 				insert @ element.first => out_element
-				parsetree::AbsNode::Token& refouttok = out->tokens[pos] ;
-				refouttok.second->push_back(
-					std::make_pair(element.first, out_element)); //or something
-			} else {
-// 				create element.first's entry and push_back out_element
-				out->push_back(
-					std::make_pair(element.first, out_element));
-// 				out[element.first]=[out_element]
-			}
+			out->tokens.push_back(
+				std::make_pair(element.first, out_element));
 		}
 	}
 	return out ;

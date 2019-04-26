@@ -114,18 +114,12 @@ void Grammar::makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexe
 }
 
 bool Grammar::inKeeperKeys(string toktype) {
-	for (auto item : keeper) {
-		std::string key = item.first ;
-		if (toktype == key) { //element type in keeper.keys()
-			return true ;			
-		}
-	}
-	return false ;
+	return std::find(keeper["all"].begin(), keeper["all"].end(), toktype) != keeper["all"].end() ;
 }
 
 bool Grammar::inLabelsKeys(string toktype) {
 	for (auto item : labels) {
-		std::string key = item.first ;
+		string key = item.first ;
 		if (toktype == key) { //element type in keeper.keys()
 			return true ;			
 		}
@@ -134,7 +128,7 @@ bool Grammar::inLabelsKeys(string toktype) {
 }
 
 bool Grammar::keyIsStr(string toktype) {
-	for (std::string token : strnodes) {
+	for (string token : strnodes) {
 		if (token == toktype) {
 			return true ;
 		}
@@ -143,15 +137,13 @@ bool Grammar::keyIsStr(string toktype) {
 }
 
 bool Grammar::isTokenSavable(string parent, string child) {
+	if (parent == "AXIOM") {
+		return true ;
+	}
 	if (!inKeeperKeys(parent)) {
 		return false ;
 	}
-	for (string token : keeper[parent]) {
-		if (child == token) {
-			return true ;
-		}
-	}
-	return false ;
+	return std::find(keeper[parent].begin(), keeper[parent].end(), child) != keeper[parent].end() ;
 }
 
 
