@@ -37,14 +37,19 @@ public :
 	
 	void update (size_t i) {
 		std::cout << "[" ;
-		for (size_t k = 0 ; k < i ; ++k) {
+		for (size_t k = 0 ; k <= i ; ++k) {
 			std::cout << "=" ;
 		}
 		std::cout << ">" ;
-		for (size_t k = i ; k < max ; ++k) {
+		for (size_t k = i ; k < max-1 ; ++k) {
 			std::cout << " " ;
 		}
-		std::cout << "] " << (i*100.0f/max) << "%\r" ;
+		std::cout << "] " << int(i*100.0f/max) << "% " ;
+		if (i == max -1) {
+			std::cout << "finished" ;
+		} else {
+			std::cout << "loading\r" ;
+		}
 	}
 
 protected :
