@@ -239,7 +239,22 @@ myparsers::Frame result = parser.membership (tokenizer.tokens) ;
 ```
 The parser doesn't support error handling yet though
 
+### Recursive File Glober 
 
+This object can be used to glob recursively files and filter them by file extension.
+
+```c++
+#include <parselib/utils/io.hpp>
+
+// setup fileGlober
+parselib::utils::FileGlober fileglober ("foo/bar", "java") ;
+// recursively globs all java files in foo/bar (relative path accepted)
+parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
+```
+
+### Main Generator
+
+Main should converge to a DSL processor template.
 
 
 
