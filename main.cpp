@@ -26,11 +26,11 @@ int main(int argc, char** argv){
 		if (argvlex.get("--src") != "False") { 
 		// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
+			parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
 			parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
-			if (verbose) {
-// 				parselib::parsetree::Tree* classname = tree->at("classes")->at("classname") ;
+			if (argvlex.get("-vr") == "True") {
 				parselib::parsetree::Tree classname = tree["classes"]["classname"] ;
-				std::cout << classname << std::endl	 ;
+				std::cout << classname ;
 			}
 		}
 	}

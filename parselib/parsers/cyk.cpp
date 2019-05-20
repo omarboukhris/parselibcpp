@@ -70,7 +70,7 @@ Frame CYK::membership (lexer::Lexer::TokenList word) {
 		P[0][i] = P[0][i] + invUnitRelation (P[0][i]) ;
 	}
 // 	std::cout << getstrmat(P) ;
-	
+	utils::ProgressBar pbar (n, n) ;
 	for (size_t l = 1 ; l < n ; l++) {
 
 		for (size_t i = 0 ; i < n-l ; i++) {
@@ -90,7 +90,9 @@ Frame CYK::membership (lexer::Lexer::TokenList word) {
 				P[l][i] = P[l][i] + invUnitRelation (rulenames) ;
 			}
 		}
+		pbar.update(l);
 	}
+	std::cout << std::endl ;
 // 	std::cout << getstrmat(P) ;
 
 	if (P[n-1][0].size() == 0) {

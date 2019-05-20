@@ -28,6 +28,30 @@ public :
 	}
 } ;
 
+class ProgressBar {
+public :
+	ProgressBar (size_t width, size_t max) {
+		this->width = width ;
+		this->max = max ;//(max/100.0)*width ;
+	}
+	
+	void update (size_t i) {
+		std::cout << "[" ;
+		for (size_t k = 0 ; k < i ; ++k) {
+			std::cout << "=" ;
+		}
+		std::cout << ">" ;
+		for (size_t k = i ; k < max ; ++k) {
+			std::cout << " " ;
+		}
+		std::cout << "] " << (i*100.0f/max) << "%\r" ;
+	}
+
+protected :
+	size_t width ;
+	size_t max ;
+} ;
+
 class ArgvLex {
 public :
 	typedef std::vector<std::string> ArgList ;
