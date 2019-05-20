@@ -25,7 +25,7 @@ void ParseSession::loadGrammar(std::string filename, bool verbose) {
 	this->grammar = grammar ;
 }
 
-parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose) {
+parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
 	parser = myparsers::CYK (grammar) ;
@@ -35,23 +35,21 @@ parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose)
 	tokenizer.tokenize (source) ;
 
 	myparsers::Frame result = parser.membership (tokenizer.tokens) ;
-	return processResults(result, verbose) ;
-}
+// 	myparsers::Frame result = parser.parallel_membership (tokenizer.tokens) ;
 
-parsetree::Tree* ParseSession::processResults(myparsers::Frame x, bool verbose, size_t index) {
-	if (x.size() == 0) {
+	if (result.size() == 0) {
 		if (verbose) {
 			// x should point errors out if parsing failed
 			utils::Printer::showerr ("Empty result : no parse tree found") ;
 		}
 		return nullptr ;
 	} else {
-		index = (index >= 0 && index < x.size()) ? index : 0 ;
+		index = (index >= 0 && index < result.size()) ? index : 0 ;
 		if (verbose) {
 			utils::Printer::showinfo ("Parsetree found") ;
-			std::cout << x[index]->unfold() << std::endl ;
+			std::cout << result[index]->unfold() << std::endl ;
 		}
-		return parse (x[index]->unfold(), "") ;
+		return parse (result[index]->unfold(), "") ;
 	}
 }
 

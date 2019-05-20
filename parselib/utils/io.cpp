@@ -27,6 +27,7 @@ string gettextfilecontent (string filename) {
 		(istreambuf_iterator<char>(filestream)),
 		istreambuf_iterator<char>()
 	) ;
+	filestream.close();
 	return out ;
 }
 

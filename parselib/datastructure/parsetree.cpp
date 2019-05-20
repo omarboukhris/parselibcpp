@@ -27,6 +27,8 @@ size_t AbsNode::size() {
 	return tokens.size() ;
 }
 
+
+
 std::string AbsNode::strUnfold() {
 	std::string ss = "" ;
 	for (AbsNode::Token tok : tokens) {
@@ -79,10 +81,37 @@ size_t Tree::keyInTree(std::string key) {
 	return -1 ; 
 }
 
+Tree* Tree::at(std::string key) {
+	Tree* out = new Tree() ;
+
+	for (Token tok : tokens) {
+		std::string tokkey = tok.first ;
+		if (tokkey == key) {
+			if (tok.second->type == "leaf") {
+				out->push_back(tok);
+			} else {
+				for (Token tokout : tok.second->tokens) {
+					out->push_back(tokout);
+				}
+			}
+		}
+	}
+	return out ;
+}
+
+Tree* Tree::operator[] (const char key[]) {
+	return this->at(std::string(key)) ;
+}
 
 std::string Tree::getval() {
 	return "" ;
 }
+
+// Tree* Tree::operator[] (int i) {
+// 	Tree* out = new Tree() ;
+// 	out->push_back(tokens[i]) ;
+// 	return out ;
+// }
 
 std::ostream& operator<<(std::ostream& out, Tree* tree) {
 	out << tree->display(tree) ;

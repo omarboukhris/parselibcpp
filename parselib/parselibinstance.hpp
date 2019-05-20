@@ -26,20 +26,16 @@ public :
 	void loadGrammar (std::string filename, bool verbose=false) ;
 
 	/*!
-	 * \brief parses source code in filename
+	 * \brief parses source code in filename,
+	 * unfolds the parse tree and optionnaly prints it
 	 * \param filename : string path to file containing text to load
-	 */
-	parsetree::Tree* processSource (std::string filename, bool verbose=false) ;
-	
-private :
-	/*!
-	 * \brief Unfolds the parse tree and optionnaly prints it
-	 * \param x : UnitNode, TokenNode, BinNode from parselib.parsetree
-	 * a list of the folded possible parse trees
 	 * \param verbose : bool
 	 * True (by default) to print results, otherwise False
+	 * \return Tree* processed parsetree if exists
 	 */
-	parsetree::Tree* processResults (myparsers::Frame x, bool verbose=false, size_t index=0) ;
+	parsetree::Tree* processSource (std::string filename, bool verbose=false, size_t index=0) ;
+	
+private :
 
 	/*!
 	 * \brief unfolds parse tree in a factory generated dataformat

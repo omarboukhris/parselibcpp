@@ -25,6 +25,7 @@ public :
 	TokenList::iterator begin () ;
 	TokenList::iterator end () ;
 	size_t size () ;
+	
 } ;
 
 // terminal node (a leaf in the tree)
@@ -41,7 +42,9 @@ public :
 	Tree(AbsNode* node) ;
 	Tree * merge (Tree *tree) ;
 	size_t keyInTree (std::string key) ;
+	Tree* at(std::string key) ;
 	virtual std::string getval () ;
+	Tree* operator[] (const char [] ) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
 private :
 	std::string display (AbsNode *tree, std::string tab="") ;

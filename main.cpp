@@ -28,7 +28,9 @@ int main(int argc, char** argv){
 			std::string sourcefilename = argvlex.get("--src") ;
 			parselib::parsetree::Tree* tree = parsesession.processSource(sourcefilename, verbose);
 			if (verbose) {
-				std::cout << tree ;
+// 				parselib::parsetree::Tree* classname = tree->at("classes")->at("classname") ;
+				parselib::parsetree::Tree* classname = (*(*tree)["classes"])["classname"] ;
+				std::cout << classname << std::endl	 ;
 			}
 		}
 	}
