@@ -23,16 +23,20 @@ int main(int argc, char** argv){
 		std::string grammarfilename = argvlex.get("--gsrc") ;
 		parsesession.loadGrammar(grammarfilename, verbose);
 
+		/*
 		if (argvlex.get("--src") != "False") { 
 		// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
 			parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
 			parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
 			if (argvlex.get("-vr") == "True") {
-				parselib::parsetree::Tree classname = tree["classes"];//["classname"] ;
-				std::cout << classname ;
+			// verbose result sample
+			//	parselib::parsetree::Tree classname = tree["classes"];//["classname"] ;
+			//	std::cout << classname ;
 			}
-		} else if (
+		} else
+		//*/ 
+		if (
 			argvlex.get("--ext") != "False" &&
 			argvlex.get("--dir") != "False"
 		) {
@@ -41,9 +45,19 @@ int main(int argc, char** argv){
 			parselib::utils::FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
 			parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
 			
+			// parse all globed files
+			parselib::parsetree::TreeList treelist = parselib::parsetree::TreeList () ;
 			for (std::string sourcefilename : files) {
 				parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
 				parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);				
+				treelist.push_back(tree); //append tree to processed trees
+			}
+			// generate using processed trees
+			for (parselib::parsetree::Tree tree : treelist) {
+				// generator is caracterized by outputFileName and outputSourceCode
+				// generate file name from something
+				// callGenerator (tree) ; 
+				// generator.process or something
 			}
 			
 		}

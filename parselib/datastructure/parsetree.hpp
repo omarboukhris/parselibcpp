@@ -50,8 +50,7 @@ public :
 private :
 	std::string display (AbsNode *tree, std::string tab="") ;
 };
-
-
+typedef std::vector<Tree> TreeList ;
 
 // abstract node : generates the parse tree 
 // unfold is some kind of lazy eval
