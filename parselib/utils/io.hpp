@@ -61,19 +61,17 @@ public :
 	}
 	
 	void update (size_t i) {
-// 		std::cout << width/step << ":" << i << ":" << steps << std::endl ;
 		std::cout << "[" ;
-		float current_prog = 0.f ; //+step each loop
-		size_t steps = current_prog*width/step ;
-		for (size_t k = 0 ; k <= i ; ++k) {
+		size_t k = 0 ;
+		while (k++ < size_t(i*1.f*width/max)) {
 			std::cout << "=" ;
 		}
 		std::cout << ">" ;
-		for (size_t k = i ; k < max ; ++k) {
+		while (k++ < width) {
 			std::cout << " " ;
 		}
 		std::cout << "] " << int(i*100.0f/max) << "% " ;
-		if (i == width) {
+		if (i == max-1) {
 			std::cout << "finished" ;
 		} else {
 			std::cout << "loading\r" ;
