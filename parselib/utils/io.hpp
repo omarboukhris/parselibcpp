@@ -1,6 +1,7 @@
 #pragma once
 
 #include <parselib/datastructure/lexer.hpp>
+#include <boost/filesystem.hpp>
 
 namespace parselib {
 
@@ -16,6 +17,29 @@ std::string escapeRegex (std::string regx) ;
 typedef std::vector<std::string> StrList ; 
 StrList split (std::string target, std::string delim) ;
 std::string join (StrList strlist, std::string delim) ;
+
+class FileGlober {
+public :
+	typedef std::vector<std::string> FilesList ;
+	FileGlober (const std::string folderpath, const std::string ext) {
+		this->folderpath = folderpath ;
+		this->ext = ext ;
+	}
+	FilesList glob () {
+		FilesList files = FilesList() ;
+		for(auto& p: boost::filesystem::recursive_directory_iterator(folderpath)) {
+			std::string path = p.path().string() ;
+			size_t startindex = path.length() - ext.length() ;
+			if (path.substr(startindex-1) == std::string(".") + ext) {
+				files.push_back(path);
+			}
+		}
+		return files ;
+	}
+protected :
+	std::string folderpath ;
+	std::string ext ;
+} ;
 
 class Printer {
 public :
@@ -33,19 +57,23 @@ public :
 	ProgressBar (size_t width, size_t max) {
 		this->width = width ;
 		this->max = max ;//(max/100.0)*width ;
+		step = width*1.0/max ;
 	}
 	
 	void update (size_t i) {
+// 		std::cout << width/step << ":" << i << ":" << steps << std::endl ;
 		std::cout << "[" ;
+		float current_prog = 0.f ; //+step each loop
+		size_t steps = current_prog*width/step ;
 		for (size_t k = 0 ; k <= i ; ++k) {
 			std::cout << "=" ;
 		}
 		std::cout << ">" ;
-		for (size_t k = i ; k < max-1 ; ++k) {
+		for (size_t k = i ; k < max ; ++k) {
 			std::cout << " " ;
 		}
 		std::cout << "] " << int(i*100.0f/max) << "% " ;
-		if (i == max -1) {
+		if (i == width) {
 			std::cout << "finished" ;
 		} else {
 			std::cout << "loading\r" ;
@@ -53,6 +81,7 @@ public :
 	}
 
 protected :
+	float step ;
 	size_t width ;
 	size_t max ;
 } ;

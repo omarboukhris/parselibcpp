@@ -29,9 +29,23 @@ int main(int argc, char** argv){
 			parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
 			parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
 			if (argvlex.get("-vr") == "True") {
-				parselib::parsetree::Tree classname = tree["classes"]["classname"] ;
+				parselib::parsetree::Tree classname = tree["classes"];//["classname"] ;
 				std::cout << classname ;
 			}
+		} else if (
+			argvlex.get("--ext") != "False" &&
+			argvlex.get("--dir") != "False"
+		) {
+		// glob recursively files with specified extention from directory
+		// then parse
+			parselib::utils::FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
+			parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
+			
+			for (std::string sourcefilename : files) {
+				parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
+				parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);				
+			}
+			
 		}
 	}
 	

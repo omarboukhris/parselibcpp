@@ -1,8 +1,12 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.13)
 project(parselib)
 
 # activates debug mode 
 # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+# activate c++17
+# set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_EXTENSIONS OFF)
 
 #############################
 ### fetch library source code
@@ -30,7 +34,7 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-find_package(Boost 1.58 COMPONENTS regex thread system filesystem) 
+find_package(Boost 1.58 COMPONENTS regex system filesystem) 
 
 ######################################
 ####### build parselib library #######
