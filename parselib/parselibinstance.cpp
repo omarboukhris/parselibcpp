@@ -25,7 +25,7 @@ void ParseSession::loadGrammar(std::string filename, bool verbose) {
 	this->grammar = grammar ;
 }
 
-parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
+parsetree::Tree ParseSession::processSource(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
 	parser = myparsers::CYK (grammar) ;
@@ -49,7 +49,7 @@ parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose,
 			utils::Printer::showinfo ("Parsetree found") ;
 			std::cout << result[index]->unfold() << std::endl ;
 		}
-		return parse (result[index]->unfold(), "") ;
+		return *(parse (result[index]->unfold(), "")) ;
 	}
 }
 

@@ -81,7 +81,7 @@ size_t Tree::keyInTree(std::string key) {
 	return -1 ; 
 }
 
-Tree* Tree::at(std::string key) {
+Tree Tree::at(std::string key) {
 	Tree* out = new Tree() ;
 
 	for (Token tok : tokens) {
@@ -96,10 +96,10 @@ Tree* Tree::at(std::string key) {
 			}
 		}
 	}
-	return out ;
+	return *out ;
 }
 
-Tree* Tree::operator[] (const char key[]) {
+Tree Tree::operator[] (const char key[]) {
 	return this->at(std::string(key)) ;
 }
 
@@ -115,6 +115,10 @@ std::string Tree::getval() {
 
 std::ostream& operator<<(std::ostream& out, Tree* tree) {
 	out << tree->display(tree) ;
+	return out ;
+}
+std::ostream& operator<<(std::ostream& out, Tree tree) {
+	out << tree.display(&tree) ;
 	return out ;
 }
 

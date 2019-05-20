@@ -33,7 +33,7 @@ public :
 	 * True (by default) to print results, otherwise False
 	 * \return Tree* processed parsetree if exists
 	 */
-	parsetree::Tree* processSource (std::string filename, bool verbose=false, size_t index=0) ;
+	parsetree::Tree processSource (std::string filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
