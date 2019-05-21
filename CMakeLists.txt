@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.5)
 project(parselib)
 
 # activates debug mode 
 # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 # activate c++17
-# set(CMAKE_CXX_STANDARD 17)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 #############################
 ### fetch library source code
@@ -45,9 +45,38 @@ if(Boost_FOUND)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/parselib)
 
 	#build library
-	add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES}  ${Boost_LIBRARIES})
+	add_library(${PROJECT_NAME} STATIC 
+		${SOURCE_FILES} 
+		${HEADER_FILES} 
+		${Boost_LIBRARIES}
+	)
 endif()
 
+
+#######################################
+####### build generator library #######
+#######################################
+file (GLOB GENERATOR_HEADER_FILES
+	generator/generator.hpp
+)
+file (GLOB GENERATOR_SOURCE_FILES
+	generator/generator.cpp
+)
+
+set(GENERATOR_PROJECT_NAME generator)
+if(Boost_FOUND)
+	include_directories(${Boost_INCLUDE_DIRS}) 
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generator)
+
+	#build library
+	add_library(${GENERATOR_PROJECT_NAME} STATIC 
+		${GENERATOR_SOURCE_FILES} ${GENERATOR_HEADER_FILES} 
+		${PROJECT_NAME} 
+		${Boost_LIBRARIES}
+	)
+	
+endif()
 
 #######################################
 ####### Build example if needed #######
@@ -62,5 +91,9 @@ endif()
 if(BUILD_EX)
 	set(APP parcexlib)
 	add_executable(${APP} main.cpp)
-	target_link_libraries(${APP} ${PROJECT_NAME} ${Boost_LIBRARIES})
+	target_link_libraries(${APP} 
+		${PROJECT_NAME} 
+		${GENERATOR_PROJECT_NAME} 
+		${Boost_LIBRARIES}
+	)
 endif()

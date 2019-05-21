@@ -1,4 +1,5 @@
 #include <parselib/datastructure/parsetree.hpp>
+#include <parselib/utils/io.hpp>
 
 namespace parselib {
 namespace parsetree {
@@ -83,24 +84,39 @@ size_t Tree::keyInTree(std::string key) {
 
 Tree Tree::at(std::string key) {
 	Tree* out = new Tree() ;
-
+	Tree* tmpout = new Tree() ;
 	for (Token tok : tokens) {
 		std::string tokkey = tok.first ;
 		if (tokkey == key) {
 			if (tok.second->type == "leaf") {
 				out->push_back(tok);
 			} else {
+				Tree *tree = new Tree () ;
 				for (Token tokout : tok.second->tokens) {
+					tree->push_back(tokout);
 					out->push_back(tokout);
 				}
+				Token token = std::make_pair(key, tree) ;
+				tmpout->push_back(token) ;
 			}
 		}
 	}
+	// tmpout is the result we want
+// 	std::cout << dump(tmpout) << std::endl ;
 	return *out ;
 }
 
 Tree Tree::operator[] (const char key[]) {
-	return this->at(std::string(key)) ;
+// 	std::cout << dump(this) ;
+	utils::StrList keylist = utils::split(key, "/") ;
+	if (keylist.size() == 1) {
+		return this->at(keylist[0]) ;
+	} else {
+		Tree tree = this->at(keylist[0]) ;
+		keylist.erase(keylist.begin()) ;
+		std::string newkey = utils::join(keylist, "/") ;
+		return tree[newkey.c_str()] ;
+	}		
 }
 
 std::string Tree::getval() {
@@ -114,22 +130,22 @@ std::string Tree::getval() {
 // }
 
 std::ostream& operator<<(std::ostream& out, Tree* tree) {
-	out << tree->display(tree) ;
+	out << tree->dump(tree) ;
 	return out ;
 }
 std::ostream& operator<<(std::ostream& out, Tree tree) {
-	out << tree.display(&tree) ;
+	out << tree.dump(&tree) ;
 	return out ;
 }
 
-std::string Tree::display(AbsNode* tree, std::string tab) {
+std::string Tree::dump(AbsNode* tree, std::string tab) {
 	std::string ss = "" ;
 	for (AbsNode::Token tok : tree->tokens) {
 		if (tok.second->type == "leaf") {
 			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
 		} else {
 			ss += tab + tok.first + " = {\n" 
-				+ display(tok.second, tab+"\t")  
+				+ dump(tok.second, tab+"\t")  
 				+ tab + "}\n" ;
 		}
 	}

@@ -3,6 +3,7 @@ class myclass {
 		public int x ; 
 	} ;
 	public int a ;
+	public int a1 ;
 	public int b () {} ;
 } ;
 

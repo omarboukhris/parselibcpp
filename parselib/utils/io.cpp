@@ -93,11 +93,16 @@ StrList split (string target, string delim) {
 }
 
 string join (StrList strlist, string delim) {
+	if (strlist.size() == 0) {
+		return "" ;
+	}
 	string out = "" ;
-	for (string s : strlist) {
+// 	for (string s : strlist) {
+	for (size_t i = 0 ; i < strlist.size()-1 ; i++) {
+		std::string s = strlist[i] ;
 		out += s + delim ;
 	}
-	return out ;
+	return out+strlist.back() ;
 }
 
 string transformtosource (lexer::Lexer::TokenList tokenizedgrammar) {

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <parselib/datastructure/lexer.hpp>
-#include <boost/variant.hpp>
-#include <boost/any.hpp>
 
 namespace parselib {
 
@@ -48,7 +46,7 @@ public :
 	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
 private :
-	std::string display (AbsNode *tree, std::string tab="") ;
+	std::string dump (AbsNode *tree, std::string tab="") ;
 };
 typedef std::vector<Tree> TreeList ;
 
