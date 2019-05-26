@@ -2,11 +2,22 @@
 #include <parselib/utils/io.hpp>
 #include <parselib/parselibinstance.hpp>
 
-#include <generator/generator.hpp>
-
 // using namespace std;
 // using namespace parselib ;
 namespace pt = boost::property_tree ;
+
+void showhelp () {
+	std::cout <<
+		"usage : parsexlib [arg] " << std::endl <<
+		"\t--gsrc=path/to/grammar.grm \t\t: specifies grammar to use for parsing"  << std::endl <<
+		"\tuse case 1 : process only 1 file"  << std::endl <<
+		"\t\t--src=path/to/source.something  : specifies source code to process"  << std::endl <<
+		"\tuse case 2 : process recursively files"  << std::endl <<
+		"\t\t--dir=directory/to/glob/recurse : directory to process"  << std::endl <<
+		"\t\t--ext=extension (ex : java, cpp): globed files extension" << std::endl <<
+		"\t-h\t                                : help"  << std::endl <<
+	std::endl ;
+}
 
 int main(int argc, char** argv){
 
@@ -20,7 +31,9 @@ int main(int argc, char** argv){
 	
 	parselib::ParseSession parsesession = parselib::ParseSession() ;
 	
-	if (argvlex.get("--gsrc") != "False") {
+	if (argvlex.get("-h") == "True") {
+		showhelp () ;
+	} else if (argvlex.get("--gsrc") != "False") {
 	//parse argument
 		std::string grammarfilename = argvlex.get("--gsrc") ;
 		parsesession.loadGrammar(grammarfilename, verbose);
@@ -32,7 +45,6 @@ int main(int argc, char** argv){
 			std::string sourcefilename = argvlex.get("--src") ;
 			parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
 
-			// parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
 			pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
 			
 			parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
@@ -55,16 +67,9 @@ int main(int argc, char** argv){
 				parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
 				pt::write_json(sourcefilename+".json", out) ;
 			}
-// 			// generate using processed trees
-// 			for (pt::ptree tree : treelist) {
-// 				// generator is caracterized by outputFileName and outputSourceCode
-// 				// generate file name from something
-// 				generator::TemplateGenerator tempEngine (argvlex.get("--template")) ;
-// 				tempEngine.process (tree) ;
-// 				// generator.process or something
-// 			}
-			
 		}
+	} else {
+		showhelp();
 	}
 	
 	return 0 ;
