@@ -55,6 +55,7 @@ All functions mentioned later and more are wrapped in a utility class (`parselib
 Reading a grammar and parsing a source code then becomes trivial :
 ```c++
 #include <parselib/parselibinstance.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 int main(int argc, char** argv){
   // define a parselib session
@@ -64,9 +65,8 @@ int main(int argc, char** argv){
   //load a grammar from a raw text file
   parsesession.loadGrammar("data/grammar.grm", verbose) ;
   //parse some source code if parsable
-  parselib::parsetree::Tree* out = parsesession.processSource("data/test.java", verbose) ; 
+  boost::property_tree::ptree out = parsesession.processSource("data/test.java", verbose) ; 
 
-  std::cout << "tree is printable : " << out ;
   return 0 ;
 }
 ```
@@ -264,12 +264,14 @@ parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
 
 ### Main Generator
 
-Main should converge to a DSL processor template.
+Main executable parses source code files using specified grammar and stores results in json files (should be injected in a template engine or whatever).
 To test it, you can use the following shell command
 
 ```bash
 cd parselibcpp
-#globs all java files in data/ folder and parses them following the rules of the grammar @data/grammar.grm
+#globs all java files in data/ folder and parses them 
+#following the rules of the grammar @data/grammar.grm
+#result is stored in .json files where the globed files are
 build/parcexlib --gsrc=data/grammar.grm --ext=java --dir=data
 ```
 
