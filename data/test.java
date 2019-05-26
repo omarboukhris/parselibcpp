@@ -1,13 +1,15 @@
-class myclass {
+import blob.inc;
+import blom.inc;
+
+class myclass1 {
 	class tmp { 
 		public int x ; 
+		class l {
+			public int m () {} ;
+		} ;
 	} ;
+	public int x () {} ;
 	public int a ;
-	public int a1 ;
-	public int b () {} ;
-} ;
-
-class myclass2 {
-	public int d () {} ;
-	public int e () {} ;
+	public int m () {} ;
+	public int m () {} ;
 } ;

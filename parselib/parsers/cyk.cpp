@@ -105,18 +105,18 @@ Frame CYK::membership (lexer::Lexer::TokenList word) {
  * \brief get terminal nodes for the cyk table + parse tree
  */
 Frame CYK::getterminal (lexer::Lexer::Token token) {
-	SequentialParser::StrList keys = SequentialParser::StrList() ;
-	for (auto item : production_rules) {
-		keys.push_back(item.first);
-	}
-
 	Frame terminals = Frame() ;
-	for (std::string key : keys) {
+
+	for (auto item : production_rules) {
+		std::string key = item.first ;
 
 		SequentialParser::Rules rules = production_rules[key] ;
 		for (SequentialParser::Rule rule : rules) {
 
-			if (rule.size() == 1 && rule[0].second == "TERMINAL" && rule[0].first == token.second) {
+			if (rule.size() == 1 && 
+				rule[0].first == token.second &&
+				rule[0].second == "TERMINAL"
+			) {
 				parsetree::Node* node = (parsetree::Node*) new parsetree::TokenNode (key, token.first) ;
 				terminals.push_back (node) ;
 			}
@@ -132,7 +132,9 @@ Frame CYK::getterminal (lexer::Lexer::Token token) {
 Frame CYK::getAxiomNodes(Frame nodes){
 	Frame axiomnodes = Frame() ;
 	for (parsetree::Node* node : nodes) {
-		if (node->nodetype == "AXIOM") { //production_rules["AXIOM"][0][0].val :
+		if (node->nodetype == "AXIOM" ||
+			node->nodetype == production_rules["AXIOM"][0][0].first
+		) { //production_rules["AXIOM"][0][0].val :
 			axiomnodes.push_back (node) ;
 		}
 	}

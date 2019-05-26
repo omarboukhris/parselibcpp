@@ -105,7 +105,6 @@ void Grammar::makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexe
 	labels = ngp.labels ;
 	strnodes = ngp.strnodes ;
 	keeper = ngp.keeper ;
-	
 
 	*this = grammaroperators::eliminatedoubles (*this) ;
 	//gramtest = checkproductionrules(self.production_rules) #is fuckedup
@@ -114,6 +113,11 @@ void Grammar::makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexe
 }
 
 bool Grammar::inKeeperKeys(string toktype) {
+	for (auto item : keeper) {
+		if (item.first == toktype) {
+			return true ;
+		}
+	}
 	return std::find(keeper["all"].begin(), keeper["all"].end(), toktype) != keeper["all"].end() ;
 }
 
@@ -137,7 +141,9 @@ bool Grammar::keyIsStr(string toktype) {
 }
 
 bool Grammar::isTokenSavable(string parent, string child) {
-	if (parent == "AXIOM") {
+	if (parent == "AXIOM" || 
+		child == production_rules["AXIOM"][0][0].first
+	) {
 		return true ;
 	}
 	if (!inKeeperKeys(parent)) {

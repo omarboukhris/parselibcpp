@@ -1,10 +1,18 @@
-%import "ext/sub/body.grm"
+%import "ext/body.grm"
 
 %import "ext/tokens.grm"
 
-AXIOM -> classes
+AXIOM -> file
 
-classes ->  
-	"class" classname=identifier. lcrch. !classbody rcrch. semic. |
+file -> 
+	!imports !classdef
+
+imports ->
+	"import" !importfile |
 [] // list operator~~~ classes classes | eps('')
 
+importfile -> !identifier. ".inc" semic.
+
+classdef ->
+	"class" classname=identifier. lcrch. !classbody rcrch. semic. |
+[]

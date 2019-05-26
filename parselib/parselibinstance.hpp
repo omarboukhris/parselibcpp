@@ -1,9 +1,14 @@
 #pragma once
 
 #include <parselib/parsers/parsers.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+namespace pt = boost::property_tree ;
 
 namespace parselib {
-	
+
+using TreeList = std::vector<pt::ptree> ;
 /*!
  * \brief eliminates the last char of a string if it's a dot (.)
  * \param name : node name to process
@@ -25,6 +30,7 @@ public :
 	 */
 	void loadGrammar (std::string filename, bool verbose=false) ;
 
+	pt::ptree process2ptree (std::string filename, bool verbose=false, size_t index=0) ;
 	/*!
 	 * \brief parses source code in filename,
 	 * unfolds the parse tree and optionnaly prints it
@@ -33,7 +39,7 @@ public :
 	 * True (by default) to print results, otherwise False
 	 * \return Tree* processed parsetree if exists
 	 */
-	parsetree::Tree processSource (std::string filename, bool verbose=false, size_t index=0) ;
+	parsetree::Tree* processSource (std::string filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
@@ -47,5 +53,7 @@ private :
 
 	parsetree::AbsNode* processnode(parsetree::AbsNode::Token element);
 
+	pt::ptree to_ptree (parsetree::AbsNode* tree) ;
+	
 } ; //class ParseSession
 } ; //namespace parselib

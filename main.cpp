@@ -6,6 +6,7 @@
 
 // using namespace std;
 // using namespace parselib ;
+namespace pt = boost::property_tree ;
 
 int main(int argc, char** argv){
 
@@ -30,13 +31,10 @@ int main(int argc, char** argv){
 		// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
 			parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
-			parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
-			if (argvlex.get("--label") != "False") {
-			// verbose result sample
- 				parselib::parsetree::Tree classname = tree[argvlex.get("--label").c_str()] ;
-				std::cout << classname ;
-// 				std::cout << tree ;
-			}
+
+			// parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
+			pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
+
 		} else if (
 			argvlex.get("--ext") != "False" &&
 			argvlex.get("--dir") != "False" // && 
@@ -45,19 +43,19 @@ int main(int argc, char** argv){
 		// glob recursively files with specified extention from directory
 		// then parse
 			parselib::utils::FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
-			parselib::parsetree::TreeList treelist = parselib::parsetree::TreeList () ;
+			parselib::TreeList treelist = parselib::TreeList() ;
 			
 			for (std::string sourcefilename : fileglober.glob()) {
 				parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
-				parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);				
-				treelist.push_back(tree); //append tree to processed trees
+				pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
+				treelist.push_back(out); //append tree to processed trees
 			}
 			// generate using processed trees
-			for (parselib::parsetree::Tree tree : treelist) {
+			for (pt::ptree tree : treelist) {
 				// generator is caracterized by outputFileName and outputSourceCode
 				// generate file name from something
 				generator::TemplateGenerator tempEngine (argvlex.get("--template")) ;
-// 				tempEngine.process (tree) ;
+				tempEngine.process (tree) ;
 				// generator.process or something
 			}
 			

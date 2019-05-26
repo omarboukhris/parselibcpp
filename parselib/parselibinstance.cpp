@@ -25,7 +25,18 @@ void ParseSession::loadGrammar(std::string filename, bool verbose) {
 	this->grammar = grammar ;
 }
 
-parsetree::Tree ParseSession::processSource(std::string filename, bool verbose, size_t index) {
+pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t index) {
+	pt::ptree out = to_ptree(processSource(filename, false, index)) ;
+	if (verbose) {
+		std::stringstream ss;
+		pt::json_parser::write_json(ss, out);
+		std::cout << ss.str() << std::endl;
+	}
+	return out ;
+}
+
+
+parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
 	parser = myparsers::CYK (grammar) ;
@@ -44,19 +55,19 @@ parsetree::Tree ParseSession::processSource(std::string filename, bool verbose, 
 		}
 		return nullptr ;
 	} else {
-		index = (index >= 0 && index < result.size()) ? index : 0 ;
+		index = (index > 0 && index < result.size()) ? index : 0 ;
 		if (verbose) {
 			utils::Printer::showinfo ("Parsetree found") ;
 			std::cout << result[index]->unfold() << std::endl ;
 		}
-		return *(parse (result[index]->unfold(), "")) ;
+		return parse (result[index]->unfold(), "") ;
 	}
 }
 
 parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
 	//needs a do over
 	parsetree::Tree* out = new parsetree::Tree() ;
-// 	std::cout << code << std::endl ;
+// 	std::cout << code << ":;" << std::endl ;
 	for (parsetree::AbsNode::Token element : code->tokens) {
 
 		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
@@ -77,9 +88,11 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) 
 			}
 		} //element.first is type, .second is val
 
-// 		check if element.first in keeper
+		// check if element.first in keeper
+		//std::cout << element.first << grammar.inKeeperKeys(element.first) << std::endl ;
 		if (grammar.inKeeperKeys(element.first)) {
 			parsetree::AbsNode* out_element = new parsetree::Tree();
+			//std::cout << (grammar.isTokenSavable(parent, element.first)) << std::endl ; 
 			if (grammar.keyIsStr(element.first)) {
 				std::string out_elementstr = element.second->strUnfold () ;
 				out_element = new parsetree::Leaf(out_elementstr) ;
@@ -95,6 +108,7 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) 
 				std::make_pair(element.first, out_element));
 		}
 	}
+	//std::cout << out << std::endl ;
 	return out ;
 }
 
@@ -110,5 +124,28 @@ parsetree::AbsNode* ParseSession::processnode(parsetree::AbsNode::Token element)
 		return element.second ;
 	}
 }
+
+pt::ptree ParseSession::to_ptree(parsetree::AbsNode *tree) {
+	if (tree == nullptr) {
+		return pt::ptree() ;
+	}
+
+	pt::ptree out = pt::ptree() ;
+	for (parsetree::AbsNode::Token tok : tree->tokens) {
+		if (tok.second->type == "leaf") {
+			out.add(tok.first, tok.second->getval()) ;
+			//ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
+		} else {
+			pt::ptree tmp = to_ptree(tok.second) ;
+			out.add_child(tok.first, tmp) ;
+// 			ss += tab + tok.first + " = {\n" 
+// 				+ dump(tok.second, tab+"\t")  
+// 				+ tab + "}\n" ;
+		}
+	}
+	return out ;
+}
+
+
 
 } //namespace parselib

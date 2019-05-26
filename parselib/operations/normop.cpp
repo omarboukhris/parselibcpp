@@ -171,6 +171,9 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 			SequentialParser::Rules rules = item.second ;
 			
 			for (SequentialParser::Rule rule : rules) {
+				if (rule.size() != 2) {
+					continue ;
+				}
 				bool isruleempty = (
 					std::find(nullables.begin(), nullables.end(), rule[0].first) != nullables.end() &&
 					std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end()) ;
@@ -212,9 +215,11 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 		SequentialParser::Rules rules = item.second ;
 
 		for (SequentialParser::Rule rule : rules) {
+			if (rule.size() != 1) {
+				continue ;
+			}
 			SequentialParser::StrList epsOrTerminal = SequentialParser::StrList({"EMPTY", "TERMINAL"}) ;
 			bool isruleunit = (
-				rule.size() == 1 && 
 				(std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].second) == epsOrTerminal.end())
 			) ;
 			if (isruleunit) {
@@ -237,14 +242,16 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 			if (rule.size() != 2) {
 				continue ;
 			}
-			bool isruleunit = (std::find(nullables.begin(), nullables.end(), rule[0].first) == nullables.end()) ;
-			if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-				unitrelation[key].push_back (rule[1].first) ;
-			} else {
-				unitrelation[key] = SequentialParser::StrList({rule[1].first}) ;
-				unitkeylist.push_back(key);
+			bool isruleunit = (std::find(nullables.begin(), nullables.end(), rule[0].first) != nullables.end()) ;
+			if (isruleunit) {
+				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
+					unitrelation[key].push_back (rule[1].first) ;
+				} else {
+					unitrelation[key] = SequentialParser::StrList({rule[1].first}) ;
+					unitkeylist.push_back(key);
+				}
 			}
-  			isruleunit = (std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end()) ;
+			isruleunit = (std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end()) ;
 			if (isruleunit) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
 					unitrelation[key].push_back (rule[0].first) ;
