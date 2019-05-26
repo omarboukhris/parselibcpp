@@ -34,6 +34,9 @@ int main(int argc, char** argv){
 
 			// parselib::parsetree::Tree tree = parsesession.processSource(sourcefilename, verbose);
 			pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
+			
+			parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
+			pt::write_json(sourcefilename+".json", out) ;
 
 		} else if (
 			argvlex.get("--ext") != "False" &&
@@ -43,21 +46,23 @@ int main(int argc, char** argv){
 		// glob recursively files with specified extention from directory
 		// then parse
 			parselib::utils::FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
-			parselib::TreeList treelist = parselib::TreeList() ;
 			
+// 			parselib::TreeList treelist = parselib::TreeList() ;
 			for (std::string sourcefilename : fileglober.glob()) {
 				parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
 				pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
-				treelist.push_back(out); //append tree to processed trees
+// 				treelist.push_back(out); //append tree to processed trees
+				parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
+				pt::write_json(sourcefilename+".json", out) ;
 			}
-			// generate using processed trees
-			for (pt::ptree tree : treelist) {
-				// generator is caracterized by outputFileName and outputSourceCode
-				// generate file name from something
-				generator::TemplateGenerator tempEngine (argvlex.get("--template")) ;
-				tempEngine.process (tree) ;
-				// generator.process or something
-			}
+// 			// generate using processed trees
+// 			for (pt::ptree tree : treelist) {
+// 				// generator is caracterized by outputFileName and outputSourceCode
+// 				// generate file name from something
+// 				generator::TemplateGenerator tempEngine (argvlex.get("--template")) ;
+// 				tempEngine.process (tree) ;
+// 				// generator.process or something
+// 			}
 			
 		}
 	}

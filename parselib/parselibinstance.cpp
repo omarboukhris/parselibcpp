@@ -1,6 +1,8 @@
 #include <parselib/parselibinstance.hpp>
 #include "operations/generalop.hpp"
 
+#include <boost/variant.hpp>
+
 namespace parselib {
 
 ParseSession::ParseSession() {
@@ -27,6 +29,7 @@ void ParseSession::loadGrammar(std::string filename, bool verbose) {
 
 pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t index) {
 	pt::ptree out = to_ptree(processSource(filename, false, index)) ;
+	
 	if (verbose) {
 		std::stringstream ss;
 		pt::json_parser::write_json(ss, out);
@@ -126,22 +129,30 @@ parsetree::AbsNode* ParseSession::processnode(parsetree::AbsNode::Token element)
 }
 
 pt::ptree ParseSession::to_ptree(parsetree::AbsNode *tree) {
+	using Map = std::map<std::string, pt::ptree> ;
 	if (tree == nullptr) {
 		return pt::ptree() ;
 	}
 
-	pt::ptree out = pt::ptree() ;
+	// use map to correctly parse into ptree
+	// something is fucked up otherwise in json
+	Map map = Map() ; 
 	for (parsetree::AbsNode::Token tok : tree->tokens) {
 		if (tok.second->type == "leaf") {
-			out.add(tok.first, tok.second->getval()) ;
-			//ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
+			pt::ptree tmp, tmplist ;
+			tmp.put ("", tok.second->getval()) ;
+			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		} else {
-			pt::ptree tmp = to_ptree(tok.second) ;
-			out.add_child(tok.first, tmp) ;
-// 			ss += tab + tok.first + " = {\n" 
-// 				+ dump(tok.second, tab+"\t")  
-// 				+ tab + "}\n" ;
+			pt::ptree tmp = to_ptree(tok.second), tmplist ;
+			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		}
+	}
+
+	pt::ptree out = pt::ptree() ;
+	for (auto item : map) {
+		std::string key = item.first ;
+		pt::ptree tmp = item.second ;
+		out.add_child(key, tmp) ;
 	}
 	return out ;
 }

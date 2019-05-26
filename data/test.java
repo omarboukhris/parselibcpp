@@ -9,7 +9,6 @@ class myclass1 {
 		} ;
 	} ;
 	public int x () {} ;
+	public int a () {} ;
 	public int a ;
-	public int m () {} ;
-	public int m () {} ;
 } ;
