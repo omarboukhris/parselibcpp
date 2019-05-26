@@ -4,7 +4,17 @@ This is intended to be a simple AND efficient (at least a lot more than its Pyth
 
 Can be used to code a symbolic mathematical kernel, a source-to-source transcompiler or whatever.. The sky is the limit (along with the established expressive power of type 2 grammars)
 
-Only boost is required as a dependency
+boost1.58 and cmake3.5 (at least) are required as a dependency to build the project.
+
+### Build the project :
+
+```bash
+cd parselibcpp
+mkdir build
+cd build
+cmake ..
+make
+```
 
 ### References :
 
@@ -239,7 +249,28 @@ myparsers::Frame result = parser.membership (tokenizer.tokens) ;
 ```
 The parser doesn't support error handling yet though
 
+### Recursive File Glober 
 
+This object can be used to glob recursively files and filter them by file extension.
 
+```c++
+#include <parselib/utils/io.hpp>
+
+// setup fileGlober
+parselib::utils::FileGlober fileglober ("foo/bar", "java") ;
+// recursively globs all java files in foo/bar (relative path accepted)
+parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
+```
+
+### Main Generator
+
+Main should converge to a DSL processor template.
+To test it, you can use the following shell command
+
+```bash
+cd parselibcpp
+#globs all java files in data/ folder and parses them following the rules of the grammar @data/grammar.grm
+build/parcexlib --gsrc=data/grammar.grm --ext=java --dir=data
+```
 
 
