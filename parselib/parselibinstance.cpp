@@ -1,5 +1,6 @@
 #include <parselib/parselibinstance.hpp>
 #include "operations/generalop.hpp"
+#include "operations/normop.hpp"
 
 #include <boost/variant.hpp>
 
@@ -23,8 +24,8 @@ void ParseSession::loadGrammar(std::string filename, bool verbose) {
 	myparsers::GenericGrammarParser ggp (preproc) ;
 
 	myparsers::Grammar grammar = ggp.parse (filename, verbose) ;
-	
-	this->grammar = grammar ;
+	grammar.exportToFile(filename);
+	this->grammar = normoperators::get2nf(grammar) ;
 }
 
 pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t index) {

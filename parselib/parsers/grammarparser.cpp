@@ -2,7 +2,9 @@
 
 #include <parselib/utils/io.hpp>
 #include <parselib/operations/generalop.hpp>
-#include <parselib/operations/normop.hpp>
+
+#include <boost/algorithm/string/replace.hpp>
+#include <fstream>
 
 using namespace std ;
 
@@ -153,34 +155,50 @@ bool Grammar::isTokenSavable(string parent, string child) {
 }
 
 
-// 	void saveGraph (self, filename) {
-// 		"""generates dot graph from a grammar and stores it in filename.png
-// 		this should be updated .. and moved
-// 		"""
-// 		ss = "digraph {\n"
-// 		for key, rules in self.production_rules.items() :
-// 			for rule in rules :
-// 				r = [op.val for op in rule]
-// 				r = [i.replace ("-", "") for i in r]
-// 				r = [i.replace (".", "") for i in r]
-// 				r = [i.replace ("\'\'", "eps") for i in r]
-// 				r = [i.replace ("\"\"", "eps") for i in r]
-// 				r = [i.replace ("/", "_") for i in r]
-// 				k = key.replace ("-", "")
-// 				k = k.replace ("/", "_")
-// 				k = k.replace (".", "_tok")
-// 				ss += "\t" + k + " -> " 
-// 				ss += " -> ".join (r)
-// 				ss += " ;\n"
-// 		ss += "}"
-// 		filestream = open (filename + '.dot', 'w') 
-// 		filestream.write(ss)
-// 		filestream.close ()
-// 		cmd = 'dot -Tpng -o ' + filename + '.png ' + filename + '.dot'
-// 		os.system (cmd)
-// 		cmd = 'rm ' + filename + '.dot'
-// 		os.system (cmd)
-// 	}
+/*!
+ * \brief generates dot graph from a grammar and stores it in filename.png
+ */
+void Grammar::exportToFile(std::string filename) {
+	std::string ss = "digraph {\n" ;
+	for (auto item : production_rules) {
+		std::string key = item.first ;
+		boost::replace_all (key, "-", "");
+		boost::replace_all (key, "/", "_");
+		boost::replace_all (key, "[", "_");
+		boost::replace_all (key, "]", "");
+		boost::replace_all (key, ".", "_tok");
+		SequentialParser::Rules rules = item.second ;
+		for (SequentialParser::Rule rule : rules) {
+			SequentialParser::StrList r ;
+			for (lexer::Lexer::Token op : rule) {
+				std::string val = op.first ;
+				boost::replace_all (val, "-", "");
+				boost::replace_all (val, ".", "");
+				boost::replace_all (val, "\'\'", "eps");
+				boost::replace_all (val, "\"\"", "eps");
+				boost::replace_all (val, "/", "_");
+				boost::replace_all (val, "[", "_");
+				boost::replace_all (val, "]", "");
+				r.push_back(val) ;
+			}
+			ss += "\t" + key + " -> " ;
+			ss += utils::join(r, "->") ;
+			ss += " ;\n" ;
+		}
+	}
+	ss += "}" ;
+	std::ofstream filestream (filename + ".dot") ;
+	if (!filestream.is_open ()) {
+		utils::Printer::showerr("(exportToFile) Can't open file " + filename + ".dot"); 
+		return ;
+	}
+	filestream << ss ;
+	filestream.close() ;
+	std::string cmd = "dot -Tpng -o " + filename + ".png " + filename + ".dot" ;
+	std::system (cmd.c_str()) ;
+	cmd = "rm " + filename + ".dot" ;
+	std::system (cmd.c_str()) ;
+}
 
 // 	def save (self, filename) :
 // 		"""save parsed grammar in pickle file"""
@@ -317,7 +335,6 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 
 		out_grammar.merge (grammar) ;
 	}
-	out_grammar = normoperators::get2nf(out_grammar) ;
 	if (verbose) {
 		cout << out_grammar ;
 	}

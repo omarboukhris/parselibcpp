@@ -52,8 +52,7 @@ int main(int argc, char** argv){
 
 		} else if (
 			argvlex.get("--ext") != "False" &&
-			argvlex.get("--dir") != "False" // && 
-			//argvlex.get("--template") != "False"
+			argvlex.get("--dir") != "False" 
 		) {
 		// glob recursively files with specified extention from directory
 		// then parse

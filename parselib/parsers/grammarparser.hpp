@@ -30,6 +30,8 @@ public :
 	Grammar () ;
 	
 	void merge (Grammar grammar) ;
+	
+	void exportToFile (std::string filename) ;
 
 	/*!
 	 * \brief parses a list of tokens in a grammar
