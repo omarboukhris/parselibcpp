@@ -16,11 +16,64 @@ cmake ..
 make
 ```
 
+### Main Generator & Test Case :
+
+Main executable parses source code files using specified grammar and stores results in json files (should be injected in a template engine or whatever).
+To test it, you can use the following shell command
+
+```bash
+cd parselibcpp
+#globs all java files in data/ folder and parses them 
+#following the rules of the grammar @data/grammar.grm
+#result is stored in .json files where the globed files are
+build/parcexlib --gsrc=data/grammar.grm --ext=java --dir=data
+```
+
+### Main interface :
+
+#### Sessions
+
+All functions mentioned later and more are wrapped in a utility class (`parselib.parselibinstance.ParselibInstance`).
+
+Reading a grammar and parsing a source code then becomes trivial :
+```c++
+#include <parselib/parselibinstance.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+int main(int argc, char** argv){
+  // define a parselib session
+  parselib::ParseSession parsesession = parselib::ParseSession() ;
+  bool verbose = true ;
+
+  //load a grammar from a raw text file
+  parsesession.loadGrammar("data/grammar.grm", verbose) ;
+  //parse some source code if parsable
+  boost::property_tree::ptree out = parsesession.processSource("data/test.java", verbose) ; 
+
+  return 0 ;
+}
+```
+
+#### Recursive File Glober 
+
+This object can be used to glob recursively files and filter them by file extension.
+
+```c++
+#include <parselib/utils/io.hpp>
+
+// setup fileGlober
+parselib::utils::FileGlober fileglober ("foo/bar", "java") ;
+// recursively globs all java files in foo/bar (relative path accepted)
+parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
+```
+
+This can mainly be useful to setup a transcompiling framework or a template engine.
+
 ### References :
 
 [1] Lange, Martin; Leiß, Hans (2009). "To CNF or not to CNF? An Efficient Yet Presentable Version of the CYK Algorithm". 
 
-### Grammars :
+## Grammar's syntax
 
 Let G be a CFG, such as G = (NT, T, Pr, AXIOM) with
 
@@ -47,32 +100,6 @@ S -> //S is a non terminal.
 a.("a") //terminals/tokens are regex for efficiency/convenience purposes 
 b.("b") //{a., b.} are terminals
 ```
-
-### Main interface :
-
-All functions mentioned later and more are wrapped in a utility class (`parselib.parselibinstance.ParselibInstance`).
-
-Reading a grammar and parsing a source code then becomes trivial :
-```c++
-#include <parselib/parselibinstance.hpp>
-#include <boost/property_tree/ptree.hpp>
-
-int main(int argc, char** argv){
-  // define a parselib session
-  parselib::ParseSession parsesession = parselib::ParseSession() ;
-  bool verbose = true ;
-
-  //load a grammar from a raw text file
-  parsesession.loadGrammar("data/grammar.grm", verbose) ;
-  //parse some source code if parsable
-  boost::property_tree::ptree out = parsesession.processSource("data/test.java", verbose) ; 
-
-  return 0 ;
-}
-```
-This can mainly be useful to setup a transcompiling framework.
-
-## Grammar's syntax
 
 ### Terminals
 
@@ -157,9 +184,11 @@ someHeader -> s:complexNodeToConvert theRestofit | '' //...
 ```
 This is mainly to catch strings that regexs can't, like nested template declaration in C++ as an example.
 
-## Under the hood
+## Under the hood (Pipeline)
 
 ### Graph encoder for generic textual CFG
+
+This encode a text written context-free grammar (CFG) in a graph data-structure handled by the appropriate component, implemented Parsers mainly.
 
 ```c++
 //import important stuff
@@ -248,31 +277,3 @@ tokenizer.tokenize (source) ;
 myparsers::Frame result = parser.membership (tokenizer.tokens) ;
 ```
 The parser doesn't support error handling yet though
-
-### Recursive File Glober 
-
-This object can be used to glob recursively files and filter them by file extension.
-
-```c++
-#include <parselib/utils/io.hpp>
-
-// setup fileGlober
-parselib::utils::FileGlober fileglober ("foo/bar", "java") ;
-// recursively globs all java files in foo/bar (relative path accepted)
-parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
-```
-
-### Main Generator
-
-Main executable parses source code files using specified grammar and stores results in json files (should be injected in a template engine or whatever).
-To test it, you can use the following shell command
-
-```bash
-cd parselibcpp
-#globs all java files in data/ folder and parses them 
-#following the rules of the grammar @data/grammar.grm
-#result is stored in .json files where the globed files are
-build/parcexlib --gsrc=data/grammar.grm --ext=java --dir=data
-```
-
-
