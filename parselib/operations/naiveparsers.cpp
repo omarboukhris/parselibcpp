@@ -239,7 +239,7 @@ void SequentialParser::checkrightside() {
 	this->j = j ;
 }
 
-void SequentialParser::processlabel(std::__cxx11::string label, std::__cxx11::string operand){
+void SequentialParser::processlabel(std::string label, std::string operand){
 	//currentrule in labels.keys()
 	if (labels.find (current_rule) != labels.end()) {
 		labels[current_rule][operand] = label ;
