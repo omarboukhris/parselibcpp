@@ -34,7 +34,7 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem REQUIRED )
+FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem python REQUIRED )
 
 # find_package(Boost 1.58 COMPONENTS regex system filesystem) 
 
@@ -43,49 +43,24 @@ FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem REQUIRED )
 ######################################
 
 if(Boost_FOUND)
-	include_directories(${Boost_INCLUDE_DIR}) 
+	find_package(PythonInterp REQUIRED)
+	find_package(PythonLibs REQUIRED)
+
+	include_directories(${Boost_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS}) 
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/parselib)
 
-	add_library(${PROJECT_NAME} STATIC 
+	add_library(${PROJECT_NAME} SHARED 
 		${SOURCE_FILES} 
 		${HEADER_FILES} )
 	target_link_libraries(
 		${PROJECT_NAME}
 		${Boost_LIBRARIES}
+		${PYTHON_LIBRARIES}
 	)
 endif()
 
-# #######################################
-# ####### build generator library #######
-# #######################################
-# file (GLOB GENERATOR_HEADER_FILES
-# 	generator/generator.hpp
-# )
-# file (GLOB GENERATOR_SOURCE_FILES
-# 	generator/generator.cpp
-# )
-# 
-# set(GENERATOR_PROJECT_NAME generator)
-# if(Boost_FOUND)
-# 	include_directories(${Boost_INCLUDE_DIRS}) 
-# 	include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-# 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generator)
-# 
-# 	#build library
-# 	add_library(${GENERATOR_PROJECT_NAME} STATIC 
-# 		${GENERATOR_SOURCE_FILES} ${GENERATOR_HEADER_FILES} 
-# 		${PROJECT_NAME} 
-# 		${Boost_LIBRARIES}
-# 	)
-# 	
-# endif()
-# 
-# #######################################
-# ####### Build example if needed #######
-# #######################################
-# 
-# choose if you want to build the example or not
+
 if(NOT BUILD_EX)
     set(BUILD_EX true)
 endif()

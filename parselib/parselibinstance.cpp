@@ -19,7 +19,7 @@ std::string processnodename(std::string name) {
 	return name ;
 }
 
-void ParseSession::loadGrammar(std::string filename, bool verbose) {
+void ParseSession::load_grammar(std::string filename, bool verbose) {
 	utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
 	myparsers::GenericGrammarParser ggp (preproc) ;
 
@@ -39,6 +39,10 @@ pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t
 	return out ;
 }
 
+void ParseSession::store_json(std::string filename, std::string output_filename, bool verbose, size_t index) {
+	pt::ptree out = process2ptree(filename, verbose, index) ;
+	pt::write_json(output_filename+".json", out) ;
+}
 
 parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
 

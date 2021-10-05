@@ -36,7 +36,7 @@ int main(int argc, char** argv){
 	} else if (argvlex.get("--gsrc") != "False") {
 	//parse argument
 		std::string grammarfilename = argvlex.get("--gsrc") ;
-		parsesession.loadGrammar(grammarfilename, verbose);
+		parsesession.load_grammar(grammarfilename, verbose);
 
 		//*
 		// this part is mainly used for testing single files
@@ -61,10 +61,8 @@ int main(int argc, char** argv){
 // 			parselib::TreeList treelist = parselib::TreeList() ;
 			for (std::string sourcefilename : fileglober.glob()) {
 				parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
-				pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
-// 				treelist.push_back(out); //append tree to processed trees
+				parsesession.store_json(sourcefilename, sourcefilename+".json", verbose);
 				parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
-				pt::write_json(sourcefilename+".json", out) ;
 			}
 		}
 	} else {

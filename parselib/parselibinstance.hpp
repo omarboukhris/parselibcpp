@@ -28,9 +28,12 @@ public :
 	 * the grammar from a text file
 	 * \param filename : string path to file containing text to load
 	 */
-	void loadGrammar (std::string filename, bool verbose=false) ;
+	void load_grammar (std::string filename, bool verbose=false) ;
+	
+	void store_json (std::string filename, std::string output_filename, bool verbose=false, size_t index=0);
 
 	pt::ptree process2ptree (std::string filename, bool verbose=false, size_t index=0) ;
+
 	/*!
 	 * \brief parses source code in filename,
 	 * unfolds the parse tree and optionnaly prints it
