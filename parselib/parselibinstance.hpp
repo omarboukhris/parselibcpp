@@ -18,10 +18,11 @@ std::string processnodename (std::string name) ;
 class ParseSession {
 public :
 	myparsers::Grammar grammar ;
-	myparsers::CYK parser ;
+	myparsers::AbstractParser *parser ;
 	lexer::Lexer tokenizer ;
 	
 	ParseSession () ;
+	~ParseSession() ;
 
 	/*!
 	 * \brief builds the instance by loading 

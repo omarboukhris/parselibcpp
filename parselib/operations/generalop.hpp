@@ -19,7 +19,7 @@ myparsers::Grammar eliminatedoubles (myparsers::Grammar grammar) ;
  * \param rule : rule to check
  * \returns true or false (bool)
  */
-bool checkunique (operations::SequentialParser::Rules uniquerules, operations::SequentialParser::Rule rule) ;
+bool checkunique (Rules uniquerules, Rule rule) ;
 
 /*!
  * \brief check is rule a & b are the same
@@ -27,7 +27,7 @@ bool checkunique (operations::SequentialParser::Rules uniquerules, operations::S
  * \param b : rules to compare
  * \returns bool
  */
-bool samerule (operations::SequentialParser::Rule rulea, operations::SequentialParser::Rule ruleb) ;
+bool samerule (Rule rulea, Rule ruleb) ;
 
 }
 

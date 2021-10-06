@@ -61,7 +61,7 @@ Frame operator+(Frame f1, Frame f2){
  * \brief test membership of a word in a grammar
  * STABLE AF, DON'T TOUCH
  */
-Frame CYK::membership (lexer::Lexer::TokenList word) {
+Frame CYK::membership (TokenList word) {
 	size_t n = word.size() ;
 	CYKMatrix P = CYKMatrix(n, Row (n, Frame())) ;
 	
@@ -104,14 +104,14 @@ Frame CYK::membership (lexer::Lexer::TokenList word) {
 /*!
  * \brief get terminal nodes for the cyk table + parse tree
  */
-Frame CYK::getterminal (lexer::Lexer::Token token) {
+Frame CYK::getterminal (Token token) {
 	Frame terminals = Frame() ;
 
 	for (auto item : production_rules) {
 		std::string key = item.first ;
 
-		SequentialParser::Rules rules = production_rules[key] ;
-		for (SequentialParser::Rule rule : rules) {
+		Rules rules = production_rules[key] ;
+		for (Rule rule : rules) {
 
 			if (rule.size() == 1 && 
 				rule[0].first == token.second &&
@@ -145,7 +145,7 @@ Frame CYK::getAxiomNodes(Frame nodes){
  * \brief get a list of binarized production rules in a frame
  */
 Frame CYK::getbinproductions(Row AB) {
-	SequentialParser::StrList keys = SequentialParser::StrList() ;
+	StrList keys = StrList() ;
 	for (auto item : production_rules) {
 		keys.push_back(item.first);
 	}
@@ -173,8 +173,8 @@ Frame CYK::getrulenames(Frame line) {
 	Frame rulenames = Frame() ;
 	for (auto item : production_rules) {
 		std::string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
- 		for (SequentialParser::Rule rule : rules) {
+		Rules rules = item.second ;
+ 		for (Rule rule : rules) {
 			if (rule.size() == 1) {
 				continue ;
 			}
@@ -195,7 +195,7 @@ Frame CYK::invUnitRelation(Frame M) {
 	for (parsetree::Node* node : M) {
 		for (auto item : unitrelation) {
 			std::string key = item.first ;
-			SequentialParser::StrList units = item.second ;
+			StrList units = item.second ;
 			if (std::find(units.begin(), units.end(), node->nodetype) != units.end()) {
 				parsetree::Node* nodeOut = /*(parsetree::Node*)*/ new parsetree::UnitNode (key, node) ;
 				rulenames.push_back (nodeOut) ;

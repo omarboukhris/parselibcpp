@@ -29,6 +29,7 @@ if __name__ == "__main__":
 	psess = ParseSession()
 	psess.load_grammar("data/grammar.grm")
 	psess.parse_to_json("data/test.java")
+	psess.parse_to_json("data/test2.java")
 	del psess
 
 

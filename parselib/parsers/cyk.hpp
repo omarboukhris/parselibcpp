@@ -1,15 +1,11 @@
 #pragma once
 
-#include <parselib/parsers/grammarparser.hpp>
-#include <parselib/datastructure/parsetree.hpp>
+#include <parselib/parsers/absparser.hpp>
+
 
 namespace parselib {
 
 namespace myparsers {
-
-typedef std::vector<parsetree::Node*> Frame ;
-typedef std::vector<Frame> Row ;
-typedef std::vector<Row> CYKMatrix ;
 
 Frame operator+(Frame f1, Frame f2) ;
 
@@ -20,19 +16,17 @@ Frame operator+(Frame f1, Frame f2) ;
 Row cartesianprod (Frame A, Frame B) ;
 
 
-class CYK {
+class CYK : public AbstractParser {
 public :
-	
-	operations::SequentialParser::ProductionRules production_rules ;
-	Grammar::UnitRelation unitrelation ;
-	
+
 	CYK () {} 
+	virtual ~CYK () {}
 	CYK (Grammar grammar) ;
 
-	Frame membership (lexer::Lexer::TokenList word) ;
+	virtual Frame membership (TokenList word) ;
 
 private :
-	Frame getterminal (lexer::Lexer::Token token) ;
+	Frame getterminal (Token token) ;
 	Frame getAxiomNodes (Frame nodes) ;
 	Frame getbinproductions (Row AB) ;
 

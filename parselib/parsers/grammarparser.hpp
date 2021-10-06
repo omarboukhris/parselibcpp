@@ -6,24 +6,22 @@
 
 namespace parselib {
 
-using namespace operations ;
-
 namespace myparsers {
 
 
 class Grammar {
 
 public :
-	typedef std::map<std::string, SequentialParser::StrList> UnitRelation ;
+	typedef std::map<std::string, StrList> UnitRelation ;
 
-	SequentialParser::ProductionRules production_rules ;
+	ProductionRules production_rules ;
 	
-	SequentialParser::StrList strnodes ;
-	SequentialParser::KeepingList keeper ;
+	StrList strnodes ;
+	KeepingList keeper ;
 	
-	SequentialParser::LabelReplacementMap labels ;
+	LabelReplacementMap labels ;
 	
-	lexer::Lexer::TokenList tokens ;
+	TokenList tokens ;
 	
 	UnitRelation unitrelation ;
 
@@ -38,7 +36,7 @@ public :
 	 * \param tokenizedgrammar : TokenList : list of tokens represented by the lexed grammar
 	 * \param grammartokens : TokenList : list of tokens representing the lexed grammar
 	 */
-	void makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexer::TokenList grammartokens) ;
+	void makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) ;
 	
 	bool inKeeperKeys (std::string toktype) ;
 	bool inLabelsKeys(std::string toktype) ;

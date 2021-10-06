@@ -16,17 +16,17 @@ namespace myparsers {
 
 
 Grammar::Grammar () {
-	production_rules = SequentialParser::ProductionRules () ;
-	labels = SequentialParser::LabelReplacementMap () ;
-	keeper = SequentialParser::KeepingList () ;
+	production_rules = ProductionRules () ;
+	labels = LabelReplacementMap () ;
+	keeper = KeepingList () ;
 	unitrelation = UnitRelation() ; 
-	strnodes = SequentialParser::StrList () ;
-	tokens = lexer::Lexer::TokenList () ;
+	strnodes = StrList () ;
+	tokens = TokenList () ;
 }
 	
 void Grammar::merge (Grammar grammar) {
 	// unitrelation is computed later
-	for (lexer::Lexer::Token token : grammar.tokens) {
+	for (Token token : grammar.tokens) {
 		tokens.push_back (token) ;
 	}
 
@@ -35,11 +35,11 @@ void Grammar::merge (Grammar grammar) {
 	
 		//get key and rules
 		std::string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 		
 		// if key if map then merge vectors
 		if (production_rules.find(key) != production_rules.end() ) {
-			for (SequentialParser::Rule rule : rules) {
+			for (Rule rule : rules) {
 				production_rules[key].push_back(rule);
 			}
 		} else { //add new map entry
@@ -50,7 +50,7 @@ void Grammar::merge (Grammar grammar) {
 	//labels merge
 	for (auto item : grammar.labels) {
 		std::string key = item.first ;
-		SequentialParser::LabelReplacement mylabels = item.second ;
+		LabelReplacement mylabels = item.second ;
 	
 		if (labels.find(key) != labels.end()) {
 			for (auto & sublab : mylabels) {
@@ -65,7 +65,7 @@ void Grammar::merge (Grammar grammar) {
 	//keeper merge
 	for (auto item : grammar.keeper) {
 		std::string key = item.first ;
-		SequentialParser::StrList kept = item.second ;
+		StrList kept = item.second ;
 		
 		if (keeper.find(key) != keeper.end()) {
 			for (std::string str : kept) {
@@ -96,7 +96,7 @@ void Grammar::merge (Grammar grammar) {
  * \param tokenizedgrammar : TokenList : list of tokens represented by the lexed grammar
  * \param grammartokens : TokenList : list of tokens representing the lexed grammar
  */
-void Grammar::makegrammar (lexer::Lexer::TokenList tokenizedgrammar, lexer::Lexer::TokenList grammartokens) {
+void Grammar::makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) {
 	//ngp for naive grammar parser
 	SequentialParser ngp = SequentialParser (tokenizedgrammar, grammartokens) ;
 
@@ -167,10 +167,10 @@ void Grammar::exportToFile(std::string filename) {
 		boost::replace_all (key, "[", "_");
 		boost::replace_all (key, "]", "");
 		boost::replace_all (key, ".", "_tok");
-		SequentialParser::Rules rules = item.second ;
-		for (SequentialParser::Rule rule : rules) {
-			SequentialParser::StrList r ;
-			for (lexer::Lexer::Token op : rule) {
+		Rules rules = item.second ;
+		for (Rule rule : rules) {
+			StrList r ;
+			for (Token op : rule) {
 				std::string val = op.first ;
 				boost::replace_all (val, "-", "");
 				boost::replace_all (val, ".", "");
@@ -228,15 +228,15 @@ string Grammar::getstr () {
 
 	for (auto item : production_rules) {
 		string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 		
 		text_rule += "\nRULE " + key + " = [\n\t" ;
 		
-		SequentialParser::StrList rule_in_a_line = SequentialParser::StrList () ;
+		StrList rule_in_a_line = StrList () ;
 		
-		for (SequentialParser::Rule rule : rules) {
-			SequentialParser::StrList ruletxt = SequentialParser::StrList () ;
-			for (lexer::Lexer::Token opr : rule) {
+		for (Rule rule : rules) {
+			StrList ruletxt = StrList () ;
+			for (Token opr : rule) {
 				ruletxt.push_back(opr.second+"("+opr.first+")");
 			}
 			string thisrule = utils::join(ruletxt, " ") ;
@@ -250,7 +250,7 @@ string Grammar::getstr () {
 	text_rule += "LABELS = [\n" ;
 	for (auto item : labels) {
 		string key = item.first ;
-		SequentialParser::LabelReplacement labmap = item.second ;
+		LabelReplacement labmap = item.second ;
 		text_rule += key + " {\n" ;
 		for (auto lab : labmap) {
 			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
@@ -262,7 +262,7 @@ string Grammar::getstr () {
 	text_rule += "STRUCT = [\n" ;
 	for (auto item : keeper) {
 		string key = item.first ;
-		SequentialParser::StrList listkeep = item.second ;
+		StrList listkeep = item.second ;
 		text_rule += "" + key + " {\n\t" ;
 		text_rule += utils::join(listkeep, "\n\t") ;
 		text_rule += "}\n" ;
@@ -271,7 +271,7 @@ string Grammar::getstr () {
 	
 	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
 
-	for (lexer::Lexer::Token tok : tokens) {
+	for (Token tok : tokens) {
 		string label = tok.second ;
 		string regx = tok.first ;
 		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;
@@ -280,7 +280,7 @@ string Grammar::getstr () {
 	text_rule += "UNIT = [\n" ;
 	for (auto item : unitrelation) {
 		string key = item.first ;
-		SequentialParser::StrList listkeep = item.second ;
+		StrList listkeep = item.second ;
 		text_rule += "" + key + " {\n\t" ;
 		text_rule += utils::join(listkeep, "\n\t") ;
 		text_rule += "}\n" ;

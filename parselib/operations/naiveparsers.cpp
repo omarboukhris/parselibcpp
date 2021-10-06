@@ -6,7 +6,7 @@ namespace parselib {
 
 namespace operations {
 
-lexer::Lexer::PatternsMap GenericGrammarTokenizer::grammartokens = {
+PatternsMap GenericGrammarTokenizer::grammartokens = {
 	//PREPROCESSOR
 	{"\\%(import|include) \"(.+)/([^/]+)\\.grm\"",	"IMPORT"},
 	
@@ -34,7 +34,7 @@ lexer::Lexer::PatternsMap GenericGrammarTokenizer::grammartokens = {
 	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",		"NONTERMINAL"}
 } ;
 
-lexer::Lexer::PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
+PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 	{"LINECOMMENT",						          "LINECOMMENT"},
 	{"AXIOM EQUAL NONTERMINAL",							"AXIOM"},
 	{"TERMINAL REGEX",									"TOKEN"},
@@ -46,8 +46,8 @@ lexer::Lexer::PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 } ;
 
 SequentialParser::SequentialParser (
-	lexer::Lexer::TokenList grammar, 
-	lexer::Lexer::TokenList parsedtokens) 
+	TokenList grammar, 
+	TokenList parsedtokens) 
 : i(0), j(0), current_rule(std::string("")) {
 
 	axiomflag = true ;
@@ -61,7 +61,7 @@ SequentialParser::SequentialParser (
 
 	labels = LabelReplacementMap() ;
 
-	tokens = lexer::Lexer::TokenList () ;
+	tokens = TokenList () ;
 
 	this->grammar = grammar ;
 	this->parsedtokens = parsedtokens ;
@@ -93,7 +93,7 @@ void SequentialParser::checkaxiom () {
 	// grammar(i).first = value,
 	//			 .second = type
 	if (grammar[i].second == std::string("AXIOM") && axiomflag ) {
-		lexer::Lexer::Token axiom = parsedtokens[j+2] ;
+		Token axiom = parsedtokens[j+2] ;
 		production_rules["AXIOM"] = {{axiom}} ;
 // 		cout << production_rules["AXIOM"][0][0].first << endl ;
 		axiomflag = false ;
@@ -257,8 +257,8 @@ void SequentialParser::processlabel(std::string label, std::string operand){
 }
 
 void SequentialParser::makelist(){
-	lexer::Lexer::Token thisnode (current_rule, std::string("NONTERMINAL")) ;
-	lexer::Lexer::Token eps (std::string("''"), std::string("EMPTY")) ;
+	Token thisnode (current_rule, std::string("NONTERMINAL")) ;
+	Token eps (std::string("''"), std::string("EMPTY")) ;
 	production_rules[current_rule].back() = {thisnode, thisnode} ;
 	production_rules[current_rule].push_back({eps}) ;
 }
@@ -277,14 +277,14 @@ void SequentialParser::makeregex(int j) {
 		std::string("[") + regex + std::string("]__") ;
 	
 	tokens.push_back(
-		lexer::Lexer::Token(regex, label)
+		Token(regex, label)
 	) ; 
 
-	lexer::Lexer::Token thisnode (label, "TERMINAL") ;
+	Token thisnode (label, "TERMINAL") ;
 	production_rules = addoperandtocurrentrule(thisnode) ;
 }
 
-SequentialParser::ProductionRules SequentialParser::addoperandtocurrentrule(lexer::Lexer::Token tok) {
+ProductionRules SequentialParser::addoperandtocurrentrule(Token tok) {
 	// adding an operand to the current running rule
 	if (production_rules[current_rule].size() != 0) {
 		production_rules[current_rule].back().push_back(tok) ;
@@ -320,15 +320,15 @@ string SequentialParser::getstr () {
 
 	for (auto item : production_rules) {
 		string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 		
 		text_rule += "\nRULE " + key + " = [\n\t" ;
 		
-		SequentialParser::StrList rule_in_a_line = SequentialParser::StrList () ;
+		StrList rule_in_a_line = StrList () ;
 		
-		for (SequentialParser::Rule rule : rules) {
-			SequentialParser::StrList ruletxt = SequentialParser::StrList () ;
-			for (lexer::Lexer::Token opr : rule) {
+		for (Rule rule : rules) {
+			StrList ruletxt = StrList () ;
+			for (Token opr : rule) {
 				ruletxt.push_back(opr.second+"("+opr.first+")");
 			}
 			string thisrule = utils::join(ruletxt, " ") ;
@@ -342,7 +342,7 @@ string SequentialParser::getstr () {
 	text_rule += "LABELS = [\n" ;
 	for (auto item : labels) {
 		string key = item.first ;
-		SequentialParser::LabelReplacement labmap = item.second ;
+		LabelReplacement labmap = item.second ;
 		text_rule += key + " {\n" ;
 		for (auto lab : labmap) {
 			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
@@ -354,7 +354,7 @@ string SequentialParser::getstr () {
 	text_rule += "STRUCT = [\n" ;
 	for (auto item : keeper) {
 		string key = item.first ;
-		SequentialParser::StrList listkeep = item.second ;
+		StrList listkeep = item.second ;
 		text_rule += "" + key + " {\n\t" ;
 		text_rule += utils::join(listkeep, "\n\t") ;
 		text_rule += "}\n" ;
@@ -363,7 +363,7 @@ string SequentialParser::getstr () {
 	
 	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
 
-	for (lexer::Lexer::Token tok : tokens) {
+	for (Token tok : tokens) {
 		string label = tok.second ;
 		string regx = tok.first ;
 		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;

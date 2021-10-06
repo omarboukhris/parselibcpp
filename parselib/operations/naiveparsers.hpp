@@ -5,14 +5,24 @@
 
 namespace parselib {
 
+typedef TokenList Rule ;
+typedef std::vector<Rule> Rules ;
+typedef std::map <std::string, Rules> ProductionRules ;
+
+typedef std::vector<std::string> StrList ;
+typedef std::map<std::string, StrList> KeepingList ;
+
+typedef std::map<std::string, std::string> LabelReplacement ;
+typedef std::map<std::string, LabelReplacement> LabelReplacementMap ;
+
 namespace operations {
 
 class GenericGrammarTokenizer {
 
 public :
-	static lexer::Lexer::PatternsMap grammartokens ;
+	static PatternsMap grammartokens ;
 
-	static lexer::Lexer::PatternsMap genericgrammarprodrules ;
+	static PatternsMap genericgrammarprodrules ;
 	
 	static lexer::Lexer tokenize (lexer::Lexer tokObj, std::string source, bool verbose=false) {
 		tokObj.tokenize (source, verbose) ;
@@ -24,15 +34,6 @@ public :
 class SequentialParser {
 
 public :
-	typedef lexer::Lexer::TokenList Rule ;
-	typedef std::vector<Rule> Rules ;
-	typedef std::map <std::string, Rules> ProductionRules ;
-
-	typedef std::vector<std::string> StrList ;
-	typedef std::map<std::string, StrList> KeepingList ;
-
-	typedef std::map<std::string, std::string> LabelReplacement ;
-	typedef std::map<std::string, LabelReplacement> LabelReplacementMap ;
 
 	ProductionRules production_rules ;
 	
@@ -41,9 +42,9 @@ public :
 	
 	LabelReplacementMap labels ;
 	
-	lexer::Lexer::TokenList tokens ;
+	TokenList tokens ;
 
-	SequentialParser (lexer::Lexer::TokenList grammar, lexer::Lexer::TokenList parsedtokens) ;
+	SequentialParser (TokenList grammar, TokenList parsedtokens) ;
 
 	void parse () ;
 
@@ -59,10 +60,10 @@ private :
 	bool axiomflag ;
 	std::string current_rule ;
 	
-	lexer::Lexer::TokenList grammar ;
-	lexer::Lexer::TokenList parsedtokens ;
+	TokenList grammar ;
+	TokenList parsedtokens ;
 	
-	ProductionRules addoperandtocurrentrule (lexer::Lexer::Token tok) ;
+	ProductionRules addoperandtocurrentrule (Token tok) ;
 
 	std::string getstr () ;
 

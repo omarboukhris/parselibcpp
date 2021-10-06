@@ -11,7 +11,7 @@ using namespace operations ;
 namespace normoperators {
 
 myparsers::Grammar get2nf(myparsers::Grammar grammar) {
-	SequentialParser::ProductionRules production_rules = grammar.production_rules ;
+	ProductionRules production_rules = grammar.production_rules ;
 	TERM term (production_rules) ;
 	term.apply() ;
 	BIN bin (term.production_rules) ;
@@ -23,9 +23,9 @@ myparsers::Grammar get2nf(myparsers::Grammar grammar) {
 	return grammar ;
 }
 
-TERM::TERM (SequentialParser::ProductionRules production_rules) {
+TERM::TERM (ProductionRules production_rules) {
 	this-> production_rules = production_rules ;
-	this->normalForm = SequentialParser::ProductionRules () ;
+	this->normalForm = ProductionRules () ;
 }
 
 void TERM::apply() {
@@ -36,26 +36,26 @@ void TERM::term() {
 	
 	for (auto item : production_rules) {
 		string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 		if (production_rules.find(key) == production_rules.end()) {
-			normalForm[key] = SequentialParser::Rules() ;
+			normalForm[key] = Rules() ;
 		}
-		for (SequentialParser::Rule rule : rules) {
+		for (Rule rule : rules) {
 			checkruleforterminals(key, rule);
 		}
 	}
 	production_rules = normalForm ;
 }
 
-void TERM::checkruleforterminals(string key, SequentialParser::Rule rule) {
-	SequentialParser::Rule newRule = SequentialParser::Rule() ;
-	for (lexer::Lexer::Token operand : rule) {
+void TERM::checkruleforterminals(string key, Rule rule) {
+	Rule newRule = Rule() ;
+	for (Token operand : rule) {
 		if (operand.second == "TERMINAL") {
 			string newKey = operand.first + "." ;
 			if (normalForm.find(newKey) == normalForm.end()) {
-				normalForm[newKey] = SequentialParser::Rules() ;
+				normalForm[newKey] = Rules() ;
 			}
-			newRule.push_back(lexer::Lexer::Token(newKey, "NONTERMINAL"));
+			newRule.push_back(Token(newKey, "NONTERMINAL"));
 			normalForm[newKey].push_back({operand});
 		} else {
 			newRule.push_back(operand);
@@ -64,9 +64,9 @@ void TERM::checkruleforterminals(string key, SequentialParser::Rule rule) {
 	normalForm[key].push_back(newRule);
 }
 
-BIN::BIN(SequentialParser::ProductionRules production_rules) {
+BIN::BIN(ProductionRules production_rules) {
 	this-> production_rules = production_rules ;
-	this->normalForm = SequentialParser::ProductionRules () ;
+	this->normalForm = ProductionRules () ;
 }
 
 void BIN::apply() {
@@ -78,16 +78,16 @@ void BIN::binarize() {
 }
 
 bool BIN::binonce() {
-	normalForm = SequentialParser::ProductionRules() ;
+	normalForm = ProductionRules() ;
 	bool changed = false ;
 	for (auto item : production_rules) {
 		string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 		
 		if (normalForm.find(key) == normalForm.end()) {
-			normalForm[key] = SequentialParser::Rules() ;
+			normalForm[key] = Rules() ;
 		}
-		for (SequentialParser::Rule rule : rules) {
+		for (Rule rule : rules) {
 			BIN::binarizerule(key, rule) ;
 			if (rule.size() > 2) {
 				changed = true ;
@@ -98,14 +98,14 @@ bool BIN::binonce() {
 	return changed ;
 }
 
-void BIN::binarizerule(string key, SequentialParser::Rule rule) {
+void BIN::binarizerule(string key, Rule rule) {
 	if (rule.size() <= 2) {
 		normalForm[key].push_back(rule);
 	} else {
-		SequentialParser::Rule newRule = SequentialParser::Rule () ;
-		SequentialParser::StrList rulebyname = SequentialParser::StrList() ;
+		Rule newRule = Rule () ;
+		StrList rulebyname = StrList() ;
 		bool dirty = true ;
-		for (lexer::Lexer::Token token : rule) {
+		for (Token token : rule) {
 			if (dirty) {
 				dirty = false ;
 				continue ;
@@ -115,22 +115,22 @@ void BIN::binarizerule(string key, SequentialParser::Rule rule) {
 		}
 		string newKey = utils::join(rulebyname, "/") ;
 		if (normalForm.find(newKey) == normalForm.end()) {
-			normalForm[newKey] = SequentialParser::Rules () ;
+			normalForm[newKey] = Rules () ;
 		}
 		normalForm[key].push_back({
-			rule[0], lexer::Lexer::Token(newKey, "NONTERMINAL")
+			rule[0], Token(newKey, "NONTERMINAL")
 		});
 		normalForm[newKey].push_back(newRule);
 	}
 }
 
 myparsers::Grammar removenullables (myparsers::Grammar grammar) {
-	SequentialParser::ProductionRules production_rules = SequentialParser::ProductionRules() ;
+	ProductionRules production_rules = ProductionRules() ;
 	for (auto item : grammar.production_rules) {
 		std::string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
-		production_rules[key] = SequentialParser::Rules() ;
-		for (SequentialParser::Rule rule : rules) {
+		Rules rules = item.second ;
+		production_rules[key] = Rules() ;
+		for (Rule rule : rules) {
 			if (rule.size() == 1 && rule[0].second == "EMPTY") {
 				continue ;
 			}
@@ -147,15 +147,15 @@ myparsers::Grammar removenullables (myparsers::Grammar grammar) {
  * \param grammar : grammar input
  * \return list of unique nullables
  */
-SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
-	SequentialParser::ProductionRules production_rules = grammar.production_rules ;
+StrList getnullables (myparsers::Grammar grammar) {
+	ProductionRules production_rules = grammar.production_rules ;
 	
-	SequentialParser::StrList nullables = SequentialParser::StrList() ;
+	StrList nullables = StrList() ;
 	size_t lenG = 0 ;
 	for (auto item : production_rules) {
 		std::string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
-		for (SequentialParser::Rule rule : rules) {
+		Rules rules = item.second ;
+		for (Rule rule : rules) {
 			lenG += 1 ;
 			
 			bool isruleempty = (rule.size() == 1 && rule[0].second == "EMPTY") ;
@@ -168,9 +168,9 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 	for (size_t i = 0 ; i < lenG ; i++) {
 		for (auto item : production_rules) {
 			std::string key = item.first ;
-			SequentialParser::Rules rules = item.second ;
+			Rules rules = item.second ;
 			
-			for (SequentialParser::Rule rule : rules) {
+			for (Rule rule : rules) {
 				if (rule.size() != 2) {
 					continue ;
 				}
@@ -185,7 +185,7 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
 	}
 	
 	//remove duplicates
-	SequentialParser::StrList nulls = SequentialParser::StrList() ;
+	StrList nulls = StrList() ;
 	for (std::string str : nullables) {
 		if (std::find (nulls.begin(), nulls.end(), str) == nulls.end()) {
 			nulls.push_back(str);
@@ -202,23 +202,23 @@ SequentialParser::StrList getnullables (myparsers::Grammar grammar) {
  * \return grammar 
  */
 myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
-	SequentialParser::StrList nullables = getnullables (grammar) ;
+	StrList nullables = getnullables (grammar) ;
 
-	SequentialParser::ProductionRules production_rules = grammar.production_rules ;
+	ProductionRules production_rules = grammar.production_rules ;
 
 	myparsers::Grammar::UnitRelation unitrelation = myparsers::Grammar::UnitRelation() ;
 
-	SequentialParser::StrList unitkeylist = SequentialParser::StrList() ;
+	StrList unitkeylist = StrList() ;
 	//first pass
 	for (auto item : production_rules) {
 		std::string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 
-		for (SequentialParser::Rule rule : rules) {
+		for (Rule rule : rules) {
 			if (rule.size() != 1) {
 				continue ;
 			}
-			SequentialParser::StrList epsOrTerminal = SequentialParser::StrList({"EMPTY", "TERMINAL"}) ;
+			StrList epsOrTerminal = StrList({"EMPTY", "TERMINAL"}) ;
 			bool isruleunit = (
 				(std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].second) == epsOrTerminal.end())
 			) ;
@@ -226,7 +226,7 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
 					unitrelation[key].push_back (rule[0].first) ;
 				} else {
-					unitrelation[key] = SequentialParser::StrList({rule[0].first}) ;
+					unitrelation[key] = StrList({rule[0].first}) ;
 					unitkeylist.push_back(key);
 				}
 			}
@@ -236,9 +236,9 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 	//second pass
 	for (auto item : production_rules) {
 		std::string key = item.first ;
-		SequentialParser::Rules rules = item.second ;
+		Rules rules = item.second ;
 
-		for (SequentialParser::Rule rule : rules) {
+		for (Rule rule : rules) {
 			if (rule.size() != 2) {
 				continue ;
 			}
@@ -247,7 +247,7 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
 					unitrelation[key].push_back (rule[1].first) ;
 				} else {
-					unitrelation[key] = SequentialParser::StrList({rule[1].first}) ;
+					unitrelation[key] = StrList({rule[1].first}) ;
 					unitkeylist.push_back(key);
 				}
 			}
@@ -256,7 +256,7 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
 					unitrelation[key].push_back (rule[0].first) ;
 				} else {
-					unitrelation[key] = SequentialParser::StrList({rule[0].first}) ;
+					unitrelation[key] = StrList({rule[0].first}) ;
 					unitkeylist.push_back(key);
 				}
 			}
@@ -266,8 +266,8 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 	myparsers::Grammar::UnitRelation outunit = myparsers::Grammar::UnitRelation () ;
 	for (auto item : unitrelation) {
 		std::string key = item.first ;
-		SequentialParser::StrList unitrel = item.second ;
-		outunit[key] = SequentialParser::StrList () ;
+		StrList unitrel = item.second ;
+		outunit[key] = StrList () ;
 		for (std::string unit : unitrel) {
 			if (std::find(outunit[key].begin(), outunit[key].end(), unit) == outunit[key].end()) {
 				//key doesn't exist

@@ -105,9 +105,10 @@ string join (StrList strlist, string delim) {
 	return out+strlist.back() ;
 }
 
-string transformtosource (lexer::Lexer::TokenList tokenizedgrammar) {
+std::string transformtosource ( TokenList tokenizedgrammar )
+{
 	string source = "" ;
-	for (lexer::Lexer::Token token : tokenizedgrammar) {
+	for (Token token : tokenizedgrammar) {
 		source += token.second + " " ;
 	}
 	return source ;

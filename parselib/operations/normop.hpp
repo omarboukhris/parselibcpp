@@ -13,36 +13,36 @@ myparsers::Grammar get2nf (myparsers::Grammar grammar) ;
 
 myparsers::Grammar removenullables (myparsers::Grammar grammar) ;
 
-SequentialParser::StrList getnullables (myparsers::Grammar grammar) ;
+StrList getnullables (myparsers::Grammar grammar) ;
 
 myparsers::Grammar getunitrelation (myparsers::Grammar grammar) ;
 
 class TERM {
 public :
-	operations::SequentialParser::ProductionRules production_rules ;
-	TERM (operations::SequentialParser::ProductionRules production_rules) ;		
+	ProductionRules production_rules ;
+	TERM (ProductionRules production_rules) ;		
 	void apply () ;
 
 private :
-	operations::SequentialParser::ProductionRules normalForm ;
+	ProductionRules normalForm ;
 	
 	void term () ;
-	void checkruleforterminals (std::string key, operations::SequentialParser::Rule rule) ;
+	void checkruleforterminals (std::string key, Rule rule) ;
 } ;
 
 class BIN {
 public :
-	operations::SequentialParser::ProductionRules production_rules ;
-	BIN (operations::SequentialParser::ProductionRules production_rules) ;
+	ProductionRules production_rules ;
+	BIN (ProductionRules production_rules) ;
 	void apply () ;
 
 private :	
-	operations::SequentialParser::ProductionRules normalForm ;
+	ProductionRules normalForm ;
 
 	void binarize () ;
 	bool binonce () ;
 
-	void binarizerule (std::string key, operations::SequentialParser::Rule rule) ;
+	void binarizerule (std::string key, Rule rule) ;
 } ;
 
 

@@ -7,7 +7,7 @@ namespace parselib {
 
 namespace utils {
 
-std::string transformtosource (lexer::Lexer::TokenList tokenizedgrammar) ;
+std::string transformtosource (TokenList tokenizedgrammar) ;
 std::string gettextfilecontent (std::string filename) ;
 
 std::string cleanIfTerminal (std::string token) ;

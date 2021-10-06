@@ -12,7 +12,7 @@ public :
 	typedef std::vector<std::string> ImportQueue ;
 	ImportQueue queue ;
 
-	virtual lexer::Lexer::TokenList preprocess (std::string filename, lexer::Lexer::TokenList tokenlist) = 0 ;
+	virtual TokenList preprocess (std::string filename, TokenList tokenlist) = 0 ;
 	void addToQueue (std::string filename) {
 		queue.push_back(filename) ;
 	}
@@ -55,10 +55,10 @@ public :
 		processed.push_back (filename) ;
 	}
 
-	lexer::Lexer::TokenList preprocess (std::string filename, lexer::Lexer::TokenList tokenlist) {
+	TokenList preprocess (std::string filename, TokenList tokenlist) {
 		removeFromQueue (filename) ;
 		if (isProcessed(filename)) {
-			return lexer::Lexer::TokenList() ;
+			return TokenList() ;
 		}
 
 		// get grammar directory 
@@ -67,7 +67,7 @@ public :
 
 		pwd = utils::join(x, "/") ; 
 
-		lexer::Lexer::TokenList out_tokenlist = processimports (tokenlist) ;
+		TokenList out_tokenlist = processimports (tokenlist) ;
 		addToProcessed (filename) ;
 
 		return out_tokenlist ;
@@ -78,9 +78,9 @@ protected :
 	
 	ProcessedFiles processed ;
 
-	lexer::Lexer::TokenList processimports (lexer::Lexer::TokenList tokenlist) {
-		lexer::Lexer::TokenList outtok = lexer::Lexer::TokenList () ;
-		for (lexer::Lexer::Token token : tokenlist) {
+	TokenList processimports (TokenList tokenlist) {
+		TokenList outtok = TokenList () ;
+		for (Token token : tokenlist) {
 			if (token.second == "IMPORT") {
 				std::size_t quotepos = token.first.find("\"") ;
 				std::string path = token.first.substr(quotepos+1) ;

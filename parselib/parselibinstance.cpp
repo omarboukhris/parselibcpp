@@ -8,8 +8,12 @@ namespace parselib {
 
 ParseSession::ParseSession() {
 	grammar   = myparsers::Grammar() ;
-	parser    = myparsers::CYK() ;
+	parser    = new myparsers::CYK() ;
 	tokenizer = lexer::Lexer () ;
+}
+
+ParseSession::~ParseSession() {
+	delete parser;
 }
 
 std::string processnodename(std::string name) {
@@ -24,7 +28,7 @@ void ParseSession::load_grammar(std::string filename, bool verbose) {
 	myparsers::GenericGrammarParser ggp (preproc) ;
 
 	myparsers::Grammar grammar = ggp.parse (filename, verbose) ;
-	grammar.exportToFile(filename);
+	// grammar.exportToFile(filename);
 	this->grammar = normoperators::get2nf(grammar) ;
 }
 
@@ -47,13 +51,13 @@ void ParseSession::store_json(std::string filename, std::string output_filename,
 parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
-	parser = myparsers::CYK (grammar) ;
+	parser = new myparsers::CYK (grammar) ;
 	std::string source = utils::gettextfilecontent(filename) ;
 	
 	tokenizer = lexer::Lexer(grammar.tokens) ;
 	tokenizer.tokenize (source) ;
 
-	myparsers::Frame result = parser.membership (tokenizer.tokens) ;
+	Frame result = parser->membership (tokenizer.tokens) ;
 // 	myparsers::Frame result = parser.parallel_membership (tokenizer.tokens) ;
 
 	if (result.size() == 0) {
