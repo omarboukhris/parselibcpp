@@ -14,7 +14,7 @@ extern "C" {
 		session->load_grammar(std::string(filepath), false); 
 	}
 	void store_json(ParseSession* session, const char* filepath) { 
-		session->store_json(std::string(filepath), std::string(filepath) + ".json", false); 
+		session->store_json(std::string(filepath), std::string(filepath), false); 
 	}
 	void del_session(ParseSession* session) { delete session ; }
 }

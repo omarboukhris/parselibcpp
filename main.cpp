@@ -69,6 +69,8 @@ int main(int argc, char** argv){
 		showhelp();
 	}
 	
+	parselib::myparsers::LR_zero lr0;
+	
 	return 0 ;
 }
 
