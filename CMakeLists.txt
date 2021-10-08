@@ -71,7 +71,6 @@ if(BUILD_EX)
 	add_executable(${APP} main.cpp)
 	target_link_libraries(${APP} 
 		${PROJECT_NAME} 
-		${GENERATOR_PROJECT_NAME} 
 		${Boost_LIBRARIES}
 	)
 endif()

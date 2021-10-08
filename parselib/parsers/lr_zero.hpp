@@ -1,7 +1,10 @@
 #pragma once
 
-#include <parselib/parsers/absparser.hpp>
+#include <queue>
+
 #include <parselib/operations/naiveparsers.hpp>
+
+#include "absparser.hpp"
 
 namespace parselib {
 
@@ -31,8 +34,11 @@ public:
 		return position;
 	}
 	
-	void readNext() {
-		position++;
+	Token readNext() {
+		if (++position < rule.size()){
+			return rule.at(position);
+		}
+		return Token();
 	}
 	
 	void reset() {
@@ -47,23 +53,27 @@ public:
 		return rule;
 	}
 	
-	friend bool operator!=(Item it1, Item it2) {
+	friend bool operator==(const Item &it1, const Item &it2) {
 		if (it1.position != it2.position) {
-			return true;
+			return false;
 		}
 
 		Rule r1 = it1.rule, r2 = it2.rule;
 		if (r1.size() != r2.size()) {
-			return true;
+			return false;
 		}
 
 		for (int i = 0; i < r1.size() ; i++) {
 			if (r1.at(i) != r2.at(i)){
-				return true;
+				return false;
 			}
 		}
 
-		return false ;
+		return true ;
+	}
+
+	friend bool operator!=(const Item &it1, const Item &it2) {
+		return not (it1 == it2);
 	}
 
 private:
@@ -76,52 +86,37 @@ public:
 	typedef std::vector<Item> Items;
 	typedef std::map<std::string, Closure*> Transitions ; 
 	
+	typedef typename Items::iterator iterator;
+	typedef typename Items::const_iterator const_iterator;
+
 	Closure()
 		: items()
 		, transitions()
 		, label("")
-		, current_item_pos(0)
 	{}
 
 	Closure(const Closure &cl) {
 		items = cl.items;
 		transitions = cl.transitions;
 		label = cl.label;
-		current_item_pos = cl.current_item_pos;
 	}
 
 	Closure(Items its, Transitions tr, std::string lab)
 		: items(its)
 		, transitions(tr)
 		, label(lab)
-		, current_item_pos(0)
 	{}
 
 	Closure(Items its, std::string lab)
 		: items(its)
 		, transitions()
 		, label(lab)
-		, current_item_pos(0)
 	{}
 
-	void reset() {
-		current_item_pos = 0;
-	}
-
-	Item &begin() {
-		reset();
-		return items.at(current_item_pos);
-	}
-
-	const Item &end() {
-		return items.back();
-	}
-
-	Item &next() {
-		current_item_pos++;
-		Item &current_item = items.at(current_item_pos);
-		return current_item;
-	}
+	inline iterator begin() noexcept { return items.begin(); }
+	inline const_iterator cbegin() const noexcept { return items.cbegin(); }
+	inline iterator end() noexcept { return items.end(); }
+	inline const_iterator cend() const noexcept { return items.cend(); }
 
 	friend bool operator==(const Closure &c1, const Closure &c2) {
 		// compare items size 
@@ -138,20 +133,22 @@ public:
 
 		return true;
 	}
+	
+	void push_back(Item &i) {
+		items.push_back(i);
+	}
 
 private:
 	Items items;
 	Transitions transitions;
 	std::string label;
-	size_t current_item_pos;
 };
 
 
 class LR_zero : public AbstractParser {
-public :
-	
+public :	
 
-	LR_zero () {} 
+	LR_zero () {}
 	virtual ~LR_zero () {} 
 	LR_zero (Grammar grammar) {
 		production_rules = grammar.production_rules ;
@@ -164,27 +161,28 @@ public :
 	}
 
 private:
+
 	void build_table() {
+
 		if (production_rules.size() < 1) {
 			return ;
 		}
-
-		std::vector<Closure> graph;
 
 		Rule axiom_rule = production_rules["AXIOM"].at(0);
 		Item axiom (axiom_rule);
 		Closure i0 = make_closure(axiom);
 
+		std::vector<Closure> graph;
+		graph.push_back(i0);
+
 		Closure clos = i0;
 
-		for (Item current_item = clos.begin(); 
-			current_item != clos.end(); 
-			current_item = clos.next()) 
-		{
+		for (Item current_item : clos) {
+
 			while(not current_item.done()) {
-				current_item.readNext();
 
 				Closure newest_clos = make_closure(current_item);
+
 				if (std::find(graph.begin(), graph.end(), newest_clos) == graph.end()) {
 					// add the new item to closures
 					graph.push_back(newest_clos);
@@ -193,11 +191,64 @@ private:
 		}
 	}
 
-	Closure make_closure(Item current_item) {
+
+	Closure make_closure(Item &current_item) {
+
 		Closure output;
+		
+		// this is where the magic happens
+		Token token = current_item.readNext();
+		output.push_back(current_item);
+
+		if (not current_item.done()) {
+
+			// second is term/non-term
+			std::string rulename = token.first;
+
+			// queue & processed list to avoid endless looping
+			std::queue<std::string> q;
+			std::vector<std::string> processed;
+
+			if (token.second != "TERMINAL") {
+				// process it only if non terminal
+				q.push(rulename);
+			}
+
+			while (not q.empty()) {
+
+				// get token name to process
+				rulename = q.front();
+				q.pop();
+
+				// if rule unprocessed
+				if (std::find(processed.begin(), processed.end(), rulename) == processed.end()) {
+
+					processed.push_back(rulename);
+
+					// put rule tokens in queue for processing
+					for (Rule rule: production_rules[rulename]) {
+
+						Item new_item (rule);
+						output.push_back(new_item);
+
+						for (Token tok: rule) {
+
+							if (std::find(processed.begin(), processed.end(), tok.first) == processed.end()
+								and tok.second != "TERMINAL")
+							{
+								q.push(tok.first);
+							}
+						}
+					}
+				}
+
+			}
+
+		}
+
 		return output;
 	}
-	
+
 	void shift_reduce();
 
 };

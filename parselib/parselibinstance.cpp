@@ -1,4 +1,4 @@
-#include <parselib/parselibinstance.hpp>
+#include "parselibinstance.hpp"
 #include "operations/generalop.hpp"
 #include "operations/normop.hpp"
 

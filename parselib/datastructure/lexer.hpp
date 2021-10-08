@@ -31,7 +31,7 @@ public :
 	/// input patterns
 	PatternsMap patterns ;
 	
-	Lexer () {} ;
+	Lexer () {}
 	Lexer (PatternsMap pmap) : 
 		patterns (pmap) {
 		tokens = TokenList() ;

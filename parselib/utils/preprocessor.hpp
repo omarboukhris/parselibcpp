@@ -46,13 +46,9 @@ public :
 		processed = ProcessedFiles () ; // to avoid nested imports
 	}
 	
-	bool isProcessed (std::string filename) {
+	inline bool isProcessed (std::string filename) {
 		ProcessedFiles::iterator itr = std::find(processed.begin(), processed.end(), filename) ;
 		return itr != processed.end() ;
-	}
-
-	void addToProcessed (std::string filename) {
-		processed.push_back (filename) ;
 	}
 
 	TokenList preprocess (std::string filename, TokenList tokenlist) {
@@ -68,7 +64,7 @@ public :
 		pwd = utils::join(x, "/") ; 
 
 		TokenList out_tokenlist = processimports (tokenlist) ;
-		addToProcessed (filename) ;
+		processed.push_back (filename) ;
 
 		return out_tokenlist ;
 	}
