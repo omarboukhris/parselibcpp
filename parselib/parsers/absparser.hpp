@@ -12,7 +12,7 @@ typedef std::vector<parsetree::Node*> Frame ;
 typedef std::vector<Frame> Row ;
 typedef std::vector<Row> CYKMatrix ;
 
-namespace myparsers {
+namespace parsers {
 
 class AbstractParser {
 public :

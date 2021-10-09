@@ -11,7 +11,7 @@
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 using namespace std ;
 using namespace grammaroperators ;

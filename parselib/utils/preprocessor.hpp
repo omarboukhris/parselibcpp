@@ -77,9 +77,9 @@ protected :
 	TokenList processimports (TokenList tokenlist) {
 		TokenList outtok = TokenList () ;
 		for (Token token : tokenlist) {
-			if (token.second == "IMPORT") {
-				std::size_t quotepos = token.first.find("\"") ;
-				std::string path = token.first.substr(quotepos+1) ;
+			if (token.type() == "IMPORT") {
+				std::size_t quotepos = token.value().find("\"") ;
+				std::string path = token.value().substr(quotepos+1) ;
 				path.pop_back() ; //eliminate the last "
 				std::string filename = pwd + "/" + path ; 
 // 				std::cout << filename << std::endl ;

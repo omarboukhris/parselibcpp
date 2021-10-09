@@ -4,7 +4,7 @@
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 LR_zero::LR_zero (Grammar grammar) {
 	production_rules = grammar.production_rules ;
@@ -22,8 +22,7 @@ void LR_zero::build_table(){
 	Item axiom (axiom_rule);
 	Closure i0 = make_closure(axiom);
 
-	std::vector<Closure> graph;
-	graph.push_back(i0);
+	m_graph.push_back(i0);
 
 	Closure clos = i0;
 
@@ -40,14 +39,15 @@ void LR_zero::build_table(){
 				// add transition here
 				Closure newest_clos = make_closure(current_item);
 
-				auto it = std::find(graph.begin(), graph.end(), newest_clos);
-				if (it == graph.end()) {
+				auto it = std::find(m_graph.begin(), m_graph.end(), newest_clos);
+				if (it == m_graph.end()) {
 					// add the new item to closures
-					graph.push_back(newest_clos);
+					newest_clos.add_transition(clos.label());
+					m_graph.push_back(newest_clos);
 					keep_going = true;
 
 				} else {
-
+					it->add_transition(clos.label());
 					// make transition from clos to existing node (*it)
 					// <clos.label, current_item.read()>
 
@@ -65,18 +65,18 @@ Closure LR_zero::make_closure(Item &current_item){
 
 	// this is where the magic happens
 	Token token = current_item.readNext();
-	output.push_back(current_item);
+	output.add_item(current_item);
 
 	if (not current_item.done()) {
 
 		// second is term/non-term
-		std::string rulename = token.first;
+		std::string rulename = token.value();
 
 		// queue & processed list to avoid endless looping
 		std::queue<std::string> q;
 		std::vector<std::string> processed;
 
-		if (token.second != "TERMINAL") {
+		if (token.type() != "TERMINAL") {
 			// process it only if non terminal
 			q.push(rulename);
 		}
@@ -96,14 +96,14 @@ Closure LR_zero::make_closure(Item &current_item){
 				for (Rule rule: production_rules[rulename]) {
 
 					Item new_item (rule);
-					output.push_back(new_item);
+					output.add_item(new_item);
 
 					for (Token tok: rule) {
 
-						if (std::find(processed.begin(), processed.end(), tok.first) == processed.end()
-							and tok.second != "TERMINAL")
+						if (std::find(processed.begin(), processed.end(), tok.value()) == processed.end()
+							and tok.type() != "TERMINAL")
 						{
-							q.push(tok.first);
+							q.push(tok.value());
 						}
 					}
 				}

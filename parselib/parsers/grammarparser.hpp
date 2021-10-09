@@ -6,7 +6,7 @@
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 class GenericGrammarParser {
 

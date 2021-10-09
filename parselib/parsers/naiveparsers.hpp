@@ -4,7 +4,7 @@
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 class SequentialParser {
 
@@ -71,6 +71,6 @@ private :
 
 } ;
 
-} //namespace myparsers
+} //namespace parsers
 
 } //namespace parselib

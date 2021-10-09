@@ -79,7 +79,7 @@ private:
 class Closure {
 public:
 	typedef std::vector<Item> Items;
-	typedef std::map<std::string, Closure*> Transitions ;
+	typedef std::set<std::string> Transitions ;
 
 	typedef typename Items::iterator iterator;
 	typedef typename Items::const_iterator const_iterator;
@@ -129,8 +129,16 @@ public:
 		return true;
 	}
 
-	void push_back(Item &i) {
+	void add_item(Item &i) {
 		m_items.push_back(i);
+	}
+
+	std::string label() {
+		return m_label;
+	}
+
+	void add_transition(std::string t_state) {
+		m_transitions.emplace(t_state);
 	}
 
 private:

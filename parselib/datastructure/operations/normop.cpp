@@ -49,8 +49,8 @@ void TERM::term() {
 void TERM::checkruleforterminals(std::string key, Rule rule) {
 	Rule newRule = Rule() ;
 	for (Token operand : rule) {
-		if (operand.second == "TERMINAL") {
-			std::string newKey = operand.first + "." ;
+		if (operand.type() == "TERMINAL") {
+			std::string newKey = operand.value() + "." ;
 			if (normalForm.find(newKey) == normalForm.end()) {
 				normalForm[newKey] = Rules() ;
 			}
@@ -109,7 +109,7 @@ void BIN::binarizerule(std::string key, Rule rule) {
 				dirty = false ;
 				continue ;
 			}
-			rulebyname.push_back(token.first) ;
+			rulebyname.push_back(token.value()) ;
 			newRule.push_back(token) ;
 		}
 		std::string newKey = utils::join(rulebyname, "/") ;
@@ -130,7 +130,7 @@ Grammar removenullables (Grammar grammar) {
 		Rules rules = item.second ;
 		production_rules[key] = Rules() ;
 		for (Rule rule : rules) {
-			if (rule.size() == 1 && rule[0].second == "EMPTY") {
+			if (rule.size() == 1 && rule[0].type() == "EMPTY") {
 				continue ;
 			}
 			production_rules[key].push_back(rule) ;
@@ -157,7 +157,7 @@ StrList getnullables (Grammar grammar) {
 		for (Rule rule : rules) {
 			lenG += 1 ;
 			
-			bool isruleempty = (rule.size() == 1 && rule[0].second == "EMPTY") ;
+			bool isruleempty = (rule.size() == 1 && rule[0].type() == "EMPTY") ;
 			if (isruleempty) {
 				nullables.push_back (key) ;
 			}
@@ -174,8 +174,8 @@ StrList getnullables (Grammar grammar) {
 					continue ;
 				}
 				bool isruleempty = (
-					std::find(nullables.begin(), nullables.end(), rule[0].first) != nullables.end() &&
-					std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end()) ;
+					std::find(nullables.begin(), nullables.end(), rule[0].value()) != nullables.end() &&
+					std::find(nullables.begin(), nullables.end(), rule[1].value()) != nullables.end()) ;
 				if (isruleempty) {
 					nullables.push_back (key) ;
 				}
@@ -219,13 +219,13 @@ Grammar getunitrelation (Grammar grammar) {
 			}
 			StrList epsOrTerminal = StrList({"EMPTY", "TERMINAL"}) ;
 			bool isruleunit = (
-				(std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].second) == epsOrTerminal.end())
+				(std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].type()) == epsOrTerminal.end())
 			) ;
 			if (isruleunit) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-					unitrelation[key].push_back (rule[0].first) ;
+					unitrelation[key].push_back (rule[0].value()) ;
 				} else {
-					unitrelation[key] = StrList({rule[0].first}) ;
+					unitrelation[key] = StrList({rule[0].value()}) ;
 					unitkeylist.push_back(key);
 				}
 			}
@@ -241,21 +241,21 @@ Grammar getunitrelation (Grammar grammar) {
 			if (rule.size() != 2) {
 				continue ;
 			}
-			bool isruleunit = (std::find(nullables.begin(), nullables.end(), rule[0].first) != nullables.end()) ;
+			bool isruleunit = (std::find(nullables.begin(), nullables.end(), rule[0].value()) != nullables.end()) ;
 			if (isruleunit) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-					unitrelation[key].push_back (rule[1].first) ;
+					unitrelation[key].push_back (rule[1].value()) ;
 				} else {
-					unitrelation[key] = StrList({rule[1].first}) ;
+					unitrelation[key] = StrList({rule[1].value()}) ;
 					unitkeylist.push_back(key);
 				}
 			}
-			isruleunit = (std::find(nullables.begin(), nullables.end(), rule[1].first) != nullables.end()) ;
+			isruleunit = (std::find(nullables.begin(), nullables.end(), rule[1].value()) != nullables.end()) ;
 			if (isruleunit) {
 				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-					unitrelation[key].push_back (rule[0].first) ;
+					unitrelation[key].push_back (rule[0].value()) ;
 				} else {
-					unitrelation[key] = StrList({rule[0].first}) ;
+					unitrelation[key] = StrList({rule[0].value()}) ;
 					unitkeylist.push_back(key);
 				}
 			}

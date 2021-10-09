@@ -9,7 +9,7 @@
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 class LR_zero : public AbstractParser {
 public :	
@@ -23,13 +23,17 @@ public :
 		return Frame();
 	}
 
-private:
+protected:
 
 	void build_table() ;
 
 	Closure make_closure(Item &current_item) ;
 
 	void shift_reduce();
+
+protected:
+
+	std::vector<Closure> m_graph;
 
 };
 

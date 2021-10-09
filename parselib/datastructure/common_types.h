@@ -14,11 +14,47 @@
 
 
 namespace parselib {
-	// 1st:Value  | 2nd:Key(type)
-	typedef std::pair<std::string, std::string> Token ;
+//*
+	class Token {
+	public:
+
+		Token()
+			: m_token({"", ""})
+		{}
+
+		Token(std::string value, std::string type)
+			: m_token({value, type})
+		{}
+
+		std::string &value(){
+			return m_token.first;
+		}
+
+		std::string &key() {
+			return m_token.second;
+		}
+
+		std::string &type() {
+			return m_token.second;
+		}
+
+		friend bool operator == (const Token &t1, const Token t2) {
+			return t1.m_token == t2.m_token;
+		}
+		friend bool operator != (const Token &t1, const Token t2) {
+			return not (t1 == t2);
+		}
+
+	protected:
+		// 1st:Value  | 2nd:Key(type)
+		std::pair<std::string, std::string> m_token ;
+	};
+//*/
+//	typedef std::pair<std::string, std::string> Token;
+
 	typedef std::vector<Token> TokenList ;
 
-	typedef std::pair<std::string,std::string> Pattern ;
+	typedef Token Pattern ;
 	typedef std::vector<Pattern> PatternsMap ;
 
 	typedef std::map<size_t, Token> MatchesMap ;

@@ -5,7 +5,7 @@
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 Frame operator+(Frame f1, Frame f2) ;
 
@@ -36,6 +36,6 @@ private :
 	std::string getstrmat (CYKMatrix cykmat) ;
 } ;
 
-} // namespace myparsers
+} // namespace parsers
 	
 } // namespace parselib

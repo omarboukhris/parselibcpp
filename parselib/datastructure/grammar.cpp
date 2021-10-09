@@ -94,7 +94,7 @@ void Grammar::merge (Grammar grammar) {
  */
 void Grammar::makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) {
 	//ngp for naive grammar parser
-	myparsers::SequentialParser ngp = myparsers::SequentialParser (tokenizedgrammar, grammartokens) ;
+	parsers::SequentialParser ngp = parsers::SequentialParser (tokenizedgrammar, grammartokens) ;
 
 	ngp.parse () ;
 
@@ -140,7 +140,7 @@ bool Grammar::keyIsStr(string toktype) {
 
 bool Grammar::isTokenSavable(string parent, string child) {
 	if (parent == "AXIOM" ||
-		child == production_rules["AXIOM"][0][0].first
+		child == production_rules["AXIOM"][0][0].value()
 	) {
 		return true ;
 	}
@@ -167,7 +167,7 @@ void Grammar::exportToFile(std::string filename) {
 		for (Rule rule : rules) {
 			StrList r ;
 			for (Token op : rule) {
-				std::string val = op.first ;
+				std::string val = op.value() ;
 				boost::replace_all (val, "-", "");
 				boost::replace_all (val, ".", "");
 				boost::replace_all (val, "\'\'", "eps");
@@ -233,7 +233,7 @@ string Grammar::getstr () {
 		for (Rule rule : rules) {
 			StrList ruletxt = StrList () ;
 			for (Token opr : rule) {
-				ruletxt.push_back(opr.second+"("+opr.first+")");
+				ruletxt.push_back(opr.type()+"("+opr.value()+")");
 			}
 			string thisrule = utils::join(ruletxt, " ") ;
 			rule_in_a_line.push_back(thisrule);
@@ -268,8 +268,8 @@ string Grammar::getstr () {
 	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
 
 	for (Token tok : tokens) {
-		string label = tok.second ;
-		string regx = tok.first ;
+		string label = tok.type() ;
+		string regx = tok.value() ;
 		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;
 	}
 

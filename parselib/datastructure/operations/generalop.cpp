@@ -99,8 +99,8 @@ bool samerule (Rule rulea, Rule ruleb) {
 		Rule::iterator opb = ruleb.begin() ; 
 		
 		while (opa != rulea.end() && opb != ruleb.end()) {
-			if (!(opa->second == opb->second && 
-				opa->first == opb->first)) { 
+			if (!(opa->value() == opb->value() &&
+				opa->type() == opb->type())) {
 				return false ;
 			}
 			opa++ ; opb++ ;

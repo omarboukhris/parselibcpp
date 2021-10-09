@@ -109,7 +109,7 @@ std::string transformtosource ( TokenList tokenizedgrammar )
 {
 	string source = "" ;
 	for (Token token : tokenizedgrammar) {
-		source += token.second + " " ;
+		source += token.type() + " " ;
 	}
 	return source ;
 }

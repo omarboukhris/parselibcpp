@@ -1,7 +1,7 @@
 
-#include <parselib/parsers/cyk.hpp>
 #include <parselib/datastructure/parsetree.hpp>
-#include <boost/iterator/iterator_concepts.hpp>
+
+#include "cyk.hpp"
 
 #define DEBUG
 inline void DEBUG_OUT(std::string x) {
@@ -12,7 +12,7 @@ inline void DEBUG_OUT(std::string x) {
 
 namespace parselib {
 
-namespace myparsers {
+namespace parsers {
 
 std::string CYK::getstrmat (CYKMatrix cykmat) {
 	//print matrix here
@@ -114,10 +114,10 @@ Frame CYK::getterminal (Token token) {
 		for (Rule rule : rules) {
 
 			if (rule.size() == 1 && 
-				rule[0].first == token.second &&
-				rule[0].second == "TERMINAL"
+				rule[0].value() == token.type() &&
+				rule[0].type() == "TERMINAL"
 			) {
-				parsetree::Node* node = (parsetree::Node*) new parsetree::TokenNode (key, token.first) ;
+				parsetree::Node* node = (parsetree::Node*) new parsetree::TokenNode (key, token.value()) ;
 				terminals.push_back (node) ;
 			}
 		}
@@ -133,8 +133,9 @@ Frame CYK::getAxiomNodes(Frame nodes){
 	Frame axiomnodes = Frame() ;
 	for (parsetree::Node* node : nodes) {
 		if (node->nodetype == "AXIOM" ||
-			node->nodetype == production_rules["AXIOM"][0][0].first
-		) { //production_rules["AXIOM"][0][0].val :
+			node->nodetype == production_rules["AXIOM"][0][0].value())
+		{
+			//production_rules["AXIOM"][0][0].val :
 			axiomnodes.push_back (node) ;
 		}
 	}
@@ -179,8 +180,8 @@ Frame CYK::getrulenames(Frame line) {
 				continue ;
 			}
 
-			if (rule[0].first == line[0]->nodetype &&
-				rule[1].first == line[1]->nodetype) {
+			if (rule[0].value() == line[0]->nodetype &&
+				rule[1].value() == line[1]->nodetype) {
 				parsetree::Node* node = new parsetree::BinNode (key, line[0], line[1]) ;
 				rulenames.push_back (node) ;
 			}
@@ -205,7 +206,7 @@ Frame CYK::invUnitRelation(Frame M) {
 	return rulenames ;
 }
 
-} // namespace myparsers
+} // namespace parsers
 	
 } // namespace parselib
 

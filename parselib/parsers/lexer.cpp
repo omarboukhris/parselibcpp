@@ -18,7 +18,7 @@ void Lexer::tokenize(string str, bool verbose) {
 	}
 	if (!verbose) return ;
 	for (Token tok : tokens) {
-		cout << tok.second << "(" << tok.first << ")" << endl ;
+		cout << tok.type() << "(" << tok.value() << ")" << endl ;
 	}
 }
 
@@ -28,7 +28,7 @@ void Lexer::tokenizeline (string str) {
 	// mix all patterns for group matching
 	string regstr = "" ;
 	for (Pattern pattern : patterns) { 
-		regstr += "(?'" + pattern.second + "'" + pattern.first + ")|" ; 
+		regstr += "(?'" + pattern.type() + "'" + pattern.value() + ")|" ;
 	}
 	
 	boost::regex r(regstr);
@@ -40,8 +40,9 @@ void Lexer::tokenizeline (string str) {
 	for ( auto it = words_begin; it != words_end; ++it ) { //loop through matches
 		boost::smatch match = *it ;
 		for (auto pattern : patterns) {
-			if (match[pattern.second].matched) { //find matched group
-				matches[ it->position() ] = make_pair( it->str(), pattern.second);
+			if (match[pattern.type()].matched) { //find matched group
+				matches[ it->position() ] = Token( it->str(), pattern.type());
+//				matches[ it->position() ] = make_pair( it->str(), pattern.type());
 // 				cout << it->position() << " " <<  it->str() << " " << pattern.second << endl ;
 			}
 		}

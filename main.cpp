@@ -2,13 +2,13 @@
 #include <parselib/utils/io.hpp>
 #include <parselib/parselibinstance.hpp>
 
-// using namespace std;
-// using namespace parselib ;
 namespace pt = boost::property_tree ;
 
 void showhelp () {
 	std::cout <<
 		"usage : parsexlib [arg] " << std::endl <<
+		 std::endl <<
+		 "\t-h\t\t\t\t: help"  << std::endl <<
 		std::endl <<
 		"\t--gsrc=path/to/grammar.grm \t\t: specifies grammar to use for parsing"  << std::endl <<
 		std::endl <<
@@ -19,7 +19,6 @@ void showhelp () {
 		"\t\t--dir=directory/to/glob/recurse  : directory to process"  << std::endl <<
 		"\t\t--ext=extension (ex : java, cpp) : globed files extension" << std::endl <<
 		std::endl <<
-		"\t-h\t\t\t\t: help"  << std::endl <<
 	std::endl ;
 }
 
@@ -73,7 +72,7 @@ int main(int argc, char** argv){
 		showhelp();
 	}
 	
-	parselib::myparsers::LR_zero lr0;
+	parselib::parsers::LR_zero lr0;
 	
 	return 0 ;
 }
