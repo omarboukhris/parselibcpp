@@ -69,10 +69,6 @@ parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
 
 This can mainly be useful to setup a transcompiling framework or a template engine.
 
-### References :
-
-[1] Lange, Martin; Leiß, Hans (2009). "To CNF or not to CNF? An Efficient Yet Presentable Version of the CYK Algorithm". 
-
 ## Grammar's syntax
 
 Let G be a CFG, such as G = (NT, T, Pr, AXIOM) with
@@ -262,9 +258,11 @@ TOKEN b = regex('b')
 //import the good stuff
 #include <parselib/parselibinstance.hpp> 
 
+using namespace parselib;
+
 // ... load, parse and normalize grammar
 
-myparsers::CYK parser = myparsers::CYK (grammar) ; //instantiate parser
+parsers::CYK parser = myparsers::CYK (grammar) ; //instantiate parser
 std::string source = utils::gettextfilecontent(filename) ; //load source from text file
 
 //tokenize source code
@@ -274,6 +272,11 @@ tokenizer.tokenize (source) ;
 //result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
 //containing all accepted solutions/parse trees
 //we generally use the first one
-myparsers::Frame result = parser.membership (tokenizer.tokens) ;
+parsers::Frame result = parser.membership (tokenizer.tokens) ;
 ```
 The parser doesn't support error handling yet though
+
+### References :
+
+[1] Lange, Martin; Leiß, Hans (2009). "To CNF or not to CNF? An Efficient Yet Presentable Version of the CYK Algorithm". 
+
