@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <parselib/parsers/lexer.hpp>
-
 #include <parselib/datastructure/common_types.h>
 #include <parselib/parsers/grammarparser.hpp>
 #include <parselib/datastructure/parsetree.hpp>
@@ -15,11 +13,12 @@ typedef std::vector<Row> CYKMatrix ;
 namespace parsers {
 
 class AbstractParser {
-public :
+protected:
 
 	ProductionRules production_rules ;
 	Grammar::UnitRelation unitrelation ;
 
+public:
 	AbstractParser () {} 
 	virtual ~AbstractParser () {} 
 	AbstractParser (Grammar grammar) {

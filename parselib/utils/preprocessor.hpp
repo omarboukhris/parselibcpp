@@ -16,7 +16,7 @@ public :
 	void addToQueue (std::string filename) {
 		queue.push_back(filename) ;
 	}
-	
+
 	void removeFromQueue (std::string filename) {
 		// remove filename from queue
 		ImportQueue newqueue = ImportQueue () ;

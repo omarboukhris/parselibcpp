@@ -44,7 +44,7 @@ PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 // 	{"RCRCH",		"RCRCH"}
 } ;
 
-/*! 
+/*!
  * \brief eliminates duplicate rules in a grammar
  * \param grammar : grammar in
  * \returns grammar : grammar out

@@ -16,16 +16,11 @@ namespace parsers {
 using namespace std ;
 using namespace grammaroperators ;
 
-GenericGrammarParser::GenericGrammarParser (utils::Preprocessor *preproc) {
+GenericGrammarParser::GenericGrammarParser (Preproc_ptr preproc) {
 	//preprocessor class
 	this->preproc = preproc ;
 }
 
-/*!
- * \brief lex a grammar from textual form to tokenized
- * \param txt_grammar : raw textual grammar source code filename
- * \param verbose true to make it talk. false by default
- */
 Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 	Grammar out_grammar = Grammar() ;
 	preproc->addToQueue (filename) ;
@@ -38,10 +33,10 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 		
 		//tokenize grammar source
 		lexer::Lexer lang (GenericGrammarTokenizer::grammartokens) ;
-		lang = GenericGrammarTokenizer::tokenize (lang, source, verbose) ;
-		
+		lang.tokenize(source, verbose);
+
 		//preprocessor here (one pass preprocessor)
-		lang.tokens = preproc->preprocess (filename, lang.tokens) ; //segfault here
+		lang.tokens = preproc->preprocess (filename, lang.tokens) ;
 
 		// text tokens are needed for next step
 		std::string txtok = utils::transformtosource (lang.tokens) ; 
@@ -49,7 +44,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 		// tokenize in abstract grammar tokens
 		lexer::Lexer gram (GenericGrammarTokenizer::genericgrammarprodrules) ;
 		
-		gram = GenericGrammarTokenizer::tokenize (gram, txtok, verbose) ;
+		gram.tokenize(txtok, verbose);
 
 		// make production rules
 		Grammar grammar = Grammar () ;

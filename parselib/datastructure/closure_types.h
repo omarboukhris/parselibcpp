@@ -5,6 +5,10 @@
 
 namespace parselib {
 
+/*!
+ * \brief The Item class serves as a container for rules
+ * composing a closure in a LR parsing context
+ */
 class Item {
 public:
 
@@ -21,7 +25,8 @@ public:
 	Item(Rule r)
 		: m_rule(r)
 		, m_position(0)
-	{}
+	{
+	}
 
 	~Item(){}
 
@@ -30,8 +35,8 @@ public:
 	}
 
 	Token readNext() {
-		if (++m_position < m_rule.size()){
-			return m_rule.at(m_position);
+		if (m_position < m_rule.size()){
+			return m_rule.at(m_position++);
 		}
 		return Token();
 	}
@@ -41,14 +46,13 @@ public:
 	}
 
 	bool done() {
-		return m_position >= m_rule.size();
+		return m_position > m_rule.size();
 	}
 
 	Rule &getRule(){
 		return m_rule;
 	}
 
-	// these may throw exceptions at badly formed files
 	void write_to (std::fstream &t_fstream) {
 
 		try {

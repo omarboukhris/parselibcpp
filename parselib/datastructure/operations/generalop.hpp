@@ -12,16 +12,17 @@ namespace grammaroperators {
 class GenericGrammarTokenizer {
 
 public :
+
+	/// \brief regex map used to tokenize text grammar
 	static PatternsMap grammartokens ;
 
+	/// \brief meta grammar production rules
 	static PatternsMap genericgrammarprodrules ;
 
-	static lexer::Lexer tokenize (lexer::Lexer tokObj, std::string source, bool verbose=false) {
-		tokObj.tokenize (source, verbose) ;
-		return tokObj ;
-	}
 } ;
-/*! \brief eliminates duplicate rules in a grammar
+
+/*!
+ * \brief eliminates duplicate rules in a grammar
  * \param grammar : grammar in
  * \returns grammar : grammar out
  */

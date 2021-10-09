@@ -67,10 +67,13 @@ Closure LR_zero::make_closure(Item &current_item){
 	Token token = current_item.readNext();
 	output.add_item(current_item);
 
+	std::cout << token.key() << token.value() << "$$" << current_item.done() << std::endl ;
+
 	if (not current_item.done()) {
 
 		// second is term/non-term
 		std::string rulename = token.value();
+		std::cout << "rulename :" << rulename << std::endl ;
 
 		// queue & processed list to avoid endless looping
 		std::queue<std::string> q;
@@ -87,10 +90,14 @@ Closure LR_zero::make_closure(Item &current_item){
 			rulename = q.front();
 			q.pop();
 
+			std::cout << rulename << std::endl ;
+
 			// if rule unprocessed
 			if (std::find(processed.begin(), processed.end(), rulename) == processed.end()) {
 
 				processed.push_back(rulename);
+
+				std::cout << production_rules[rulename].size() << std::endl ;
 
 				// put rule tokens in queue for processing
 				for (Rule rule: production_rules[rulename]) {

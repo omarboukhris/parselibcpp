@@ -16,30 +16,48 @@
 
 namespace parselib {
 
+	/*!
+	 * \brief The Token class is the base class
+	 * of the whole parselib framework
+	 */
 	class Token {
 	public:
 
+		/*!
+		 * \brief Token default constructor
+		 */
 		Token()
 			: m_token({"", ""})
 		{}
 
+		/*!
+		 * \brief Token construction with key value pairing
+		 * \param value
+		 * \param type
+		 */
 		Token(std::string value, std::string type)
 			: m_token({value, type})
 		{}
 
-		std::string &value(){
-			return m_token.first;
-		}
+		//
+		// Accessors
+		//
 
-		std::string &key() {
-			return m_token.second;
-		}
+		std::string &value()
+			{ return m_token.first; }
+		std::string &key()
+			{ return m_token.second; }
+		std::string &type()
+			{ return m_token.second; }
 
-		std::string &type() {
-			return m_token.second;
-		}
+		//
+		// File streams
+		//
 
-		// these may throw exceptions at badly formed files
+		/*!
+		 * \brief write_to writes token to binary file (serialization)
+		 * \param t_fstream open file stream
+		 */
 		void write_to (std::fstream &t_fstream) {
 
 			try {
@@ -59,6 +77,10 @@ namespace parselib {
 			}
 		}
 
+		/*!
+		 * \brief read_from reads serialized token from open file
+		 * \param t_fstream  input open file stream
+		 */
 		void read_from (std::fstream &t_fstream) {
 
 			try {
@@ -81,6 +103,10 @@ namespace parselib {
 			}
 		}
 
+		//
+		// operators
+		//
+
 		friend bool operator == (const Token &t1, const Token t2) {
 			return t1.m_token == t2.m_token;
 		}
@@ -89,6 +115,7 @@ namespace parselib {
 		}
 
 	protected:
+
 		// 1st:Value  | 2nd:Key(type)
 		std::pair<std::string, std::string> m_token ;
 	};

@@ -5,9 +5,15 @@
 
 namespace parselib {
 
+/*!
+ * \brief The Grammar class represents a grammar
+ * in the context of language theory with some
+ * useful internal mechanisms
+ */
 class Grammar {
 
 public :
+
 	typedef std::map<std::string, StrList> UnitRelation ;
 
 	ProductionRules production_rules ;
@@ -23,8 +29,16 @@ public :
 
 	Grammar () ;
 
+	/*!
+	 * \brief merge input grammar with this (union)
+	 * \param grammar input grammar to merge
+	 */
 	void merge (Grammar grammar) ;
 
+	/*!
+	 * \brief exportToFile exports grammar to dot file for graph generation
+	 * \param filename path to exportation file
+	 */
 	void exportToFile (std::string filename) ;
 
 	/*!
@@ -33,6 +47,8 @@ public :
 	 * \param grammartokens : TokenList : list of tokens representing the lexed grammar
 	 */
 	void makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) ;
+
+public:
 
 	bool inKeeperKeys (std::string toktype) ;
 	bool inLabelsKeys(std::string toktype) ;

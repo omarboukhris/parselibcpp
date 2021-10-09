@@ -1,5 +1,6 @@
 
 #include <parselib/utils/io.hpp>
+#include <parselib/datastructure/operations/normop.hpp>
 #include <parselib/parselibinstance.hpp>
 
 namespace pt = boost::property_tree ;
@@ -69,11 +70,15 @@ int main(int argc, char** argv){
 			}
 		}
 	} else {
-		showhelp();
+//		showhelp();
 	}
 	
-	parselib::parsers::LR_zero lr0;
-	
+//	parselib::utils::OnePassPreprocessor *preproc = new parselib::utils::OnePassPreprocessor() ;
+//	parselib::parsers::GenericGrammarParser ggp (preproc) ;
+//	parselib::Grammar grammar = ggp.parse ("../data/grammar.grm", verbose) ;
+// //	grammar = parselib::normoperators::get2nf(grammar) ;
+//	parselib::parsers::LR_zero lr0(grammar);
+
 	return 0 ;
 }
 
