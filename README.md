@@ -45,7 +45,7 @@ int main(int argc, char** argv){
   parselib::ParseSession parsesession = parselib::ParseSession() ;
   bool verbose = true ;
 
-  //load a grammar from a raw text file
+  //load a grammar from a raw text file++
   parsesession.loadGrammar("data/grammar.grm", verbose) ;
   //parse some source code if parsable
   boost::property_tree::ptree out = parsesession.processSource("data/test.java", verbose) ; 
@@ -53,6 +53,21 @@ int main(int argc, char** argv){
   return 0 ;
 }
 ```
+
+#### Python interface 
+
+The C++ parselib interface is exposed in python using ctypes.
+
+An example of use could be 
+```python
+import pyparse
+
+psession = pyparse.ParseSession()
+psession.load_grammar("path/to/grammar.grm")
+psession.store_json("path/to/source/to/parse.ext") # output file is input.json
+del psession
+```
+
 
 #### Recursive File Glober 
 
