@@ -196,28 +196,6 @@ void Grammar::exportToFile(std::string filename) {
 	std::system (cmd.c_str()) ;
 }
 
-// 	def save (self, filename) :
-// 		"""save parsed grammar in pickle file"""
-// 		serialFile = open (filename, "wb")
-// 		pickle.dump (self.production_rules, serialFile)
-// 		pickle.dump (self.unitrelation, serialFile)
-// 		pickle.dump (self.labels, serialFile)
-// 		pickle.dump (self.keeper, serialFile)
-// 		pickle.dump (self.strnodes, serialFile)
-// 		pickle.dump (self.tokens, serialFile)
-// 		serialFile.close()
-// 	def load (self, filename) :
-// 		"""load grammar from pickle file"""
-// 		serialFile = open (filename, "rb")
-// 		self.production_rules = pickle.load (serialFile)
-// 		self.unitrelation = pickle.load (serialFile)
-// 		self.labels = pickle.load (serialFile)
-// 		self.keeper = pickle.load (serialFile)
-// 		self.strnodes = pickle.load(serialFile)
-// 		self.tokens = pickle.load (serialFile)
-// 		serialFile.close()
-//
-
 /// \brief Screaming results for debug resons or verbose
 string Grammar::getstr () {
 	string text_rule = "" ;

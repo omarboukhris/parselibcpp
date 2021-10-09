@@ -48,6 +48,51 @@ public:
 		return m_rule;
 	}
 
+	// these may throw exceptions at badly formed files
+	void write_to (std::fstream &t_fstream) {
+
+		try {
+			// write position first
+			t_fstream.write(reinterpret_cast<char*>(&m_position), sizeof(m_position));
+			// then rule's size
+			size_t ruleSize = m_rule.size();
+			t_fstream.write(reinterpret_cast<char*>(&ruleSize), sizeof(ruleSize));
+
+			for (Token tok: m_rule) {
+				// then rule's tokens
+				tok.write_to(t_fstream);
+			}
+		} catch (std::exception &e) {
+
+			std::cerr << "(item) caught exception while writing file: "
+					  << e.what() << std::endl ;
+		}
+	}
+
+	void read_from (std::fstream &t_fstream) {
+
+		try {
+			// write position first
+			t_fstream.read(reinterpret_cast<char*>(&m_position), sizeof(m_position));
+			// then rule's size
+			size_t ruleSize ;
+			t_fstream.read(reinterpret_cast<char*>(&ruleSize), sizeof(ruleSize));
+
+			m_rule.clear();
+			for (size_t i = 0 ; i < ruleSize;  ++i) {
+				// then rule's tokens
+				Token tok ;
+				tok.read_from(t_fstream);
+				m_rule.push_back(tok);
+			}
+		} catch (std::exception &e) {
+
+			std::cerr << "(item) caught exception while reading file: "
+					  << e.what() << std::endl ;
+		}
+	}
+
+
 	friend bool operator==(const Item &it1, const Item &it2) {
 		if (it1.m_position != it2.m_position) {
 			return false;
@@ -107,6 +152,62 @@ public:
 		, m_transitions()
 		, m_label(lab)
 	{}
+
+	void write_to (std::fstream &t_fstream) {
+
+		try {
+
+			size_t closureSize = m_items.size();
+			t_fstream.write(reinterpret_cast<char*>(&closureSize), sizeof(closureSize));
+			for (Item i: m_items) {
+				i.write_to(t_fstream);
+			}
+
+			size_t transitionSize = m_transitions.size();
+			t_fstream.write(reinterpret_cast<char*>(&transitionSize), sizeof(transitionSize));
+			for (std::string transition: m_transitions) {
+				t_fstream.write(reinterpret_cast<char*>(transition.size()), sizeof(transition.size()));
+				t_fstream.write(transition.c_str(), transition.size());
+			}
+
+		} catch (std::exception &e) {
+
+			std::cerr << "(closure) caught exception while writing file: "
+					  << e.what() << std::endl ;
+		}
+	}
+
+	void read_from (std::fstream &t_fstream) {
+
+		try {
+
+			size_t closureSize;
+			t_fstream.read(reinterpret_cast<char*>(&closureSize), sizeof(closureSize));
+			for (size_t i = 0 ; i < closureSize; ++i) {
+				Item item;
+				item.read_from(t_fstream);
+				m_items.push_back(item);
+			}
+
+			size_t transitionSize;
+			t_fstream.read(reinterpret_cast<char*>(&transitionSize), sizeof(transitionSize));
+			m_transitions.clear();
+			for (size_t i = 0 ; i < transitionSize; ++i) {
+				size_t transSize;
+				t_fstream.read(reinterpret_cast<char*>(&transSize), sizeof(transSize));
+
+				char *transtxt = new char[transSize];
+				t_fstream.write(transtxt, transSize);
+				m_transitions.emplace(transtxt);
+				delete transtxt;
+			}
+
+		} catch (std::exception &e) {
+
+			std::cerr << "(closure) caught exception while reading file: "
+					  << e.what() << std::endl ;
+		}
+	}
 
 	inline iterator begin() noexcept { return m_items.begin(); }
 	inline const_iterator cbegin() const noexcept { return m_items.cbegin(); }
