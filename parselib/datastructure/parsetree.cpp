@@ -1,7 +1,10 @@
-#include <parselib/datastructure/parsetree.hpp>
+
 #include <parselib/utils/io.hpp>
 
+#include "parsetree.hpp"
+
 namespace parselib {
+
 namespace parsetree {
 
 AbsNode::AbsNode () : type("tree") {

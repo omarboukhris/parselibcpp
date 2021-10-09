@@ -1,6 +1,8 @@
 
-#include <parselib/datastructure/lexer.hpp>
+
 #include <utils/io.hpp>
+
+#include "lexer.hpp"
 
 namespace parselib {
 

@@ -1,13 +1,15 @@
-#include "parselibinstance.hpp"
-#include "operations/generalop.hpp"
-#include "operations/normop.hpp"
 
 #include <boost/variant.hpp>
+
+#include <parselib/datastructure/operations/generalop.hpp>
+#include <parselib/datastructure/operations/normop.hpp>
+
+#include "parselibinstance.hpp"
 
 namespace parselib {
 
 ParseSession::ParseSession() {
-	grammar   = myparsers::Grammar() ;
+	grammar   = Grammar() ;
 	parser    = new myparsers::CYK() ;
 	tokenizer = lexer::Lexer () ;
 }
@@ -27,7 +29,7 @@ void ParseSession::load_grammar(std::string filename, bool verbose) {
 	utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
 	myparsers::GenericGrammarParser ggp (preproc) ;
 
-	myparsers::Grammar grammar = ggp.parse (filename, verbose) ;
+	Grammar grammar = ggp.parse (filename, verbose) ;
 	// grammar.exportToFile(filename);
 	this->grammar = normoperators::get2nf(grammar) ;
 }

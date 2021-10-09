@@ -1,6 +1,6 @@
 #pragma once
 
-#include <parselib/datastructure/lexer.hpp>
+#include <parselib/datastructure/common_types.h>
 
 namespace parselib {
 

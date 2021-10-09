@@ -1,35 +1,10 @@
 #pragma once
 
-#include <parselib/datastructure/lexer.hpp>
-#include <parselib/utils/io.hpp>
+#include <parselib/datastructure/common_types.h>
 
 namespace parselib {
 
-typedef TokenList Rule ;
-typedef std::vector<Rule> Rules ;
-typedef std::map <std::string, Rules> ProductionRules ;
-
-typedef std::vector<std::string> StrList ;
-typedef std::map<std::string, StrList> KeepingList ;
-
-typedef std::map<std::string, std::string> LabelReplacement ;
-typedef std::map<std::string, LabelReplacement> LabelReplacementMap ;
-
-namespace operations {
-
-class GenericGrammarTokenizer {
-
-public :
-	static PatternsMap grammartokens ;
-
-	static PatternsMap genericgrammarprodrules ;
-	
-	static lexer::Lexer tokenize (lexer::Lexer tokObj, std::string source, bool verbose=false) {
-		tokObj.tokenize (source, verbose) ;
-		return tokObj ;
-	}
-} ;
-
+namespace myparsers {
 
 class SequentialParser {
 
@@ -96,6 +71,6 @@ private :
 
 } ;
 
-} //namespace operations
+} //namespace myparsers
 
 } //namespace parselib

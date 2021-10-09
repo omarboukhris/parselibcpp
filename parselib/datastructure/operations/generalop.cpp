@@ -1,17 +1,55 @@
-#include <parselib/operations/generalop.hpp>
+
+#include "generalop.hpp"
 
 namespace parselib {
-	
-using namespace operations ;
 
 namespace grammaroperators {
+
+PatternsMap GenericGrammarTokenizer::grammartokens = {
+	//PREPROCESSOR
+	{"\\%(import|include) \"(.+)/([^/]+)\\.grm\"",	"IMPORT"},
+
+	//KEYWORDS
+	{"(//|\\;).*",						"LINECOMMENT"},
+	{"\'\'|\"\"",						"EMPTY"},
+	{"AXIOM",							"AXIOM"},
+
+	// SPECIAL OPERATORS
+	{"(\\_\\_list\\_\\_|\\[\\])",		"LIST"},
+	{"\\!",								"EXCL"},
+	{"s\\:",							"STR"},
+	{"\\(\".*\"\\)|\\(\'.*\'\\)",		"REGEX"},
+	{"\".*\"|\'.*\'",					"AREGEX"}, //a for anonymous
+	{"(\\->|\\=)",						"EQUAL"},
+	{"\\,",								"COMMA"},
+	{"\\|",								"OR"},
+	{"\\(",								"LPAR"},
+	{"\\)",								"RPAR"},
+// 	{"\[",								"LCRCH"},
+// 	{"\]",								"RCRCH"},
+
+	//OPERANDS
+	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*\\.",	"TERMINAL"},
+	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",		"NONTERMINAL"}
+} ;
+
+PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
+	{"LINECOMMENT",						          "LINECOMMENT"},
+	{"AXIOM EQUAL NONTERMINAL",							"AXIOM"},
+	{"TERMINAL REGEX",									"TOKEN"},
+	{"NONTERMINAL EQUAL",								"LSIDE"},
+	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY",	"RSIDE"},
+	{"OR", "OR"},
+// 	{"LCRCH",		"LCRCH"},
+// 	{"RCRCH",		"RCRCH"}
+} ;
 
 /*! 
  * \brief eliminates duplicate rules in a grammar
  * \param grammar : grammar in
  * \returns grammar : grammar out
  */
-myparsers::Grammar eliminatedoubles (myparsers::Grammar grammar) {
+Grammar eliminatedoubles (Grammar grammar) {
 
 	ProductionRules production_rules = ProductionRules () ;
 	for (auto item : grammar.production_rules) {
@@ -29,6 +67,8 @@ myparsers::Grammar eliminatedoubles (myparsers::Grammar grammar) {
 	}
 	grammar.production_rules = production_rules ;
 	return grammar ;
+
+}
 
 }
 
@@ -70,9 +110,6 @@ bool samerule (Rule rulea, Rule ruleb) {
 		return false ;
 	}
 }
-
-}
-
 
 }
 

@@ -9,13 +9,17 @@ namespace pt = boost::property_tree ;
 void showhelp () {
 	std::cout <<
 		"usage : parsexlib [arg] " << std::endl <<
+		std::endl <<
 		"\t--gsrc=path/to/grammar.grm \t\t: specifies grammar to use for parsing"  << std::endl <<
+		std::endl <<
 		"\tuse case 1 : process only 1 file"  << std::endl <<
-		"\t\t--src=path/to/source.something  : specifies source code to process"  << std::endl <<
+		"\t\t--src=path/to/source.something   : specifies source code to process"  << std::endl <<
+		std::endl <<
 		"\tuse case 2 : process recursively files"  << std::endl <<
-		"\t\t--dir=directory/to/glob/recurse : directory to process"  << std::endl <<
-		"\t\t--ext=extension (ex : java, cpp): globed files extension" << std::endl <<
-		"\t-h\t                                : help"  << std::endl <<
+		"\t\t--dir=directory/to/glob/recurse  : directory to process"  << std::endl <<
+		"\t\t--ext=extension (ex : java, cpp) : globed files extension" << std::endl <<
+		std::endl <<
+		"\t-h\t\t\t\t: help"  << std::endl <<
 	std::endl ;
 }
 

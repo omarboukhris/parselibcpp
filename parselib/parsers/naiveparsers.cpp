@@ -1,49 +1,13 @@
-#include <parselib/operations/naiveparsers.hpp>
+
+#include <parselib/utils/io.hpp>
+
+#include "naiveparsers.hpp"
 
 using namespace std ;
 
 namespace parselib {
 
-namespace operations {
-
-PatternsMap GenericGrammarTokenizer::grammartokens = {
-	//PREPROCESSOR
-	{"\\%(import|include) \"(.+)/([^/]+)\\.grm\"",	"IMPORT"},
-	
-	//KEYWORDS
-	{"(//|\\;).*",						"LINECOMMENT"},
-	{"\'\'|\"\"",						"EMPTY"},
-	{"AXIOM",							"AXIOM"},
-	
-	// SPECIAL OPERATORS
-	{"(\\_\\_list\\_\\_|\\[\\])",		"LIST"},
-	{"\\!",								"EXCL"},
-	{"s\\:",							"STR"},
-	{"\\(\".*\"\\)|\\(\'.*\'\\)",		"REGEX"},
-	{"\".*\"|\'.*\'",					"AREGEX"}, //a for anonymous
-	{"(\\->|\\=)",						"EQUAL"},
-	{"\\,",								"COMMA"},
-	{"\\|",								"OR"},
-	{"\\(",								"LPAR"},
-	{"\\)",								"RPAR"},
-// 	{"\[",								"LCRCH"},
-// 	{"\]",								"RCRCH"},
-	
-	//OPERANDS
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*\\.",	"TERMINAL"},
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",		"NONTERMINAL"}
-} ;
-
-PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
-	{"LINECOMMENT",						          "LINECOMMENT"},
-	{"AXIOM EQUAL NONTERMINAL",							"AXIOM"},
-	{"TERMINAL REGEX",									"TOKEN"},
-	{"NONTERMINAL EQUAL",								"LSIDE"},
-	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY",	"RSIDE"},
-	{"OR", "OR"},
-// 	{"LCRCH",		"LCRCH"},
-// 	{"RCRCH",		"RCRCH"}
-} ;
+namespace myparsers {
 
 SequentialParser::SequentialParser (
 	TokenList grammar, 

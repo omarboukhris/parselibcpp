@@ -1,21 +1,19 @@
 #pragma once
-#include "naiveparsers.hpp"
 
-#include <parselib/datastructure/lexer.hpp>
-#include <parselib/operations/naiveparsers.hpp>
+#include <parselib/datastructure/common_types.h>
 #include <parselib/parsers/grammarparser.hpp>
 
 namespace parselib {
 
 namespace normoperators {
 
-myparsers::Grammar get2nf (myparsers::Grammar grammar) ;
+Grammar get2nf (Grammar grammar) ;
 
-myparsers::Grammar removenullables (myparsers::Grammar grammar) ;
+Grammar removenullables (Grammar grammar) ;
 
-StrList getnullables (myparsers::Grammar grammar) ;
+StrList getnullables (Grammar grammar) ;
 
-myparsers::Grammar getunitrelation (myparsers::Grammar grammar) ;
+Grammar getunitrelation (Grammar grammar) ;
 
 class TERM {
 public :

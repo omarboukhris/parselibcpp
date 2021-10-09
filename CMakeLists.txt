@@ -13,7 +13,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #############################
 file(GLOB SOURCE_FILES
 	parselib/datastructure/*.cpp
- 	parselib/operations/*.cpp
+	parselib/datastructure/operations/*.cpp
+	parselib/operations/*.cpp
  	parselib/utils/*.cpp
  	parselib/parsers/*.cpp
  	parselib/*.cpp
@@ -21,6 +22,7 @@ file(GLOB SOURCE_FILES
 
 file(GLOB HEADER_FILES
 	parselib/datastructure/*.hpp
+	parselib/datastructure/operations/*.hpp
 	parselib/operations/*.hpp
 	parselib/utils/*.hpp
 	parselib/parsers/*.hpp

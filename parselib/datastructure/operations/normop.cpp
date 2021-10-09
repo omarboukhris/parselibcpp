@@ -1,16 +1,15 @@
-#include <parselib/operations/normop.hpp>
 
-#include <parselib/operations/generalop.hpp>
+#include <parselib/datastructure/operations/generalop.hpp>
 
-using namespace std ;
+#include "normop.hpp"
+
 
 namespace parselib {
 
-using namespace operations ;
-
 namespace normoperators {
 
-myparsers::Grammar get2nf(myparsers::Grammar grammar) {
+
+Grammar get2nf(Grammar grammar) {
 	ProductionRules production_rules = grammar.production_rules ;
 	TERM term (production_rules) ;
 	term.apply() ;
@@ -35,7 +34,7 @@ void TERM::apply() {
 void TERM::term() {
 	
 	for (auto item : production_rules) {
-		string key = item.first ;
+		std::string key = item.first ;
 		Rules rules = item.second ;
 		if (production_rules.find(key) == production_rules.end()) {
 			normalForm[key] = Rules() ;
@@ -47,11 +46,11 @@ void TERM::term() {
 	production_rules = normalForm ;
 }
 
-void TERM::checkruleforterminals(string key, Rule rule) {
+void TERM::checkruleforterminals(std::string key, Rule rule) {
 	Rule newRule = Rule() ;
 	for (Token operand : rule) {
 		if (operand.second == "TERMINAL") {
-			string newKey = operand.first + "." ;
+			std::string newKey = operand.first + "." ;
 			if (normalForm.find(newKey) == normalForm.end()) {
 				normalForm[newKey] = Rules() ;
 			}
@@ -81,7 +80,7 @@ bool BIN::binonce() {
 	normalForm = ProductionRules() ;
 	bool changed = false ;
 	for (auto item : production_rules) {
-		string key = item.first ;
+		std::string key = item.first ;
 		Rules rules = item.second ;
 		
 		if (normalForm.find(key) == normalForm.end()) {
@@ -98,7 +97,7 @@ bool BIN::binonce() {
 	return changed ;
 }
 
-void BIN::binarizerule(string key, Rule rule) {
+void BIN::binarizerule(std::string key, Rule rule) {
 	if (rule.size() <= 2) {
 		normalForm[key].push_back(rule);
 	} else {
@@ -113,7 +112,7 @@ void BIN::binarizerule(string key, Rule rule) {
 			rulebyname.push_back(token.first) ;
 			newRule.push_back(token) ;
 		}
-		string newKey = utils::join(rulebyname, "/") ;
+		std::string newKey = utils::join(rulebyname, "/") ;
 		if (normalForm.find(newKey) == normalForm.end()) {
 			normalForm[newKey] = Rules () ;
 		}
@@ -124,7 +123,7 @@ void BIN::binarizerule(string key, Rule rule) {
 	}
 }
 
-myparsers::Grammar removenullables (myparsers::Grammar grammar) {
+Grammar removenullables (Grammar grammar) {
 	ProductionRules production_rules = ProductionRules() ;
 	for (auto item : grammar.production_rules) {
 		std::string key = item.first ;
@@ -147,7 +146,7 @@ myparsers::Grammar removenullables (myparsers::Grammar grammar) {
  * \param grammar : grammar input
  * \return list of unique nullables
  */
-StrList getnullables (myparsers::Grammar grammar) {
+StrList getnullables (Grammar grammar) {
 	ProductionRules production_rules = grammar.production_rules ;
 	
 	StrList nullables = StrList() ;
@@ -201,12 +200,12 @@ StrList getnullables (myparsers::Grammar grammar) {
  * \param grammar : grammar
  * \return grammar 
  */
-myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
+Grammar getunitrelation (Grammar grammar) {
 	StrList nullables = getnullables (grammar) ;
 
 	ProductionRules production_rules = grammar.production_rules ;
 
-	myparsers::Grammar::UnitRelation unitrelation = myparsers::Grammar::UnitRelation() ;
+	Grammar::UnitRelation unitrelation = Grammar::UnitRelation() ;
 
 	StrList unitkeylist = StrList() ;
 	//first pass
@@ -263,7 +262,7 @@ myparsers::Grammar getunitrelation (myparsers::Grammar grammar) {
 		}
 	}
 
-	myparsers::Grammar::UnitRelation outunit = myparsers::Grammar::UnitRelation () ;
+	Grammar::UnitRelation outunit = Grammar::UnitRelation () ;
 	for (auto item : unitrelation) {
 		std::string key = item.first ;
 		StrList unitrel = item.second ;

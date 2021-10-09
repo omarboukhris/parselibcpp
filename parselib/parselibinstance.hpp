@@ -17,7 +17,7 @@ std::string processnodename (std::string name) ;
 
 class ParseSession {
 public :
-	myparsers::Grammar grammar ;
+	Grammar grammar ;
 	myparsers::AbstractParser *parser ;
 	lexer::Lexer tokenizer ;
 	

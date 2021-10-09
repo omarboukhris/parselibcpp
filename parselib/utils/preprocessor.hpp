@@ -1,6 +1,6 @@
 #pragma once
 
-#include <parselib/datastructure/lexer.hpp>
+#include <parselib/parsers/lexer.hpp>
 #include <parselib/utils/io.hpp>
 
 namespace parselib {

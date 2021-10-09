@@ -1,17 +1,33 @@
 #pragma once
 
-#include <parselib/parsers/grammarparser.hpp>
-#include <parselib/operations/naiveparsers.hpp>
+#include <parselib/datastructure/common_types.h>
+#include <parselib/datastructure/grammar.h>
+
+#include <parselib/parsers/lexer.hpp>
 
 namespace parselib {
 	
 namespace grammaroperators {
 
+class GenericGrammarTokenizer {
+
+public :
+	static PatternsMap grammartokens ;
+
+	static PatternsMap genericgrammarprodrules ;
+
+	static lexer::Lexer tokenize (lexer::Lexer tokObj, std::string source, bool verbose=false) {
+		tokObj.tokenize (source, verbose) ;
+		return tokObj ;
+	}
+} ;
 /*! \brief eliminates duplicate rules in a grammar
  * \param grammar : grammar in
  * \returns grammar : grammar out
  */
-myparsers::Grammar eliminatedoubles (myparsers::Grammar grammar) ;
+Grammar eliminatedoubles (Grammar grammar) ;
+
+}
 
 /*!
  * \brief check if rule already exists
@@ -30,8 +46,4 @@ bool checkunique (Rules uniquerules, Rule rule) ;
 bool samerule (Rule rulea, Rule ruleb) ;
 
 }
-
-
-}
-
 
