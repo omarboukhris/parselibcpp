@@ -277,17 +277,17 @@ using namespace parselib;
 
 // ... load, parse and normalize grammar
 
-parsers::CYK parser = parsers::CYK (grammar) ; //instantiate parser
+parsers::CYK parser (grammar) ; //instantiate parser
 std::string source = utils::gettextfilecontent(filename) ; //load source from text file
 
 //tokenize source code
-tokenizer = lexer::Lexer(grammar.tokens) ;
+lexer::Lexer tokenizer (grammar.tokens) ;
 tokenizer.tokenize (source) ;
 
 //result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
 //containing all accepted solutions/parse trees
 //we generally use the first one
-parsers::Frame result = parser.membership (tokenizer.tokens) ;
+Frame result = parser.membership (tokenizer.tokens) ;
 ```
 The parser doesn't support error handling yet though
 
