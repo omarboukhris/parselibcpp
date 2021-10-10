@@ -207,19 +207,17 @@ This encode a text written context-free grammar (CFG) in a graph data-structure 
 
 using namespace parselib ;
 
-int main() {
-
-  std::string filename = "path/to/grammar.grm";
+Grammar load(std::string filename) {
 
   //define preprocessor to use
   utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
   parsers::GenericGrammarParser ggp (preproc) ; //define the parser
 
-  Grammar grammar = ggp.parse (filename, verbose) ; //..and parse
+  auto grammar = ggp.parse (filename, verbose) ; //..and parse
 
   std::cout << grammar ; //it is printable
   
-  return 0;
+  return grammar;
 }
 ```
 Results on display :
@@ -245,10 +243,6 @@ to 2NF<sup>[1]</sup>
 Note : START operator is forced by the language by the AXIOM keyword
 
 ```c++
-#include <parselib/parselibinstance.hpp>
-
-//... stuff happens here (grammar loading or something)
-
 parselib::normoperators::get2nf(grammar) ;
 ```
 Result on display :
@@ -281,19 +275,21 @@ TOKEN b = regex('b')
 
 using namespace parselib;
 
-// ... load, parse and normalize grammar
+Frame parse_file_into_frame (Grammar grammar, std::string filename) {
 
-parsers::CYK parser (grammar) ; //instantiate parser
-std::string source = utils::gettextfilecontent(filename) ; //load source from text file
+  parsers::CYK parser (grammar) ; //instantiate parser
+  std::string source = utils::gettextfilecontent(filename) ; //load source from text file
 
-//tokenize source code
-lexer::Lexer tokenizer (grammar.tokens) ;
-tokenizer.tokenize (source) ;
+  //tokenize source code
+  lexer::Lexer tokenizer (grammar.tokens) ;
+  tokenizer.tokenize (source) ;
 
-//result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
-//containing all accepted solutions/parse trees
-//we generally use the first one
-Frame result = parser.membership (tokenizer.tokens) ;
+  //result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
+  //containing all accepted solutions/parse trees
+  //we generally use the first one
+  Frame result = parser.membership (tokenizer.tokens) ;
+  return result;
+}
 ```
 The parser doesn't support error handling yet though
 
