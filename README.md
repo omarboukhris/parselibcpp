@@ -205,16 +205,22 @@ This encode a text written context-free grammar (CFG) in a graph data-structure 
 //import important stuff
 #include <parselib/parselibinstance.hpp>
 
-//...
 using namespace parselib ;
-//...
-//define preprocessor to use
-utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
-myparsers::GenericGrammarParser ggp (preproc) ; //define the parser
 
-myparsers::Grammar grammar = ggp.parse (filename, verbose) ; //..and parse
+int main() {
 
-std::cout << grammar ; //it is printable
+  std::string filename = "path/to/grammar.grm";
+
+  //define preprocessor to use
+  utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
+  parsers::GenericGrammarParser ggp (preproc) ; //define the parser
+
+  Grammar grammar = ggp.parse (filename, verbose) ; //..and parse
+
+  std::cout << grammar ; //it is printable
+  
+  return 0;
+}
 ```
 Results on display :
 ```javascript
