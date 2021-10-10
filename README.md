@@ -277,7 +277,7 @@ using namespace parselib;
 
 // ... load, parse and normalize grammar
 
-parsers::CYK parser = myparsers::CYK (grammar) ; //instantiate parser
+parsers::CYK parser = parsers::CYK (grammar) ; //instantiate parser
 std::string source = utils::gettextfilecontent(filename) ; //load source from text file
 
 //tokenize source code
