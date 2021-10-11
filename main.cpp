@@ -5,6 +5,8 @@
 
 namespace pt = boost::property_tree ;
 
+using namespace parselib::utils;
+
 void showhelp () {
 	std::cout <<
 		"usage : parsexlib [arg] " << std::endl <<
@@ -25,15 +27,15 @@ void showhelp () {
 
 int main(int argc, char** argv){
 
-	parselib::utils::ArgvLex::ArgList arglist = parselib::utils::ArgvLex::compileargv(argc, argv) ;
+	auto arglist = ArgvLex::compileargv(argc, argv) ;
 
-	parselib::utils::ArgvLex argvlex (arglist) ;
+	ArgvLex argvlex (arglist) ;
 
 	bool verbose = (argvlex.get("-v") == "True") ? true : false ;
-	parselib::utils::Printer::showinfo("verbose : " + argvlex.get("-v"));
-	parselib::utils::Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
+	Printer::showinfo("verbose : " + argvlex.get("-v"));
+	Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
 	
-	parselib::ParseSession parsesession = parselib::ParseSession() ;
+	parselib::ParseSession parsesession ;
 	
 	if (argvlex.get("-h") == "True") {
 		showhelp () ;
@@ -42,42 +44,39 @@ int main(int argc, char** argv){
 		std::string grammarfilename = argvlex.get("--gsrc") ;
 		parsesession.load_grammar(grammarfilename, verbose);
 
-		//*
 		// this part is mainly used for testing single files
 		if (argvlex.get("--src") != "False") { 
-		// a source code have been provided
+
+			// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
-			parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
+			Printer::showinfo("now processing source code : " + sourcefilename);
 
 			pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
 			
-			parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
+			Printer::showinfo("written json to : " + sourcefilename + ".json") ;
 			pt::write_json(sourcefilename+".json", out) ;
 
-		} else if (
-			argvlex.get("--ext") != "False" &&
-			argvlex.get("--dir") != "False" 
-		) {
-		// glob recursively files with specified extention from directory
-		// then parse
-			parselib::utils::FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
+		} else if (argvlex.get("--ext") != "False" && argvlex.get("--dir") != "False") {
+
+			// glob recursively files with specified extention from directory
+			// then parse
+			FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
 			
-// 			parselib::TreeList treelist = parselib::TreeList() ;
 			for (std::string sourcefilename : fileglober.glob()) {
-				parselib::utils::Printer::showinfo("now processing source code : " + sourcefilename);
+				Printer::showinfo("now processing source code : " + sourcefilename);
 				parsesession.store_json(sourcefilename, sourcefilename+".json", verbose);
-				parselib::utils::Printer::showinfo("written json to : " + sourcefilename + ".json") ;
+				Printer::showinfo("written json to : " + sourcefilename + ".json") ;
 			}
 		}
 	} else {
-//		showhelp();
+	//	showhelp();
 	}
-	
-//	parselib::utils::OnePassPreprocessor *preproc = new parselib::utils::OnePassPreprocessor() ;
-//	parselib::parsers::GenericGrammarParser ggp (preproc) ;
-//	parselib::Grammar grammar = ggp.parse ("../data/grammar.grm", verbose) ;
-// //	grammar = parselib::normoperators::get2nf(grammar) ;
-//	parselib::parsers::LR_zero lr0(grammar);
+
+	Preproc_ptr preproc (new parselib::utils::OnePassPreprocessor()) ;
+	parselib::parsers::GenericGrammarParser ggp (preproc) ;
+	parselib::Grammar grammar = ggp.parse ("../data/grammar.grm", verbose) ;
+ //	grammar = parselib::normoperators::get2nf(grammar) ;
+	parselib::parsers::LR_zero lr0(grammar);
 
 	return 0 ;
 }

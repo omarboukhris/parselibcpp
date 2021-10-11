@@ -16,7 +16,7 @@ namespace parsers {
 using namespace std ;
 using namespace grammaroperators ;
 
-GenericGrammarParser::GenericGrammarParser (Preproc_ptr preproc) {
+GenericGrammarParser::GenericGrammarParser (utils::Preproc_ptr preproc) {
 	//preprocessor class
 	this->preproc = preproc ;
 }
@@ -49,10 +49,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 		// make production rules
 		Grammar grammar = Grammar () ;
 
-		grammar.makegrammar (
-			gram.tokens,
-			lang.tokens
-		) ;
+		grammar.makegrammar (gram.tokens, lang.tokens) ;
 
 		out_grammar.merge (grammar) ;
 	}

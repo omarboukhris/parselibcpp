@@ -5,23 +5,23 @@ from ctypes import cdll
 
 import os.path
 
-lib = cdll.LoadLibrary("build/libparselib.so")  # change for convinience
+parselib = cdll.LoadLibrary("build/libparselib.so")  # change for convinience
 
 class ParseSession:
 
 	def __init__(self):
-		self.sess = lib.new_session()
+		self.sess = parselib.new_session()
 
 	def load_grammar(self, filepath: str):
 		if os.path.isfile(filepath) and self.sess:
-			lib.load_grammar(self.sess, filepath.encode())
+			parselib.load_grammar(self.sess, filepath.encode())
 
 	def parse_to_json(self, filepath: str):
 		if os.path.isfile(filepath) and self.sess:
-			lib.store_json(self.sess, filepath.encode())
+			parselib.store_json(self.sess, filepath.encode())
 
 	def __del__(self):
-		lib.del_session(self.sess)
+		parselib.del_session(self.sess)
 		self.sess = None
 
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <parselib/parsers/parsers.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
@@ -31,8 +32,22 @@ public :
 	 */
 	void load_grammar (std::string filename, bool verbose=false) ;
 	
+	/*!
+	 * \brief store_json processes input file into json output
+	 * \param filename        input filename
+	 * \param output_filename output json filename
+	 * \param verbose         self explanatory
+	 * \param index           frame index to use as a solution
+	 */
 	void store_json (std::string filename, std::string output_filename, bool verbose=false, size_t index=0);
 
+	/*!
+	 * \brief process2ptree processes input file into pt::ptree
+	 * \param filename  input filen name
+	 * \param verbose
+	 * \param index     index of solution to use
+	 * \return
+	 */
 	pt::ptree process2ptree (std::string filename, bool verbose=false, size_t index=0) ;
 
 	/*!
@@ -60,4 +75,5 @@ private :
 	pt::ptree to_ptree (parsetree::AbsNode* tree) ;
 	
 } ; //class ParseSession
-} ; //namespace parselib
+
+} //namespace parselib

@@ -26,7 +26,7 @@ std::string processnodename(std::string name) {
 }
 
 void ParseSession::load_grammar(std::string filename, bool verbose) {
-	std::shared_ptr<utils::OnePassPreprocessor> preproc (new utils::OnePassPreprocessor()) ;
+	utils::Preproc_ptr preproc (new utils::OnePassPreprocessor()) ;
 	parsers::GenericGrammarParser ggp (preproc) ;
 
 	Grammar grammar = ggp.parse (filename, verbose) ;

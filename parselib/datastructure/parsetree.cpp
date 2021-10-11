@@ -9,7 +9,15 @@ namespace parsetree {
 
 AbsNode::AbsNode () : type("tree") {
 	tokens = std::vector<Token> () ;
-} 
+}
+
+AbsNode::~AbsNode() {
+	for (auto &&tok : tokens) {
+		if (tok.second != nullptr) {
+			delete tok.second;
+		}
+	}
+}
 
 void AbsNode::push_back(AbsNode::Token tok) {
 	tokens.push_back(tok) ;
@@ -85,52 +93,10 @@ size_t Tree::keyInTree(std::string key) {
 	return -1 ; 
 }
 
-Tree Tree::at(std::string key) {
-	Tree* out = new Tree() ;
-	Tree* tmpout = new Tree() ;
-	for (Token tok : tokens) {
-		std::string tokkey = tok.first ;
-		if (tokkey == key) {
-			if (tok.second->type == "leaf") {
-				out->push_back(tok);
-			} else {
-				Tree *tree = new Tree () ;
-				for (Token tokout : tok.second->tokens) {
-					tree->push_back(tokout);
-					out->push_back(tokout);
-				}
-				Token token = std::make_pair(key, tree) ;
-				tmpout->push_back(token) ;
-			}
-		}
-	}
-	// tmpout is the result we want
-// 	std::cout << dump(tmpout) << std::endl ;
-	return *out ;
-}
-
-Tree Tree::operator[] (const char key[]) {
-// 	std::cout << dump(this) ;
-	utils::StrList keylist = utils::split(key, "/") ;
-	if (keylist.size() == 1) {
-		return this->at(keylist[0]) ;
-	} else {
-		Tree tree = this->at(keylist[0]) ;
-		keylist.erase(keylist.begin()) ;
-		std::string newkey = utils::join(keylist, "/") ;
-		return tree[newkey.c_str()] ;
-	}		
-}
 
 std::string Tree::getval() {
 	return "" ;
 }
-
-// Tree* Tree::operator[] (int i) {
-// 	Tree* out = new Tree() ;
-// 	out->push_back(tokens[i]) ;
-// 	return out ;
-// }
 
 std::ostream& operator<<(std::ostream& out, Tree* tree) {
 	out << tree->dump(tree) ;

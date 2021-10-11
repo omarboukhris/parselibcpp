@@ -11,12 +11,15 @@ namespace parsers {
 class GenericGrammarParser {
 
 protected:
-	typedef std::shared_ptr<utils::Preprocessor> Preproc_ptr;
 
-	Preproc_ptr preproc ;
+	utils::Preproc_ptr preproc ;
 
 public:
-	GenericGrammarParser (Preproc_ptr preproc) ;
+	/*!
+	 * \brief GenericGrammarParser constructor
+	 * \param preproc shared pointer of preprocessor object
+	 */
+	GenericGrammarParser (utils::Preproc_ptr preproc) ;
 
 	/*!
 	 * \brief lex a grammar from textual form to tokenized

@@ -47,10 +47,10 @@ void LR_zero::build_table(){
 					keep_going = true;
 
 				} else {
+
 					it->add_transition(clos.label());
 					// make transition from clos to existing node (*it)
 					// <clos.label, current_item.read()>
-
 				}
 			}
 		}
@@ -93,11 +93,12 @@ Closure LR_zero::make_closure(Item &current_item){
 			std::cout << rulename << std::endl ;
 
 			// if rule unprocessed
-			if (std::find(processed.begin(), processed.end(), rulename) == processed.end()) {
+			auto itRule = std::find(processed.begin(), processed.end(), rulename) ;
+			if (itRule == processed.end()) {
 
 				processed.push_back(rulename);
 
-				std::cout << production_rules[rulename].size() << std::endl ;
+				std::cout << rulename << ":" << production_rules[rulename].size() << std::endl ;
 
 				// put rule tokens in queue for processing
 				for (Rule rule: production_rules[rulename]) {
@@ -107,8 +108,8 @@ Closure LR_zero::make_closure(Item &current_item){
 
 					for (Token tok: rule) {
 
-						if (std::find(processed.begin(), processed.end(), tok.value()) == processed.end()
-							and tok.type() != "TERMINAL")
+						auto it = std::find(processed.begin(), processed.end(), tok.value());
+						if (it == processed.end() and tok.type() != "TERMINAL")
 						{
 							q.push(tok.value());
 						}

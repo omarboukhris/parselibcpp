@@ -16,6 +16,7 @@ public :
 	TokenList tokens ;
 
 	AbsNode () ;
+	~AbsNode () ;
 	virtual std::string getval () = 0 ;
 	std::string strUnfold() ;
 	void push_back (Token tok) ;
@@ -40,15 +41,12 @@ public :
 	Tree(AbsNode* node) ;
 	Tree * merge (Tree *tree) ;
 	size_t keyInTree (std::string key) ;
-	Tree at(std::string key) ;
 	virtual std::string getval () ;
-	Tree operator[] (const char [] ) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
 private :
 	std::string dump (AbsNode *tree, std::string tab="") ;
 };
-typedef std::vector<Tree> TreeList ;
 
 // abstract node : generates the parse tree 
 // unfold is some kind of lazy eval
