@@ -42,7 +42,7 @@ Reading a grammar and parsing a source code then becomes trivial :
 
 int main(int argc, char** argv){
   // define a parselib session
-  parselib::ParseSession parsesession = parselib::ParseSession() ;
+  parselib::ParseSession parsesession ;
   bool verbose = true ;
 
   // load a grammar from a raw text file++
