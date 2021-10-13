@@ -45,10 +45,12 @@ int main(int argc, char** argv){
   parselib::ParseSession parsesession = parselib::ParseSession() ;
   bool verbose = true ;
 
-  //load a grammar from a raw text file++
+  // load a grammar from a raw text file++
   parsesession.loadGrammar("data/grammar.grm", verbose) ;
-  //parse some source code if parsable
-  boost::property_tree::ptree out = parsesession.processSource("data/test.java", verbose) ; 
+  
+  // parse some source code if parsable
+  // return type is boost::property_tree::ptree 
+  auto out = parsesession.processSource("data/test.java", verbose) ; 
 
   return 0 ;
 }
