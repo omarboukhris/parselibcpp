@@ -46,7 +46,7 @@ public:
 	}
 
 	bool done() {
-		return m_position > m_rule.size();
+		return m_position > m_rule.size() ;
 	}
 
 	Rule &getRule(){
@@ -120,7 +120,7 @@ public:
 		return not (it1 == it2);
 	}
 
-private:
+protected:
 	Rule m_rule;
 	size_t m_position;
 };
@@ -238,12 +238,20 @@ public:
 		m_items.push_back(i);
 	}
 
+	void add_transition(std::string t_state) {
+		m_transitions.emplace(t_state);
+	}
+
 	std::string label() {
 		return m_label;
 	}
 
-	void add_transition(std::string t_state) {
-		m_transitions.emplace(t_state);
+	bool empty() {
+		return not size();
+	}
+
+	size_t size() {
+		return m_items.size();
 	}
 
 private:
