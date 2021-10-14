@@ -42,17 +42,34 @@ Reading a grammar and parsing a source code then becomes trivial :
 
 int main(int argc, char** argv){
   // define a parselib session
-  parselib::ParseSession parsesession = parselib::ParseSession() ;
+  parselib::ParseSession parsesession ;
   bool verbose = true ;
 
-  //load a grammar from a raw text file
+  // load a grammar from a raw text file++
   parsesession.loadGrammar("data/grammar.grm", verbose) ;
-  //parse some source code if parsable
-  boost::property_tree::ptree out = parsesession.processSource("data/test.java", verbose) ; 
+  
+  // parse some source code if parsable
+  // return type is boost::property_tree::ptree 
+  auto out = parsesession.processSource("data/test.java", verbose) ; 
 
   return 0 ;
 }
 ```
+
+#### Python interface 
+
+The C++ parselib interface is exposed in python using ctypes.
+
+An example of use could be 
+```python
+import pyparse
+
+psession = pyparse.ParseSession()
+psession.load_grammar("path/to/grammar.grm")
+psession.store_json("path/to/source/to/parse.ext") # output file is input.json
+del psession
+```
+
 
 #### Recursive File Glober 
 
@@ -64,14 +81,10 @@ This object can be used to glob recursively files and filter them by file extens
 // setup fileGlober
 parselib::utils::FileGlober fileglober ("foo/bar", "java") ;
 // recursively globs all java files in foo/bar (relative path accepted)
-parselib::utils::FileGlober::FilesList files = fileglober.glob() ;
+auto files = fileglober.glob() ; // type is parselib::utils::FileGlober::FilesList or std::vector<std::string>
 ```
 
 This can mainly be useful to setup a transcompiling framework or a template engine.
-
-### References :
-
-[1] Lange, Martin; Leiß, Hans (2009). "To CNF or not to CNF? An Efficient Yet Presentable Version of the CYK Algorithm". 
 
 ## Grammar's syntax
 
@@ -194,16 +207,20 @@ This encode a text written context-free grammar (CFG) in a graph data-structure 
 //import important stuff
 #include <parselib/parselibinstance.hpp>
 
-//...
 using namespace parselib ;
-//...
-//define preprocessor to use
-utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
-myparsers::GenericGrammarParser ggp (preproc) ; //define the parser
 
-myparsers::Grammar grammar = ggp.parse (filename, verbose) ; //..and parse
+Grammar load(std::string filename) {
 
-std::cout << grammar ; //it is printable
+  //define preprocessor to use
+  utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
+  parsers::GenericGrammarParser ggp (preproc) ; //define the parser
+
+  auto grammar = ggp.parse (filename, verbose) ; //..and parse
+
+  std::cout << grammar ; //it is printable
+  
+  return grammar;
+}
 ```
 Results on display :
 ```javascript
@@ -228,10 +245,6 @@ to 2NF<sup>[1]</sup>
 Note : START operator is forced by the language by the AXIOM keyword
 
 ```c++
-#include <parselib/parselibinstance.hpp>
-
-//... stuff happens here (grammar loading or something)
-
 parselib::normoperators::get2nf(grammar) ;
 ```
 Result on display :
@@ -262,18 +275,27 @@ TOKEN b = regex('b')
 //import the good stuff
 #include <parselib/parselibinstance.hpp> 
 
-// ... load, parse and normalize grammar
+using namespace parselib;
 
-myparsers::CYK parser = myparsers::CYK (grammar) ; //instantiate parser
-std::string source = utils::gettextfilecontent(filename) ; //load source from text file
+Frame parse_file_into_frame (Grammar grammar, std::string filename) {
 
-//tokenize source code
-tokenizer = lexer::Lexer(grammar.tokens) ;
-tokenizer.tokenize (source) ;
+  parsers::CYK parser (grammar) ; //instantiate parser
+  std::string source = utils::gettextfilecontent(filename) ; //load source from text file
 
-//result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
-//containing all accepted solutions/parse trees
-//we generally use the first one
-myparsers::Frame result = parser.membership (tokenizer.tokens) ;
+  //tokenize source code
+  lexer::Lexer tokenizer (grammar.tokens) ;
+  tokenizer.tokenize (source) ;
+
+  //result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
+  //containing all accepted solutions/parse trees
+  //we generally use the first one
+  Frame result = parser.membership (tokenizer.tokens) ;
+  return result;
+}
 ```
 The parser doesn't support error handling yet though
+
+### References :
+
+[1] Lange, Martin; Leiß, Hans (2009). "To CNF or not to CNF? An Efficient Yet Presentable Version of the CYK Algorithm". 
+
