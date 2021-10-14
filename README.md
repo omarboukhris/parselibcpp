@@ -81,7 +81,8 @@ This object can be used to glob recursively files and filter them by file extens
 // setup fileGlober
 parselib::utils::FileGlober fileglober ("foo/bar", "java") ;
 // recursively globs all java files in foo/bar (relative path accepted)
-auto files = fileglober.glob() ; // type is parselib::utils::FileGlober::FilesList or std::vector<std::string>
+auto files = fileglober.glob() ; 
+// type is parselib::utils::FileGlober::FilesList or std::vector<std::string>
 ```
 
 This can mainly be useful to setup a transcompiling framework or a template engine.
