@@ -293,7 +293,7 @@ Frame parse_file_into_frame (Grammar grammar, std::string filename) {
   return result;
 }
 ```
-The parser doesn't support error handling yet though
+The parser doesn't support error handling yet though. If `membership` fails, the returned frame is empty, otherwise it contains a list of accepted parse trees.
 
 ### References :
 
