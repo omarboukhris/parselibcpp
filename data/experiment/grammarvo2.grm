@@ -15,7 +15,7 @@ regexnode ->
 	quote. !regex. quote. |
 	dquote. !regex. dquote. |
 
-operator -> "!" | "s:" | ''
+operator -> "\!" | "s\:" | ''
 
 
 

@@ -1,4 +1,3 @@
 AXIOM -> classes
 
-classes ->
-	"class" classname=identifier. lcrch. !classbody rcrch. semic.
+classes -> "class" classname=identifier. lcrch. !classbody rcrch. semic.

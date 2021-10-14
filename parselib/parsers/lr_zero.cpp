@@ -37,8 +37,6 @@ void LR_zero::build_table(){
 
 		for (Item current_item : clos) {
 
-			std::cout << "-----------------///////////////////////" << std::endl;
-
 			while(not current_item.done()) {
 
 				std::cout << "-----------------" << current_item.getPosition() << ":" << current_item.getRule().size() << std::endl;
@@ -56,6 +54,8 @@ void LR_zero::build_table(){
 					newest_clos.add_transition(clos.label());
 					m_graph.push_back(newest_clos);
 					keep_going = true;
+
+					// add newest_clos to processing queue
 
 				} else {
 					std::cout << "exis" << std::endl ;

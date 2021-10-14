@@ -12,6 +12,9 @@ typedef std::vector<Row> CYKMatrix ;
 
 namespace parsers {
 
+/*!
+ * \brief The AbstractParser class
+ */
 class AbstractParser {
 protected:
 

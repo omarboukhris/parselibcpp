@@ -9,20 +9,33 @@ namespace lexer {
 class Lexer {
 public :
 
-	/// output tokenlist
-	TokenList tokens ;
+	TokenList tokens ; ///< output tokenlist
+	PatternsMap patterns ; ///< input patterns
 
-	/// input patterns
-	PatternsMap patterns ;
-	
 	Lexer () {}
-	Lexer (PatternsMap pmap) : 
+
+	/*!
+	 * \brief Lexer constructor
+	 * \param pmap  Patterns Map to use for lexing
+	 */
+	Lexer (PatternsMap pmap) :
 		patterns (pmap) {
 		tokens = TokenList() ;
 	}
 
+	/*!
+	 * \brief tokenizes a string into a token's list
+	 * \param str     string to tokenize
+	 * \param verbose set to true for verbose, false otherwise
+	 */
 	void tokenize (std::string str, bool verbose=false) ;
+
 private :
+
+	/*!
+	 * \brief tokenizeline tokenizes oneline at a time
+	 * \param str  line to tokenize
+	 */
 	void tokenizeline (std::string str) ;
 } ;// class Lexer
 

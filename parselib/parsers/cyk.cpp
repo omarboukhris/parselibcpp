@@ -126,7 +126,7 @@ Frame CYK::getterminal (Token token) {
 }
 
 /*!
- * \brief returns all well parsed nodes with key "axiom" 
+ * \brief returns all well parsed nodes with key "axiom"
  * on the last frame of the CYKMatrix
  */
 Frame CYK::getAxiomNodes(Frame nodes){
@@ -164,8 +164,8 @@ Frame CYK::getbinproductions(Row AB) {
 }
 
 /*!
- * \returns a list of valid nodes corresponding 
- * to the rules being inspected
+ * \brief returns a list of valid nodes corresponding
+ * to the rules being inspected in frame "line"
  */
 Frame CYK::getrulenames(Frame line) {
 	if (line.size() == 0) {
@@ -190,7 +190,9 @@ Frame CYK::getrulenames(Frame line) {
 	return rulenames ;
 }
 
-/// \brief get inverse unit relation for the parse tree
+/*!
+ * \brief get inverse unit relation for the parse tree
+ */
 Frame CYK::invUnitRelation(Frame M) {
 	Frame rulenames = Frame () ;
 	for (parsetree::Node* node : M) {

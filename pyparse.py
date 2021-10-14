@@ -30,6 +30,9 @@ if __name__ == "__main__":
 	psess.load_grammar("data/grammar.grm")
 	psess.parse_to_json("data/test.java")
 	psess.parse_to_json("data/test2.java")
+
+	psess.load_grammar("data/experiment/grammarvo2.grm")
+#	psess.parse_to_json("data/experiment/grammar.source") # segfaults
 	del psess
 
 

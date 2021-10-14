@@ -8,6 +8,10 @@ namespace parselib {
 
 namespace parsers {
 
+/*!
+ * \brief The GenericGrammarParser class parses a tokenized grammar
+ * into the appropriate  data format
+ */
 class GenericGrammarParser {
 
 protected:
