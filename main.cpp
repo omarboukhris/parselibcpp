@@ -11,16 +11,16 @@ void showhelp () {
 	std::cout <<
 		"usage : parsexlib [arg] " << std::endl <<
 		 std::endl <<
-		 "\t-h\t\t\t\t: help"  << std::endl <<
+		 "  -h\t\t\t\t\t: help"  << std::endl <<
 		std::endl <<
-		"\t--gsrc=path/to/grammar.grm \t\t: specifies grammar to use for parsing"  << std::endl <<
+		"  --gsrc=path/to/grammar.grm \t\t: specifies grammar to use for parsing"  << std::endl <<
 		std::endl <<
-		"\tuse case 1 : process only 1 file"  << std::endl <<
-		"\t\t--src=path/to/source.something   : specifies source code to process"  << std::endl <<
+		"  use case 1 : process only 1 file"  << std::endl <<
+		"    --src=path/to/source.something   : specifies source code to process"  << std::endl <<
 		std::endl <<
-		"\tuse case 2 : process recursively files"  << std::endl <<
-		"\t\t--dir=directory/to/glob/recurse  : directory to process"  << std::endl <<
-		"\t\t--ext=extension (ex : java, cpp) : globed files extension" << std::endl <<
+		"  use case 2 : process recursively files"  << std::endl <<
+		"    --dir=directory/to/glob/recurse  : directory to process"  << std::endl <<
+		"    --ext=extension (ex : java, cpp) : globed files extension" << std::endl <<
 		std::endl <<
 	std::endl ;
 }
@@ -69,14 +69,14 @@ int main(int argc, char** argv){
 			}
 		}
 	} else {
-	//	showhelp();
+		showhelp();
 	}
 
-	Preproc_ptr preproc (new parselib::utils::OnePassPreprocessor()) ;
-	parselib::parsers::GenericGrammarParser ggp (preproc) ;
-	parselib::Grammar grammar = ggp.parse ("../data/grammar.grm", verbose) ;
- //	grammar = parselib::normoperators::get2nf(grammar) ;
-	parselib::parsers::LR_zero lr0(grammar);
+//	Preproc_ptr preproc (new parselib::utils::OnePassPreprocessor()) ;
+//	parselib::parsers::GenericGrammarParser ggp (preproc) ;
+//	parselib::Grammar grammar = ggp.parse ("../data/grammar.grm", verbose) ;
+// //	grammar = parselib::normoperators::get2nf(grammar) ;
+//	parselib::parsers::LR_zero lr0(grammar);
 
 	return 0 ;
 }

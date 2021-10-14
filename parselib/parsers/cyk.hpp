@@ -59,9 +59,10 @@ private :
 	/*!
 	 * \brief getbinproductions return frame with binary production rules
 	 * \param AB CYK matrix row
+	 * \param MAX Maximum frame height, otherwise, solutions might overflow
 	 * \return Frame containing binary rules
 	 */
-	Frame getbinproductions (Row AB) ;
+	Frame getbinproductions (Row AB, const int MAX = 10) ;
 
 	/*!
 	 * \returns a list of valid nodes corresponding

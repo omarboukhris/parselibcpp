@@ -25,7 +25,7 @@ std::string CYK::getstrmat (CYKMatrix cykmat) {
 			ss += "|" ;
 		}
 		ss += "\n" ;
-	}	
+	}
 	return ss ;
 }
 
@@ -64,7 +64,7 @@ Frame operator+(Frame f1, Frame f2){
 Frame CYK::membership (TokenList word) {
 	size_t n = word.size() ;
 	CYKMatrix P = CYKMatrix(n, Row (n, Frame())) ;
-	
+
 	for (size_t i = 0 ; i < n ; i++) {
 		P[0][i] = getterminal (word[i]) ;
 		P[0][i] = P[0][i] + invUnitRelation (P[0][i]) ;
@@ -76,9 +76,9 @@ Frame CYK::membership (TokenList word) {
 		for (size_t i = 0 ; i < n-l ; i++) {
 
 			for (size_t k = 0 ; k < l ; k++) {
-				
-				Frame 
-					B = P[l-k-1][k+i+1], 
+
+				Frame
+					B = P[l-k-1][k+i+1],
 					A = P[k][i] ;
 				Row AB = cartesianprod (A, B) ;
 				if (AB.size() == 0) {
@@ -93,7 +93,7 @@ Frame CYK::membership (TokenList word) {
 		pbar.update(l);
 	}
 	std::cout << std::endl ;
-// 	std::cout << getstrmat(P) ;
+//	std::cout << getstrmat(P) ;
 
 	if (P[n-1][0].size() == 0) {
 		return Frame() ; // try returning the broken nodes
@@ -113,7 +113,7 @@ Frame CYK::getterminal (Token token) {
 		Rules rules = production_rules[key] ;
 		for (Rule rule : rules) {
 
-			if (rule.size() == 1 && 
+			if (rule.size() == 1 &&
 				rule[0].value() == token.type() &&
 				rule[0].type() == "TERMINAL"
 			) {
@@ -145,22 +145,24 @@ Frame CYK::getAxiomNodes(Frame nodes){
 /*!
  * \brief get a list of binarized production rules in a frame
  */
-Frame CYK::getbinproductions(Row AB) {
+Frame CYK::getbinproductions(Row AB, const int MAX) {
 	StrList keys = StrList() ;
 	for (auto item : production_rules) {
 		keys.push_back(item.first);
 	}
 
+	int i = 0;
 	Frame bins = Frame() ;
 	for (Frame line : AB) {
 		Frame rulenames = getrulenames (line) ;
 		for (parsetree::Node* rulename : rulenames) {
 			//add node for parse tree here
+			if (i++<MAX)
 			bins.push_back (rulename) ;
 		}
 	}
 // 	#return list (set(bins))
- 	return bins ;
+	return bins ;
 }
 
 /*!
@@ -168,15 +170,15 @@ Frame CYK::getbinproductions(Row AB) {
  * to the rules being inspected in frame "line"
  */
 Frame CYK::getrulenames(Frame line) {
-	if (line.size() == 0) {
+	if (line.size() <= 1) {
 		return Frame() ;
 	}
 	Frame rulenames = Frame() ;
 	for (auto item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
- 		for (Rule rule : rules) {
-			if (rule.size() == 1) {
+		for (Rule rule : rules) {
+			if (rule.size() <= 1) {
 				continue ;
 			}
 
@@ -209,6 +211,6 @@ Frame CYK::invUnitRelation(Frame M) {
 }
 
 } // namespace parsers
-	
+
 } // namespace parselib
 

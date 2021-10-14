@@ -1,44 +1,17 @@
 
-AXIOM -> productionRules
+AXIOM -> prodrules
 
-productionRules ->
-	leftside=nonterminaltok. assign. rightside=listoperand |
-	leftside=terminaltok. left. rightside=regex. right. |
-__list__
+prodrules -> !prodrule | __list__
 
-listoperand ->
-	operator !operand |
-	regexnode |
-__list__
+prodrule -> rside=word. assign. !lside
 
-regexnode -> 
-	quote. !regex. quote. |
-	dquote. !regex. dquote. |
-
-operator -> "\!" | "s\:" | ''
+lside -> operand=word. | __list__
 
 
 
-operand -> 
-	label=word "\=" termnonterm |
-	termnonterm
-
-termnonterm ->
-	!nonterminal
-	!terminal
-
-terminal -> word. "\."
-nonterminal -> word.
 
 
-word.("w*")
+assign.("->")
 
-assign.("\-\>")
+word.("[a-z_A-Z]\w*")
 
-quote.("\'")
-dquote.("\"")
-
-left.("\(")
-right.("\)")
-
-regex.("\.*")

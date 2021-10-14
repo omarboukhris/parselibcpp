@@ -35,7 +35,7 @@ void ParseSession::load_grammar(std::string filename, bool verbose) {
 }
 
 pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t index) {
-	pt::ptree out = to_ptree(processSource(filename, false, index)) ;
+	pt::ptree out = to_ptree(processSource(filename, verbose, index)) ;
 	
 	if (verbose) {
 		std::stringstream ss;
@@ -57,7 +57,7 @@ parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose,
 	std::string source = utils::gettextfilecontent(filename) ;
 	
 	tokenizer = lexer::Lexer(grammar.tokens) ;
-	tokenizer.tokenize (source) ;
+	tokenizer.tokenize (source, verbose) ;
 
 	Frame result = parser->membership (tokenizer.tokens) ;
 // 	Frame result = parser.parallel_membership (tokenizer.tokens) ;

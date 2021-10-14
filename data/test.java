@@ -6,7 +6,7 @@ class myclass1 {
 		public int x ; 
 		class l {
 			public int m () {} ;
-		} ;
+qsdf		} ;
 	} ;
 	public int x () {} ;
 	public int a () {} ;
