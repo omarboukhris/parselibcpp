@@ -42,6 +42,14 @@ public :
 	void store_json (std::string filename, std::string output_filename, bool verbose=false, size_t index=0);
 
 	/*!
+	 * \brief process_to_json processes input file into json string output
+	 * \param filename        input filename
+	 * \param verbose         self explanatory
+	 * \param index           frame index to use as a solution
+	 */
+	std::string process_to_json (std::string filename, bool verbose=false, size_t index=0);
+
+	/*!
 	 * \brief process2ptree processes input file into pt::ptree
 	 * \param filename  input filen name
 	 * \param verbose

@@ -3,15 +3,13 @@ AXIOM -> prodrules
 
 prodrules -> !prodrule | __list__
 
-prodrule -> rside=word. assign. !lside
+prodrule -> rside=word. "->" !lside
 
-lside -> operand=word. | __list__
+lside -> operand=word. | !operand | __list__
+
+operand -> !word. "\."
 
 
-
-
-
-assign.("->")
 
 word.("[a-z_A-Z]\w*")
 

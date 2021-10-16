@@ -1,11 +1,11 @@
 
 
 
-from ctypes import cdll
-
+import ctypes
 import os.path
 
-parselib = cdll.LoadLibrary("build/libparselib.so")  # change for convinience
+parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
+parselib.get_json.restype = ctypes.c_char_p
 
 class ParseSession:
 
@@ -16,9 +16,15 @@ class ParseSession:
 		if os.path.isfile(filepath) and self.sess:
 			parselib.load_grammar(self.sess, filepath.encode())
 
-	def parse_to_json(self, filepath: str):
+	def parse_to_json_file(self, filepath: str):
 		if os.path.isfile(filepath) and self.sess:
 			parselib.store_json(self.sess, filepath.encode())
+
+	def parse_to_json(self, filepath: str):
+		if os.path.isfile(filepath) and self.sess:
+			jsonstr = parselib.get_json(self.sess, filepath.encode())
+			return jsonstr.decode()
+		return None
 
 	def __del__(self):
 		parselib.del_session(self.sess)
@@ -28,10 +34,12 @@ class ParseSession:
 if __name__ == "__main__":
 	psess = ParseSession()
 	psess.load_grammar("data/grammar.grm")
-	psess.parse_to_json("data/test.java")
-	psess.parse_to_json("data/test2.java")
+	ss = psess.parse_to_json("data/test.java")
+	print(ss)
+	ss = psess.parse_to_json("data/test2.java")
+	print(ss)
 
-	psess.load_grammar("data/experiment/grammarvo2.grm")
+#	psess.load_grammar("data/experiment/grammarvo2.grm")
 #	psess.parse_to_json("data/experiment/grammar.source") # segfaults
 	del psess
 
