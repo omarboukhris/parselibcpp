@@ -1,7 +1,6 @@
 
-
-
 import ctypes
+import json
 import os.path
 
 parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
@@ -23,7 +22,8 @@ class ParseSession:
 	def parse_to_json(self, filepath: str):
 		if os.path.isfile(filepath) and self.sess:
 			jsonstr = parselib.get_json(self.sess, filepath.encode())
-			return jsonstr.decode()
+			output = json.loads(jsonstr.decode())
+			return output
 		return None
 
 	def __del__(self):
@@ -39,8 +39,8 @@ if __name__ == "__main__":
 	ss = psess.parse_to_json("data/test2.java")
 	print(ss)
 
-#	psess.load_grammar("data/experiment/grammarvo2.grm")
-#	psess.parse_to_json("data/experiment/grammar.source") # segfaults
+	psess.load_grammar("data/experiment/grammarvo2.grm")
+	psess.parse_to_json("data/experiment/grammar.source")
 	del psess
 
 
