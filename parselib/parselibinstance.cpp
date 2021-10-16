@@ -50,6 +50,13 @@ void ParseSession::store_json(std::string filename, std::string output_filename,
 	pt::write_json(output_filename+".json", out) ;
 }
 
+std::string ParseSession::process_to_json (std::string filename, bool verbose, size_t index) {
+	pt::ptree out = process2ptree(filename, verbose, index) ;
+	std::stringstream ss;
+	pt::write_json(ss, out);
+	return ss.str();
+}
+
 parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
