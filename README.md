@@ -67,6 +67,7 @@ import pyparse
 psession = pyparse.ParseSession()
 psession.load_grammar("path/to/grammar.grm")
 psession.store_json("path/to/source/to/parse.ext") # output file is input.json
+json_string = psession.parse_to_json("path/to/source/to/parse.ext") # output string formatted in json
 del psession
 ```
 
