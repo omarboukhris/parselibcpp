@@ -5,7 +5,7 @@ prodrules -> !prodrule | __list__
 
 prodrule -> rside=word. "->" !lside
 
-lside -> operand=word. | !operand | __list__
+lside -> operand=word. | s:operand | __list__
 
 operand -> !word. "\."
 

@@ -3,7 +3,6 @@
 
 //fix whatever this is
 classbody -> 
- 	!method |
-	s:attribute | //s: operator
-	!classdef |
-__list__ // ~~~ classbody classbody | epsilon
+	!method |
+	!attribute |
+[]

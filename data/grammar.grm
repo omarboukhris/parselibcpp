@@ -8,11 +8,19 @@ file ->
 	!imports !classdef
 
 imports ->
-	"import" s:importfile semic. |
-[] // list operator~~~ classes classes | eps('')
+	import. s:importfile |
+[]
 
-importfile -> !identifier. ".inc" 
+importfile ->  
+	lt. path gt. |
+	dqu. path dqu.
+
+path -> 
+	identifier. |
+	identifier. antisl. |
+	identifier. headext. |
+[]
 
 classdef ->
-	"class" classname=identifier. lcrch. !classbody rcrch. semic. |
+	classdec. classname=identifier. lcrch. !classbody rcrch. semic. |
 []

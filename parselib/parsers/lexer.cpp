@@ -16,9 +16,10 @@ void Lexer::tokenize(string str, bool verbose) {
 	for (std::string line : utils::split(str, "\n")) {
 		tokenizeline(line);
 	}
-	if (!verbose) return ;
-	for (Token tok : tokens) {
-		cout << tok.type() << "(" << tok.value() << ")" << endl ;
+	if (verbose) {
+		for (Token tok : tokens) {
+			cout << tok.type() << "(" << tok.value() << ")" << endl ;
+		}
 	}
 }
 
@@ -43,11 +44,11 @@ void Lexer::tokenizeline (string str) {
 			if (match[pattern.type()].matched) { //find matched group
 				matches[ it->position() ] = Token( it->str(), pattern.type());
 //				matches[ it->position() ] = make_pair( it->str(), pattern.type());
-// 				cout << it->position() << " " <<  it->str() << " " << pattern.second << endl ;
+//				cout << it->position() << " " <<  it->str() << " " << pattern.value() << endl ;
 			}
 		}
 	}
-
+//	cout << "----------------" << endl ;
 	//write to result
 	for ( auto & match : matches) {
 		tokens.push_back(match.second) ;
