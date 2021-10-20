@@ -1,14 +1,14 @@
 
-from .observers.observer import *
+from PyCpp.observers.observer import *
 
 
-class PyCpp:
+class PyCppEngine:
 
-	def __init__(self, json_obj, observers=[]):
+	def __init__(self, json_obj, observers: list):
 		self.json_obj = json_obj
 		self.observers = observers
 
-	def make_hpp(self):
+	def drive(self):
 		# print (self.json_obj)
 		for arr in self.json_obj["file"]:
 			self.write_import(arr["imports"][0])
@@ -28,8 +28,8 @@ class PyCpp:
 		for classname, classbody in zip(classdef["classname"], classdef["classbody"]):
 			classobj = Class(
 				name=classname,
-				attributes=PyCpp.write_attr(classbody["attribute"]),
-				methods=PyCpp.write_meth(classbody["method"])
+				attributes=PyCppEngine.write_attr(classbody["attribute"]),
+				methods=PyCppEngine.write_meth(classbody["method"])
 			)
 			out.append(classobj)
 
@@ -42,7 +42,7 @@ class PyCpp:
 		for attr in attr_list:
 			out.append(Attribute(
 				visibility=attr["visibility"][0],
-				type=PyCpp.process_type(attr),
+				type=PyCppEngine.process_type(attr),
 				name=attr["att_name"][0]
 			))
 		return out
@@ -53,15 +53,19 @@ class PyCpp:
 		for meth in meth_list:
 			out.append(Method(
 				visibility=meth["visibility"][0],
-				type=PyCpp.process_type(meth),
+				type=PyCppEngine.process_type(meth),
 				name=meth["met_name"][0],
-				args=PyCpp.process_args(meth)
+				args=PyCppEngine.process_args(meth)
 			))
 		return out
 
 	@staticmethod
 	def process_type(attr):
-		ty = "".join(attr["type"][0].split())
+		attr_spl = attr["type"][0].split()
+		if attr_spl[0] == "const":
+			ty = "const " + "".join(attr_spl[1:])
+		else:
+			ty = "".join(attr_spl)
 		ty = ty.replace(",", ", ")
 		return ty
 

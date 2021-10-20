@@ -1,3 +1,3 @@
 
-from .CppGenerator import CppGenerator
+from .HppGenerator import HppGenerator
 from .observer import Observer
