@@ -3,6 +3,9 @@ import ctypes
 import json
 import os.path
 
+from PyCpp import pycpp
+from PyCpp.observers.CppGenerator import CppGenerator
+
 parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
 parselib.get_json.restype = ctypes.c_char_p
 
@@ -33,15 +36,21 @@ class ParseSession:
 
 if __name__ == "__main__":
 	psess = ParseSession()
-	psess.load_grammar("data/grammar.grm")
-	ss = psess.parse_to_json_file("data/test.java")
+	psess.load_grammar("PyCpp/data/grammar.grm")
+	ss = psess.parse_to_json("PyCpp/data/test2.java")
 #	print(ss)
-	ss = psess.parse_to_json_file("data/test2.java")
-#	print(ss)
+
+	cppgen = CppGenerator(stream=print)
+
+	gen = pycpp.PyCpp(ss, observers=[cppgen])
+	gen.make_hpp()
 
 #	psess.load_grammar("data/experiment/grammarvo2.grm")
 #	ss = psess.parse_to_json("data/experiment/grammar.source")
 #	print(ss)
+
+#	psess.load_grammar("data/test/gram.grm")
+#	psess.parse_to_json_file("data/test/source.txt")
 
 	del psess
 

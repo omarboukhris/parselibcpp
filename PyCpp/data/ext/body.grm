@@ -1,0 +1,8 @@
+
+%import "./members.grm"
+
+//fix whatever this is
+classbody -> 
+	!method |
+	!attribute |
+[]

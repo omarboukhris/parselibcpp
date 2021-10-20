@@ -96,10 +96,27 @@ Frame CYK::membership (TokenList word) {
 //	std::cout << getstrmat(P) ;
 
 	if (P[n-1][0].size() == 0) {
-		return Frame() ; // try returning the broken nodes
+//		return Frame() ; // try returning the broken nodes
+		return getBrokenNodes(P);
 	}
 	return getAxiomNodes (P[n-1][0]) ;
 }
+
+/*!
+ * \brief returns last well parsed nodes in the CYKMatrix
+ */
+Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
+	Frame output;
+	for (const Row& line: mat) {
+		for (const Frame& elm: line) {
+			if (elm.size() > 0) {
+				output = elm;
+			}
+		}
+	}
+	return output;
+}
+
 
 /*!
  * \brief get terminal nodes for the cyk table + parse tree

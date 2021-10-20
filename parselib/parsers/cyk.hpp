@@ -57,6 +57,13 @@ private :
 	Frame getAxiomNodes (Frame nodes) ;
 
 	/*!
+	 * \brief returns last well parsed nodes in the CYKMatrix
+	 * \param mat    the broken CYK matrix
+	 * \return Frame containing the right nodes
+	 */
+	Frame getBrokenNodes (const CYKMatrix &mat) ;
+
+	/*!
 	 * \brief getbinproductions return frame with binary production rules
 	 * \param AB CYK matrix row
 	 * \param MAX Maximum frame height, otherwise, solutions might overflow

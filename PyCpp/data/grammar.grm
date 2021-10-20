@@ -1,0 +1,26 @@
+%import "ext/body.grm"
+
+%import "ext/tokens.grm"
+
+AXIOM -> file
+
+file -> 
+	!imports !classdef
+
+imports ->
+	import. s:importfile |
+[]
+
+importfile ->  
+	lt. path gt. |
+	dqu. path dqu.
+
+path -> 
+	identifier. |
+	identifier. antisl. |
+	identifier. headext. |
+[]
+
+classdef ->
+	classdec. classname=identifier. lcrch. !classbody rcrch. semic. |
+[]

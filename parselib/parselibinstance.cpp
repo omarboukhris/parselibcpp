@@ -77,18 +77,26 @@ parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose,
 		return nullptr ;
 	} else {
 		index = (index > 0 && index < result.size()) ? index : 0 ;
-		if (verbose) {
-			utils::Printer::showinfo ("Parsetree found") ;
-			std::cout << result[index]->unfold() << std::endl ;
+
+		if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
+			return parse (result[index]->unfold(), "") ;
+		} else {
+			std::fstream fstr (filename + ".log", std::fstream::out);
+			if (fstr.is_open()) {
+				utils::Printer::showerr("Parsing went wrong, check : " + filename + ".log");
+				fstr << result[index]->unfold();
+				fstr.close();
+			} else {
+				utils::Printer::showerr("Could not open log file stream.");
+			}
+			return nullptr;
 		}
-		return parse (result[index]->unfold(), "") ;
 	}
 }
 
 parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
 	//needs a do over
 	parsetree::Tree* out = new parsetree::Tree() ;
-// 	std::cout << code << ":;" << std::endl ;
 	for (parsetree::AbsNode::Token element : code->tokens) {
 
 		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
@@ -129,7 +137,7 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) 
 				std::make_pair(element.first, out_element));
 		}
 	}
-	//std::cout << out << std::endl ;
+//	std::cout << out << std::endl ;
 	return out ;
 }
 
