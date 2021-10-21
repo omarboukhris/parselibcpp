@@ -70,6 +70,7 @@ An example of use could be
 
 >>> json = psess.parse_to_json("data/test/source.txt")
 [===========================================================>] 100%    finished
+
 >>> print(json)
 {'S': [{'S': [{'a': ['a'], 'b': ['b']}], 'a': ['a'], 'b': ['b']}]}
 
