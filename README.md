@@ -62,13 +62,22 @@ The C++ parselib interface is exposed in python using ctypes.
 
 An example of use could be 
 ```python
-import pyparse
+>>> from PyCpp.pyparse import ParseSession
 
-psession = pyparse.ParseSession()
-psession.load_grammar("path/to/grammar.grm")
-psession.store_json("path/to/source/to/parse.ext") # output file is input.json
-json_string = psession.parse_to_json("path/to/source/to/parse.ext") # output string formatted in json
-del psession
+>>> psess = ParseSession()
+>>> psess.load_grammar("data/test/gram.grm")
+(info) now processing : data/test/gram.grm
+
+>>> json = psess.parse_to_json("data/test/source.txt")
+[====================================================>       ] 87% finished
+>>> print(json)
+{'S': [{'S': [{'S': [{'S': [{'a': ['a'], 'b': ['b']}], 'a': ['a'], 'b': ['b']}], 'a': ['a'], 'b': ['b']}], 'a': ['a'], 'b': ['b']}]}
+>>> json = psess.parse_to_json("data/test/source.txt")
+[=============================================>              ] 75% finished
+>>> print(json)
+{'S': [{'S': [{'a': ['a'], 'b': ['b']}], 'a': ['a'], 'b': ['b']}]}
+
+>>> del psession
 ```
 
 
