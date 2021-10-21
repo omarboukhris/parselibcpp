@@ -69,7 +69,7 @@ An example of use could be
 (info) now processing : data/test/gram.grm
 
 >>> json = psess.parse_to_json("data/test/source.txt")
-[=============================================>              ] 75% finished
+[===========================================================>] 100%    finished
 >>> print(json)
 {'S': [{'S': [{'a': ['a'], 'b': ['b']}], 'a': ['a'], 'b': ['b']}]}
 
