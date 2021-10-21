@@ -65,6 +65,7 @@ An example of use could be
 >>> from PyCpp.pyparse import ParseSession
 
 >>> psess = ParseSession()
+
 >>> psess.load_grammar("data/test/gram.grm")
 (info) now processing : data/test/gram.grm
 
