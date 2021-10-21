@@ -1,9 +1,17 @@
 
+// keywords
+
 classdec.("class")
-import.("#include")
-visibility.("public|private|protected|prop")
+import.("import")
+construct.("constructor")
+destruct.("destructor")
+visibility.("public|private|protected")
 base_type.("(const )?(int|char|float|double|long|string)")
 headext.(".h(pp)?")
+py.("\@py")
+
+// operators
+
 ref.("\&")
 ptr.("[*]")
 lcrch.("\{")
@@ -17,5 +25,8 @@ lt.("<")
 dqu.('"')
 qu.("'")
 antisl.("/")
+
+// alphanum
+
 identifier.("[a-z_A-Z]\w*")
 

@@ -3,8 +3,8 @@ import ctypes
 import json
 import os.path
 
-from PyCpp import pycpp
-from PyCpp.observers.HppGenerator import HppGenerator
+import pycpp
+from observers.HppGenerator import HppGenerator
 
 parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
 parselib.get_json.restype = ctypes.c_char_p
@@ -38,9 +38,10 @@ if __name__ == "__main__":
 	psess = ParseSession()
 	psess.load_grammar("data/grammar.grm")
 	ss = psess.parse_to_json("data/test2.java")
-
-	cppgen = HppGenerator(stream=print)
-	gen = pycpp.PyCppEngine(ss, observers=[cppgen])
+	print(ss)
+	hppgen = HppGenerator(stream=print)
+	# TODO: cppgen, ctypesgen, pymodgen
+	gen = pycpp.PyCppEngine(ss, observers=[hppgen])
 	gen.drive()
 
 	del psess

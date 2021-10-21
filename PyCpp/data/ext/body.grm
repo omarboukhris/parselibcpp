@@ -2,7 +2,8 @@
 %import "./members.grm"
 
 //fix whatever this is
-classbody -> 
+classbody ->
+    !constructor |
 	!method |
 	!attribute |
 []

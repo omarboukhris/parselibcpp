@@ -1,20 +1,19 @@
 
+constructor ->
+    !construct. lpar. !args rpar. semic. |
+    !destruct. lpar. rpar. semic.
+
 // attribute syntax definition
 
 attribute -> 
-	!visibility. 
-	s:type 
-	att_name=identifier. 
-semic. 
+	!visibility. s:type att_name=identifier. semic. |
+	!visibility. !py. s:type att_name=identifier. semic.
 
 // method syntax definition
 
 method -> 
-	!visibility. 
-	s:type 
-	met_name=identifier. 
-	lpar. !args rpar.
-semic.
+	!visibility. s:type met_name=identifier. lpar. !args rpar. semic. |
+	!visibility. !py. s:type met_name=identifier. lpar. !args rpar. semic.
 
 args ->
 	s:type args_name=identifier. |

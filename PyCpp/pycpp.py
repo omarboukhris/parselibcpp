@@ -1,5 +1,5 @@
 
-from PyCpp.observers.observer import *
+from observers.observer import *
 
 
 class PyCppEngine:
@@ -42,6 +42,7 @@ class PyCppEngine:
 		for attr in attr_list:
 			out.append(Attribute(
 				visibility=attr["visibility"][0],
+				py="py" in attr.keys(),
 				type=PyCppEngine.process_type(attr),
 				name=attr["att_name"][0]
 			))
@@ -53,6 +54,7 @@ class PyCppEngine:
 		for meth in meth_list:
 			out.append(Method(
 				visibility=meth["visibility"][0],
+				py="py" in meth.keys(),
 				type=PyCppEngine.process_type(meth),
 				name=meth["met_name"][0],
 				args=PyCppEngine.process_args(meth)

@@ -3,30 +3,29 @@ from .observer import Observer
 
 from string import Template
 
-class_template = """
-class $classname {
-
-$public_methods
-$public_attributes
-$private_methods
-$private_attributes
-$protected_methods
-$protected_attributes	
-} ;
-"""
-
-attr_template = "\t$type $name;\n"
-
-meth_template = "\t$type $name ($args);\n"
-
 class HppGenerator(Observer):
+
+	class_template = "\n\
+class $classname {\n\
+\n\
+$public_methods\
+$public_attributes\
+$private_methods\
+$private_attributes\
+$protected_methods\
+$protected_attributes\
+} ;\n"
+
+	attr_template = "\t$type $name;\n"
+
+	meth_template = "\t$type $name ($args);\n"
 
 	class_temp = Template(class_template)
 	attr_temp = Template(attr_template)
 	meth_temp = Template(meth_template)
 
 	def __init__(self, stream: callable):
-		self.stream = stream
+		super(HppGenerator, self).__init__(stream)
 
 	def process_import(self, filenames=[]):
 		import_list = ["#include " + fn for fn in filenames]
@@ -47,7 +46,6 @@ class HppGenerator(Observer):
 			)
 
 		self.stream(ss)
-		self.stream(t_class)
 
 	@staticmethod
 	def process_attributes(visibility, attrs: list):
@@ -59,7 +57,7 @@ class HppGenerator(Observer):
 					name=attr.name
 				)
 		if ss != "":
-			ss = "{visibility}:\n".format(visibility=visibility) + ss
+			ss = "{visibility}:\n".format(visibility=visibility) + ss + "\n"
 		return ss
 
 	@staticmethod
@@ -73,7 +71,7 @@ class HppGenerator(Observer):
 					args=HppGenerator.process_args(meth.args)
 				)
 		if ss != "":
-			ss = "{visibility}:\n".format(visibility=visibility) + ss
+			ss = "{visibility}:\n".format(visibility=visibility) + ss + "\n"
 		return ss
 
 	@staticmethod
@@ -82,3 +80,4 @@ class HppGenerator(Observer):
 		for arg in args:
 			ss += "{type} {name}, ".format(type=arg.type, name=arg.name)
 		return ss[:-2]
+
