@@ -72,8 +72,13 @@ public :
 		}
 		std::cout << "] " << int(i*100.0f/max) << "% " ;
 		if (i == max-1) {
-			std::cout << "finished" ;
+			std::cout << "\r[" ;
+			for (size_t k = 0 ; k++ < width-1;) {
+				std::cout << "=" ;
+			}
+			std::cout << ">] 100%     finished" ;
 		} else {
+			std::cout << "] " << int(i*100.0f/max) << "% " ;
 			std::cout << "loading\r" ;
 		}
 	}

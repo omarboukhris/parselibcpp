@@ -10,11 +10,15 @@ namespace lexer {
 
 using namespace std ;
 
-void Lexer::tokenize(string str, bool verbose) {
+void Lexer::tokenize(string str, bool verbose, bool splits) {
 	tokens.clear () ;
 	// split lines otherwise boost regex parser makes weird tokens
-	for (std::string line : utils::split(str, "\n")) {
-		tokenizeline(line);
+	if (splits) {
+		for (std::string line : utils::split(str, "\n")) {
+			tokenizeline(line);
+		}
+	} else {
+		tokenizeline(str);
 	}
 	if (verbose) {
 		for (Token tok : tokens) {

@@ -1,6 +1,7 @@
 
-AXIOM -> xsx
+AXIOM -> S
 
-xsx -> ssqx sdc.
+S -> a. S b. | ''
 
-
+a.("a")
+b.("b")

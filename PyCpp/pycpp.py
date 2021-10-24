@@ -1,5 +1,5 @@
 
-from observers.observer import *
+from PyCpp.observers.observer import *
 
 
 class PyCppEngine:

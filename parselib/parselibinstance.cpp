@@ -29,7 +29,7 @@ void ParseSession::load_grammar(std::string filename, bool verbose) {
 	utils::Preproc_ptr preproc (new utils::OnePassPreprocessor()) ;
 	parsers::GenericGrammarParser ggp (preproc) ;
 
-	Grammar grammar = ggp.parse (filename, verbose) ;
+	Grammar grammar = ggp.parse (filename, verbose, true) ;
 	// grammar.exportToFile(filename);
 	this->grammar = normoperators::get2nf(grammar) ;
 }

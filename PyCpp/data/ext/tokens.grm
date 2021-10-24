@@ -12,6 +12,8 @@ py.("\@py")
 
 // operators
 
+multilinecommands.("(?s)\@\{.*?\@\}")
+
 ref.("\&")
 ptr.("[*]")
 lcrch.("\{")

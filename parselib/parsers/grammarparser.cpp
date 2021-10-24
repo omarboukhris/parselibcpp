@@ -21,7 +21,7 @@ GenericGrammarParser::GenericGrammarParser (utils::Preproc_ptr preproc) {
 	this->preproc = preproc ;
 }
 
-Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
+Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool splits) {
 	Grammar out_grammar = Grammar() ;
 	preproc->addToQueue (filename) ;
 
@@ -33,7 +33,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose) {
 		
 		//tokenize grammar source
 		lexer::Lexer lang (GenericGrammarTokenizer::grammartokens) ;
-		lang.tokenize(source, verbose);
+		lang.tokenize(source, verbose, splits);
 
 		//preprocessor here (one pass preprocessor)
 		lang.tokens = preproc->preprocess (filename, lang.tokens) ;

@@ -27,8 +27,10 @@ public :
 	 * \brief tokenizes a string into a token's list
 	 * \param str     string to tokenize
 	 * \param verbose set to true for verbose, false otherwise
+	 * \param splits  set to true to tokenize by line, otherwise, tokenizes
+	 * the whole file
 	 */
-	void tokenize (std::string str, bool verbose=false) ;
+	void tokenize (std::string str, bool verbose=false, bool splits=true) ;
 
 private :
 

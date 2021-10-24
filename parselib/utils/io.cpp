@@ -8,7 +8,6 @@
 #include <streambuf>
 #include <string>
 
-
 namespace parselib {
 
 namespace utils {
@@ -19,7 +18,7 @@ using namespace std ;
 string gettextfilecontent (string filename) {
 	ifstream filestream (filename) ;
 	if (!filestream.is_open()) {
-		utils::Printer::showerr("can't read file : " + filename );
+		utils::Printer::showerr("can't read file : " + filename);
 		return "" ;
 	}
 	

@@ -7,7 +7,7 @@ namespace grammaroperators {
 
 PatternsMap GenericGrammarTokenizer::grammartokens = {
 	//PREPROCESSOR
-	{"\\%(import|include) \"(.+)/([^/]+)\\.grm\"",	"IMPORT"},
+	{"\\%(import|include) \"(.+)(/([^/]+))?\\.grm\"",	"IMPORT"},
 
 	//KEYWORDS
 	{"(//|\\;).*",						"LINECOMMENT"},

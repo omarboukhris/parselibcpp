@@ -3,6 +3,8 @@
 #include <parselib/parsers/lexer.hpp>
 #include <parselib/utils/io.hpp>
 
+#include <unistd.h>
+
 namespace parselib {
 
 namespace utils {
@@ -63,7 +65,7 @@ public :
 		utils::StrList x = utils::split(filename, "/") ;
 		x.pop_back() ;
 
-		pwd = utils::join(x, "/") ; 
+		pwd = utils::join(x, "/") ;
 
 		TokenList out_tokenlist = processimports (tokenlist) ;
 		processed.push_back (filename) ;
@@ -83,8 +85,8 @@ protected :
 				std::size_t quotepos = token.value().find("\"") ;
 				std::string path = token.value().substr(quotepos+1) ;
 				path.pop_back() ; //eliminate the last "
-				std::string filename = pwd + "/" + path ; 
-// 				std::cout << filename << std::endl ;
+				std::string filename = pwd + "/" + path ;
+//				std::cout << "IMPORT [" << filename << "]" << std::endl ;
 				addToQueue (filename) ;
 			} else {
 				outtok.push_back (token) ;

@@ -13,7 +13,9 @@ attribute ->
 
 method -> 
 	!visibility. s:type met_name=identifier. lpar. !args rpar. semic. |
-	!visibility. !py. s:type met_name=identifier. lpar. !args rpar. semic.
+	!visibility. !py. s:type met_name=identifier. lpar. !args rpar. semic. |
+	!visibility. s:type met_name=identifier. lpar. !args rpar. !multilinecommands. |
+	!visibility. !py. s:type met_name=identifier. lpar. !args rpar. !multilinecommands.
 
 args ->
 	s:type args_name=identifier. |
