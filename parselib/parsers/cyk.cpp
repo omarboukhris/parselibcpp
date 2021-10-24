@@ -93,7 +93,7 @@ Frame CYK::membership (TokenList word) {
 		pbar.update(l);
 	}
 	std::cout << std::endl ;
-	std::cout << getstrmat(P) ;
+//	std::cout << getstrmat(P) ;
 
 	if (P[n-1][0].size() == 0) {
 //		return Frame() ; // try returning the broken nodes
@@ -107,13 +107,21 @@ Frame CYK::membership (TokenList word) {
  */
 Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
 	Frame output;
+	size_t i = 0, o_i, o_j;
 	for (const Row& line: mat) {
+		size_t j = 0;
 		for (const Frame& elm: line) {
 			if (elm.size() > 0) {
 				output = elm;
+				o_i = i ; o_j = j ;
 			}
+			j++ ;
 		}
+		i++ ;
 	}
+	if (o_j)
+		output.push_back(mat.at(0).at(o_j-1).at(0));
+
 	return output;
 }
 

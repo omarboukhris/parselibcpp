@@ -34,30 +34,93 @@ public :
 	virtual std::string getval () ;
 	std::string val ;
 } ;
+
 // tree (still branching)
 class Tree : public AbsNode {
+
 public :
+
+	//
+	// Constructors
+	//
+
 	Tree() ;
 	Tree(AbsNode* node) ;
+
+	//
+	// Helpers and acccessors
+	//
+
+	/*!
+	 * \brief merge inplace two trees into one
+	 * \param tree tree to merge with *this
+	 * \return current tree
+	 */
 	Tree * merge (Tree *tree) ;
+
+	/*!
+	 * \brief keyInTree check if the key is in the tree
+	 * \param key to look for
+	 * \return boolean
+	 */
 	size_t keyInTree (std::string key) ;
+
 	virtual std::string getval () ;
+
+	//
+	// stream operators
+	//
+
 	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
+
 private :
+	/*!
+	 * \brief dumps content of a tree into a string
+	 * \param tree tree to unfold
+	 * \param tab used for recursive tab stack tracking
+	 * \return tree recursive dump of *tree parameter
+	 */
 	std::string dump (AbsNode *tree, std::string tab="") ;
 };
 
-// abstract node : generates the parse tree 
-// unfold is some kind of lazy eval
+/*!
+ * \brief abstract node : generates the parse tree
+ * unfold is a lazy eval
+ */
 class Node {
+
 public :
+
+	//
+	// Constructors
+	//
+
 	Node () ;
+
+	//
+	// Helpers and accessors
+	//
+
+	/*!
+	 * \brief iscompacted check if node is compacted
+	 * check if there are / in token name
+	 * \return boolean
+	 */
 	bool iscompacted () ;
+
+	/*!
+	 * \brief abstract, pure virtual
+	 * unfolds the Node into a parse tree : Tree*
+	 * \param parent  parent node
+	 * \return Tree pointer
+	 */
 	virtual Tree* unfold (std::string parent="") = 0 ;
 
+	/// \brief node type (terminal or non terminal)
 	std::string nodetype ;
 } ;
+
 
 class UnitNode : public Node {
 public :

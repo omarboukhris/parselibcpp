@@ -84,6 +84,10 @@ parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose,
 			std::fstream fstr (filename + ".log", std::fstream::out);
 			if (fstr.is_open()) {
 				utils::Printer::showerr("Parsing went wrong, check : " + filename + ".log");
+				auto sus_tok = result.back();
+				std::stringstream ss ;
+				ss << sus_tok->unfold() ;
+				utils::Printer::showerr("Broken token seems to be <" + ss.str() + ">") ;
 				fstr << result[index]->unfold();
 				fstr.close();
 			} else {

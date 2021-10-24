@@ -96,7 +96,6 @@ string join (StrList strlist, string delim) {
 		return "" ;
 	}
 	string out = "" ;
-// 	for (string s : strlist) {
 	for (size_t i = 0 ; i < strlist.size()-1 ; i++) {
 		std::string s = strlist[i] ;
 		out += s + delim ;

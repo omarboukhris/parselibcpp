@@ -107,17 +107,33 @@ std::ostream& operator<<(std::ostream& out, Tree tree) {
 	return out ;
 }
 
+/*!
+ * \brief Tree::dump dumps the content of a tree into a std::string
+ */
 std::string Tree::dump(AbsNode* tree, std::string tab) {
 	std::string ss = "" ;
+	// count how many terminals displayed
+	int count = 0;
+	// count if we dump non terminals
+	bool dump_nonterminal = false;
 	for (AbsNode::Token tok : tree->tokens) {
 		if (tok.second->type == "leaf") {
 			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
+			count++ ;
 		} else {
+			dump_nonterminal = true;
 			ss += tab + tok.first + " = {\n" 
 				+ dump(tok.second, tab+"\t")  
 				+ tab + "}\n" ;
 		}
 	}
+
+	// check, if this is for error display/handling
+	// must be highest non recursive call
+	// must not dump any non terminal token
+	// must dump only one unique terminal token
+	if (not dump_nonterminal and count == 1 and tab.size() == 0)
+		ss.pop_back();
 	return ss ;
 }
 

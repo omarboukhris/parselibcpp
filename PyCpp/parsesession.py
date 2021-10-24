@@ -2,31 +2,32 @@ import ctypes
 import json
 import os.path
 
-parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
-parselib.get_json.restype = ctypes.c_char_p
 
 class ParseSession:
 
+	parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
+	parselib.get_json.restype = ctypes.c_char_p
+
 	def __init__(self):
-		self.sess = parselib.new_session()
+		self.sess = ParseSession.parselib.new_session()
 
 	def load_grammar(self, filepath: str, verbose: bool = False):
 		if os.path.isfile(filepath) and self.sess:
-			parselib.load_grammar(self.sess, filepath.encode(), verbose)
+			ParseSession.parselib.load_grammar(self.sess, filepath.encode(), verbose)
 
 	def parse_to_json_file(self, filepath: str, verbose: bool = False):
 		if os.path.isfile(filepath) and self.sess:
-			parselib.store_json(self.sess, filepath.encode(), verbose)
+			ParseSession.parselib.store_json(self.sess, filepath.encode(), verbose)
 
 	def parse_to_json(self, filepath: str, verbose: bool = False):
 		if os.path.isfile(filepath) and self.sess:
-			jsonstr = parselib.get_json(self.sess, filepath.encode(), verbose)
+			jsonstr = ParseSession.parselib.get_json(self.sess, filepath.encode(), verbose)
 			output = json.loads(jsonstr.decode())
 			return output
 		return None
 
 	def __del__(self):
-		parselib.del_session(self.sess)
+		ParseSession.parselib.del_session(self.sess)
 		self.sess = None
 
 

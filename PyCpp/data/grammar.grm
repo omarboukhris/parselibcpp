@@ -20,6 +20,6 @@ path ->
 []
 
 classdef ->
-	classdec. classname=identifier. lcrch. !classbody rcrch. semic. |
-	doxy=multilinecomments. classdec. classname=identifier. lcrch. !classbody rcrch. semic. |
+	classdec. !type lcrch. !classbody rcrch. semic. |
+	doxy=multilinecomments. classdec. !type lcrch. !classbody rcrch. semic. |
 []
