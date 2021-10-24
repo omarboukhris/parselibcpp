@@ -1,6 +1,4 @@
-%import "ext/body.grm"
-
-%import "ext/tokens.grm"
+%import "glib/body.grm"
 
 AXIOM -> file
 
@@ -23,4 +21,5 @@ path ->
 
 classdef ->
 	classdec. classname=identifier. lcrch. !classbody rcrch. semic. |
+	doxy=multilinecomments. classdec. classname=identifier. lcrch. !classbody rcrch. semic. |
 []

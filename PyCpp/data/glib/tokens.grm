@@ -3,8 +3,7 @@
 
 classdec.("class")
 import.("import")
-construct.("constructor")
-destruct.("destructor")
+construct_type.("constructor|destructor")
 visibility.("public|private|protected")
 base_type.("(const )?(int|char|float|double|long|string)")
 headext.(".h(pp)?")
@@ -13,6 +12,7 @@ py.("\@py")
 // operators
 
 multilinecommands.("(?s)\@\{.*?\@\}")
+multilinecomments.("(?s)\/\*.*?\*\/")
 
 ref.("\&")
 ptr.("[*]")

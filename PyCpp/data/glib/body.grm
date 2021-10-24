@@ -1,5 +1,7 @@
 
-%import "./members.grm"
+%import "construct.grm"
+%import "method.grm"
+%import "attribute.grm"
 
 //fix whatever this is
 classbody ->
@@ -7,3 +9,4 @@ classbody ->
 	!method |
 	!attribute |
 []
+

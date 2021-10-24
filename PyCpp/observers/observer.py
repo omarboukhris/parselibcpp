@@ -2,9 +2,10 @@
 from collections import namedtuple
 
 Args = namedtuple("Args", ["type", "name"])
-Attribute = namedtuple("Attribute", ["visibility", "py", "type", "name"])
-Method = namedtuple("Method", ["visibility", "py", "type", "name", "args"])
-Class = namedtuple("Class", ["name", "attributes", "methods"])
+Attribute = namedtuple("Attribute", ["doxy", "visibility", "py", "type", "name"])
+Method = namedtuple("Method", ["doxy", "visibility", "py", "type", "name", "args", "core"])
+Construct = namedtuple("Construct", ["doxy", "construct_type", "args", "core"])
+Class = namedtuple("Class", ["doxy", "name", "constructs", "attributes", "methods"])
 
 class Observer:
 

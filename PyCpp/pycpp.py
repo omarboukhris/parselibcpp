@@ -28,6 +28,8 @@ class PyCppEngine:
 		for classname, classbody in zip(classdef["classname"], classdef["classbody"]):
 			classobj = Class(
 				name=classname,
+				doxy=classdef["doxy"] if "doxy" in classdef.keys() else "",
+				constructs=PyCppEngine.write_construct(classbody["constructor"]),
 				attributes=PyCppEngine.write_attr(classbody["attribute"]),
 				methods=PyCppEngine.write_meth(classbody["method"])
 			)
@@ -37,10 +39,23 @@ class PyCppEngine:
 			obs.process_class(out)
 
 	@staticmethod
+	def write_construct(construct_list):
+		out = []
+		for construct in construct_list:
+			out.append(Construct(
+				doxy=construct["doxy"][0] if "doxy" in construct.keys() else "",
+				construct_type=construct["construct_type"][0],
+				args=PyCppEngine.process_args(construct),
+				core=construct["construct_core"][0] if "construct_core" in construct.keys() else ""
+			))
+		return out
+
+	@staticmethod
 	def write_attr(attr_list):
 		out = []
 		for attr in attr_list:
 			out.append(Attribute(
+				doxy=attr["doxy"][0] if "doxy" in attr.keys() else "",
 				visibility=attr["visibility"][0],
 				py="py" in attr.keys(),
 				type=PyCppEngine.process_type(attr),
@@ -53,11 +68,13 @@ class PyCppEngine:
 		out = []
 		for meth in meth_list:
 			out.append(Method(
+				doxy=meth["doxy"][0] if "doxy" in meth.keys() else "",
 				visibility=meth["visibility"][0],
 				py="py" in meth.keys(),
 				type=PyCppEngine.process_type(meth),
 				name=meth["met_name"][0],
-				args=PyCppEngine.process_args(meth)
+				args=PyCppEngine.process_args(meth),
+				core=meth["meth_core"][0] if "meth_core" in meth.keys() else ""
 			))
 		return out
 

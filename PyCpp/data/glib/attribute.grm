@@ -1,0 +1,14 @@
+
+%import "tokens.grm"
+
+// attribute syntax definition
+
+attribute ->
+    // undocumented attribute
+	!visibility. s:type att_name=identifier. semic. |
+	!visibility. !py. s:type att_name=identifier. semic. |
+
+	// documented attribute
+	doxy=multilinecomments. !visibility. s:type att_name=identifier. semic. |
+	doxy=multilinecomments. !visibility. !py. s:type att_name=identifier. semic.
+

@@ -3,7 +3,7 @@ from .observer import Observer
 
 from string import Template
 
-class HppGenerator(Observer):
+class TemplGenerator(Observer):
 
 	class_template = "\n\
 $doc\n\
@@ -18,11 +18,11 @@ $protected_methods\
 $protected_attributes\
 } ;\n"
 
-	construct_template = "$doc\n\t$classname($args);\n\n"
+	construct_template = "$doc\n\t$classname ($args) {$construct_core}\n\n"
 
 	attr_template = "$doc\n\t$type $name;\n\n"
 
-	meth_template = "$doc\n\t$type $name ($args);\n\n"
+	meth_template = "$doc\n\t$type $name ($args) {$meth_core}\n\n"
 
 	class_temp = Template(class_template)
 	const_temp = Template(construct_template)
@@ -30,7 +30,7 @@ $protected_attributes\
 	meth_temp = Template(meth_template)
 
 	def __init__(self, stream: callable):
-		super(HppGenerator, self).__init__(stream)
+		super(TemplGenerator, self).__init__(stream)
 
 	def process_import(self, filenames=[]):
 		import_list = ["#include " + fn for fn in filenames]
@@ -40,16 +40,16 @@ $protected_attributes\
 	def process_class(self, t_class=[]):
 		ss = ""
 		for cl in t_class:
-			ss += HppGenerator.class_temp.substitute(
+			ss += TemplGenerator.class_temp.substitute(
 				doc=cl.doxy if cl.doxy else "// No class documentation was specified",
 				classname=cl.name,
-				constructors=HppGenerator.process_constructors(cl.constructs, cl.name),
-				public_attributes=HppGenerator.process_attributes("public", cl.attributes),
-				public_methods=HppGenerator.process_methods("public", cl.methods),
-				private_attributes=HppGenerator.process_attributes("private", cl.attributes),
-				private_methods=HppGenerator.process_methods("private", cl.methods),
-				protected_attributes=HppGenerator.process_attributes("protected", cl.attributes),
-				protected_methods=HppGenerator.process_methods("protected", cl.methods),
+				constructors=TemplGenerator.process_constructors(cl.constructs, cl.name),
+				public_attributes=TemplGenerator.process_attributes("public", cl.attributes),
+				public_methods=TemplGenerator.process_methods("public", cl.methods),
+				private_attributes=TemplGenerator.process_attributes("private", cl.attributes),
+				private_methods=TemplGenerator.process_methods("private", cl.methods),
+				protected_attributes=TemplGenerator.process_attributes("protected", cl.attributes),
+				protected_methods=TemplGenerator.process_methods("protected", cl.methods),
 			)
 
 		self.stream(ss)
@@ -59,10 +59,11 @@ $protected_attributes\
 		ss = ""
 		for construct in constructors:
 			cname_prefix = "" if construct.construct_type == "constructor" else "~"
-			ss += HppGenerator.const_temp.substitute(
-				doc=HppGenerator.process_doc(construct.doxy),
+			ss += TemplGenerator.const_temp.substitute(
+				doc=TemplGenerator.process_doc(construct.doxy),
 				classname=cname_prefix + classname,
-				args=HppGenerator.process_args(construct.args)
+				args=TemplGenerator.process_args(construct.args),
+				construct_core=TemplGenerator.process_core(construct.core)
 			)
 		if ss != "":
 			ss = "public:\n" + ss
@@ -73,8 +74,8 @@ $protected_attributes\
 		ss = ""
 		for attr in attrs:
 			if attr.visibility == visibility:
-				ss += HppGenerator.attr_temp.substitute(
-					doc=HppGenerator.process_doc(attr.doxy),
+				ss += TemplGenerator.attr_temp.substitute(
+					doc=TemplGenerator.process_doc(attr.doxy),
 					type=attr.type,
 					name=attr.name
 				)
@@ -87,11 +88,12 @@ $protected_attributes\
 		ss = ""
 		for meth in meths:
 			if meth.visibility == visibility:
-				ss += HppGenerator.meth_temp.substitute(
-					doc=HppGenerator.process_doc(meth.doxy),
+				ss += TemplGenerator.meth_temp.substitute(
+					doc=TemplGenerator.process_doc(meth.doxy),
 					type=meth.type,
 					name=meth.name,
-					args=HppGenerator.process_args(meth.args)
+					args=TemplGenerator.process_args(meth.args),
+					meth_core=TemplGenerator.process_core(meth.core)
 				)
 		if ss != "":
 			ss = "{visibility}:\n".format(visibility=visibility) + ss + "\n"
@@ -114,3 +116,17 @@ $protected_attributes\
 		else:
 			doc = "\t" + "\n\t".join([d.strip() for d in doc_split])
 		return doc
+
+	@staticmethod
+	def process_core(strcore: str):
+		""" strips the @{ @} tokens from a function core """
+		if not strcore:
+			return ""
+		elif strcore.find("@{") == 0 and strcore.find("@}") == len(strcore)-2:
+			strcore = strcore[2:-2]
+			split_core = strcore.split("\n")
+			merge_core = "\t\t" + "\n\t\t".join([sc.strip() for sc in split_core])
+			return merge_core[:-1]
+		else:
+			# ill formed core somehow
+			raise Exception("Ill formed function core <{}>".format(strcore))
