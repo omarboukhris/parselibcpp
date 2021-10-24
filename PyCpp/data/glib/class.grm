@@ -1,0 +1,13 @@
+
+%import "tokens.grm"
+
+classname ->
+	identifier. |
+	template_type |
+
+inheritence ->
+	visibility. identifier. |
+	visibility. template_type |
+	visibility. identifier. comma. |
+	visibility. template_type comma. |
+[]
