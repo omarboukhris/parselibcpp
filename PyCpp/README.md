@@ -42,7 +42,7 @@ An example of use could be
 
 This script loops through recursively globbed files and apply TemplateGenerator on each file correctly parsed
 
-```
+```python
 from PyCpp.parsesession import ParseSession
 from PyCpp.observers import HppGenerator, TemplGenerator
 from PyCpp import pycpp
