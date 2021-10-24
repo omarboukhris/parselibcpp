@@ -30,7 +30,7 @@ public :
 	 * \param splits  set to true to tokenize by line, otherwise, tokenizes
 	 * the whole file
 	 */
-	void tokenize (std::string str, bool verbose=false, bool splits=true) ;
+	void tokenize (std::string str, bool verbose=false, bool splits=false) ;
 
 private :
 

@@ -17,7 +17,11 @@ class myclass {
 	private char *& c3;
 	public string &&blob;
 
-	public const string b (const int param3 , string param2) ;
+	public const string b (const int param3 , string param2) @{
+	    code goes here
+	    lorem ipsum
+	@}
+
 	public @py int e (const int t);
 
 	protected vector<pair<int, int, vector<int>, int>> e;
