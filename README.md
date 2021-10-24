@@ -23,10 +23,14 @@ To test it, you can use the following shell command
 
 ```bash
 cd parselibcpp
+
 #globs all java files in data/ folder and parses them 
 #following the rules of the grammar @data/grammar.grm
 #result is stored in .json files where the globed files are
 build/parcexlib --gsrc=data/grammar.grm --ext=java --dir=data
+
+#launch python script tessting pyCpp
+python3 main.py
 ```
 
 ### Main interfaces :
