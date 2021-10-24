@@ -20,6 +20,22 @@ path ->
 []
 
 classdef ->
-	classdec. !type lcrch. !classbody rcrch. semic. |
-	doxy=multilinecomments. classdec. !type lcrch. !classbody rcrch. semic. |
+    // without enheritence
+	classdec. s:classname lcrch. !classbody rcrch. semic. |
+	doxy=multilinecomments. classdec. s:classname lcrch. !classbody rcrch. semic. |
+
+    // with inheritence
+	classdec. s:classname dblpt. s:inheritence lcrch. !classbody rcrch. semic. |
+	doxy=multilinecomments. classdec. s:classname dblpt. s:inheritence lcrch. !classbody rcrch. semic. |
+[]
+
+classname ->
+	identifier. |
+	template_type |
+
+inheritence ->
+	visibility. identifier. |
+	visibility. template_type |
+	visibility. identifier. comma. |
+	visibility. template_type comma. |
 []
