@@ -12,11 +12,6 @@ class myclass : public absclass, public xbezglife {
 
     constructor(int a, const float b);
 
-    /*!
-    destruct comment
-    */
-    destructor();
-
     /*! method documentation
     \param param3 description
     \return processed string

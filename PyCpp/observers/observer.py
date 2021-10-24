@@ -5,7 +5,7 @@ Args = namedtuple("Args", ["type", "name"])
 Attribute = namedtuple("Attribute", ["doxy", "visibility", "py", "type", "name"])
 Method = namedtuple("Method", ["doxy", "visibility", "py", "type", "name", "args", "core"])
 Construct = namedtuple("Construct", ["doxy", "construct_type", "args", "core"])
-Class = namedtuple("Class", ["doxy", "name", "constructs", "attributes", "methods"])
+Class = namedtuple("Class", ["doxy", "name", "inherit", "constructs", "attributes", "methods"])
 
 class Observer:
 

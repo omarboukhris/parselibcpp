@@ -7,7 +7,8 @@ class TemplGenerator(Observer):
 
 	class_template = "\n\
 $doc\n\
-class $classname {\n\
+class $classname\
+$inheritence {\n\
 \n\
 $constructors\
 $public_methods\
@@ -43,6 +44,7 @@ $protected_attributes\
 			ss += TemplGenerator.class_temp.substitute(
 				doc=cl.doxy if cl.doxy else "// No class documentation was specified",
 				classname=cl.name,
+				inheritence=": {}".format(cl.inherit[0]) if cl.inherit else "",
 				constructors=TemplGenerator.process_constructors(cl.constructs, cl.name),
 				public_attributes=TemplGenerator.process_attributes("public", cl.attributes),
 				public_methods=TemplGenerator.process_methods("public", cl.methods),

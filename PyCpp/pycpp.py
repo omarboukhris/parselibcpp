@@ -29,6 +29,7 @@ class PyCppEngine:
 			classobj = Class(
 				name=classname,
 				doxy=classdef["doxy"] if "doxy" in classdef.keys() else "",
+				inherit=classdef["inheritence"] if "inheritence" in classdef.keys() else "",
 				constructs=PyCppEngine.write_construct(classbody["constructor"]) if "constructor" in classbody.keys() else [],
 				attributes=PyCppEngine.write_attr(classbody["attribute"]) if "attribute" in classbody.keys() else [],
 				methods=PyCppEngine.write_meth(classbody["method"]) if "method" in classbody.keys() else []
