@@ -127,7 +127,7 @@ $protected_attributes\
 		elif strcore.find("@{") == 0 and strcore.find("@}") == len(strcore)-2:
 			strcore = strcore[2:-2]
 			split_core = strcore.split("\n")
-			merge_core = "\t\t" + "\n\t\t".join([sc.strip() for sc in split_core])
+			merge_core = "\t" + "\n\t".join([sc.strip() for sc in split_core])
 			return merge_core[:-1]
 		else:
 			# ill formed core somehow

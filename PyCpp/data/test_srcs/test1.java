@@ -3,7 +3,12 @@ import <iostream>
 import <iostream.h>
 import "parselib/local.hpp"
 
-class myclass : public absclass, public xbezglife {
+class myclass :
+    public absclass<
+        abstracinexistanttype&,
+        someptrTemplate*>,
+    public xbezglife
+{
 
     /*!
     doc goes here
@@ -23,7 +28,7 @@ class myclass : public absclass, public xbezglife {
 
 	public @py int e (const int t);
 
-	protected vector<pair<int, int, vector<int>, int>> e;
+	protected vector<pair<int*, int**, vector<int>, int>> e;
 } ;
 
 

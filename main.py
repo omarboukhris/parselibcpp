@@ -1,6 +1,6 @@
 
 from PyCpp.parsesession import ParseSession
-from PyCpp.observers import HppGenerator, TemplGenerator
+from PyCpp.observers import HppGenerator, TemplGenerator, CppGenerator
 from PyCpp import pycpp
 
 import glob
@@ -16,9 +16,10 @@ if __name__ == "__main__":
 
 		# TODO: cppgen, ctypesgen, pymodgen
 		hppgen = HppGenerator(stream=print)
+		cppgen = CppGenerator(stream=print)
 		templ = TemplGenerator(stream=print)
 
-		gen = pycpp.PyCppEngine(ss, observers=[hppgen, templ])
+		gen = pycpp.PyCppEngine(ss, observers=[hppgen, cppgen, templ])
 		gen.drive()
 
 	del psess

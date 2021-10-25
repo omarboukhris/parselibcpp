@@ -25,8 +25,11 @@ args ->
 
 type ->
 	template_type |
+	base_type. |
+	template_type refptr |
 	base_type. refptr |
-	base_type.
+	identifier. |
+	identifier. refptr
 
 refptr -> 
 	ref. | ptr. |
