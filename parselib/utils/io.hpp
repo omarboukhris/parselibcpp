@@ -46,7 +46,7 @@ public :
 	static void showinfo (std::string str) {
 		std::cout << "(info) " << str << std::endl ;
 	}
-	
+
 	static void showerr (std::string str) {
 		std::cerr << "(error) " << str << std::endl ;
 	}

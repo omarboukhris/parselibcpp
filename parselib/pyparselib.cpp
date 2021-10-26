@@ -9,7 +9,7 @@ namespace parselib {
 
 extern "C" {
 	
-	ParseSession* new_session() { return new ParseSession() ; }
+	ParseSession* new_session(int logLevel) { return new ParseSession(logLevel) ; }
 
 	void load_grammar(ParseSession* session, const char* filepath, bool verb) {
 		session->load_grammar(std::string(filepath), verb);

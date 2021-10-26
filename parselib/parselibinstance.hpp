@@ -1,6 +1,7 @@
 #pragma once
 
 #include <parselib/parsers/parsers.hpp>
+#include <parselib/utils/logger.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -10,6 +11,7 @@ namespace pt = boost::property_tree ;
 namespace parselib {
 
 using TreeList = std::vector<pt::ptree> ;
+
 /*!
  * \brief eliminates the last char of a string if it's a dot (.)
  * \param name : node name to process
@@ -17,12 +19,10 @@ using TreeList = std::vector<pt::ptree> ;
 std::string processnodename (std::string name) ;
 
 class ParseSession {
+
 public :
-	Grammar grammar ;
-	parsers::AbstractParser *parser ;
-	lexer::Lexer tokenizer ;
-	
-	ParseSession () ;
+
+	ParseSession (int logLevel=utils::Logger::LogBasic) ;
 	~ParseSession() ;
 
 	/*!
@@ -66,7 +66,7 @@ public :
 	 * True (by default) to print results, otherwise False
 	 * \return Tree* processed parsetree if exists
 	 */
-	parsetree::Tree* processSource (std::string filename, bool verbose=false, size_t index=0) ;
+	parsetree::Tree* process_source (std::string filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
@@ -81,6 +81,13 @@ private :
 	parsetree::AbsNode* processnode(parsetree::AbsNode::Token element);
 
 	pt::ptree to_ptree (parsetree::AbsNode* tree) ;
+
+protected :
+
+	Grammar grammar ;
+	parsers::AbstractParser *parser ;
+	lexer::Lexer tokenizer ;
+	utils::Logger_ptr logger ;
 	
 } ; //class ParseSession
 

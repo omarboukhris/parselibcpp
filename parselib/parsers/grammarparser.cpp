@@ -7,18 +7,25 @@
 
 #include <parselib/utils/io.hpp>
 
+#include <parselib/utils/logger.h>
+
 #include "grammarparser.hpp"
+
 
 namespace parselib {
 
 namespace parsers {
 
+
 using namespace std ;
 using namespace grammaroperators ;
+using namespace utils ;
 
-GenericGrammarParser::GenericGrammarParser (utils::Preproc_ptr preproc) {
+
+GenericGrammarParser::GenericGrammarParser (Preproc_ptr preproc, Logger_ptr logger) {
 	//preprocessor class
 	this->preproc = preproc ;
+	this->logger  = logger  ;
 }
 
 Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool splits) {
@@ -28,7 +35,10 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool sp
 	while (!preproc->queueIsEmpty()) {
 
 		filename = preproc->queue[0] ;
-		utils::Printer::showinfo("now processing : " + filename);
+
+//		utils::Printer::showinfo("now processing : " + filename);
+		logger->log_basic_info("now processing : " + filename);
+
 		std::string source = utils::gettextfilecontent (filename) ;
 		
 		//tokenize grammar source

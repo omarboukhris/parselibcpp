@@ -4,14 +4,18 @@
 #include <parselib/datastructure/operations/generalop.hpp>
 #include <parselib/datastructure/operations/normop.hpp>
 
+#include <parselib/utils/logger.h>
+
 #include "parselibinstance.hpp"
+
 
 namespace parselib {
 
-ParseSession::ParseSession() {
+ParseSession::ParseSession(int logLevel) {
 	grammar   = Grammar() ;
 	parser    = new parsers::CYK() ;
 	tokenizer = lexer::Lexer () ;
+	logger    = std::make_shared<utils::Logger>(logLevel) ;
 }
 
 ParseSession::~ParseSession() {
@@ -27,7 +31,7 @@ std::string processnodename(std::string name) {
 
 void ParseSession::load_grammar(std::string filename, bool verbose) {
 	utils::Preproc_ptr preproc (new utils::OnePassPreprocessor()) ;
-	parsers::GenericGrammarParser ggp (preproc) ;
+	parsers::GenericGrammarParser ggp (preproc, logger) ;
 
 	Grammar grammar = ggp.parse (filename, verbose, true) ;
 	// grammar.exportToFile(filename);
@@ -35,8 +39,8 @@ void ParseSession::load_grammar(std::string filename, bool verbose) {
 }
 
 pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t index) {
-	pt::ptree out = to_ptree(processSource(filename, verbose, index)) ;
-	
+	pt::ptree out = to_ptree(process_source(filename, verbose, index)) ;
+
 	if (verbose) {
 		std::stringstream ss;
 		pt::json_parser::write_json(ss, out);
@@ -57,7 +61,7 @@ std::string ParseSession::process_to_json (std::string filename, bool verbose, s
 	return ss.str();
 }
 
-parsetree::Tree* ParseSession::processSource(std::string filename, bool verbose, size_t index) {
+parsetree::Tree* ParseSession::process_source(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
 	parser = new parsers::CYK (grammar) ;

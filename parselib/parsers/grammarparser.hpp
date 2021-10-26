@@ -4,6 +4,9 @@
 
 #include <parselib/datastructure/grammar.h>
 
+#include <parselib/utils/logger.h>
+
+
 namespace parselib {
 
 namespace parsers {
@@ -17,13 +20,14 @@ class GenericGrammarParser {
 protected:
 
 	utils::Preproc_ptr preproc ;
+	utils::Logger_ptr logger;
 
 public:
 	/*!
 	 * \brief GenericGrammarParser constructor
 	 * \param preproc shared pointer of preprocessor object
 	 */
-	GenericGrammarParser (utils::Preproc_ptr preproc) ;
+	GenericGrammarParser (utils::Preproc_ptr preproc, utils::Logger_ptr logger) ;
 
 	/*!
 	 * \brief lex a grammar from textual form to tokenized

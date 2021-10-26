@@ -4,8 +4,8 @@
 #include <parselib/parselibinstance.hpp>
 
 namespace pt = boost::property_tree ;
-
-using namespace parselib::utils;
+namespace pl = parselib ;
+using namespace pl::utils;
 
 void showhelp () {
 	std::cout <<
@@ -34,9 +34,10 @@ int main(int argc, char** argv){
 	bool verbose = (argvlex.get("-v") == "True") ? true : false ;
 	Printer::showinfo("verbose : " + argvlex.get("-v"));
 	Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
-	
-	parselib::ParseSession parsesession ;
-	
+
+	// change LogNone to LogBasic if needed
+	pl::ParseSession parsesession (Logger::LogNone) ;
+
 	if (argvlex.get("-h") == "True") {
 		showhelp () ;
 	} else if (argvlex.get("--gsrc") != "False") {

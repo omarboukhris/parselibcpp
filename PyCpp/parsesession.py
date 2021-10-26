@@ -8,8 +8,8 @@ class ParseSession:
 	parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience
 	parselib.get_json.restype = ctypes.c_char_p
 
-	def __init__(self):
-		self.sess = ParseSession.parselib.new_session()
+	def __init__(self, logLevel: int = 0):
+		self.sess = ParseSession.parselib.new_session(logLevel)
 
 	def load_grammar(self, filepath: str, verbose: bool = False):
 		if os.path.isfile(filepath) and self.sess:
