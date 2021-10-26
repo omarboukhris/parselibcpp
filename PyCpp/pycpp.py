@@ -12,8 +12,8 @@ class PyCppEngine:
 		# print (self.json_obj)
 		for arr in self.json_obj["file"]:
 			self.register_module(arr["module_header"][0])
-			self.write_ns()
 			self.write_import(arr["imports"][0])
+			self.write_ns()
 			self.write_class(arr["classdef"][0])
 			self.end_write_ns()
 

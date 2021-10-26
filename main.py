@@ -1,5 +1,5 @@
 
-from PyCpp.parsesession import ParseSession
+from PyCpp.parsesession import ParseSession, StringStream
 from PyCpp.observers import HppGenerator, TemplGenerator, CppGenerator
 from PyCpp import pycpp
 
@@ -11,19 +11,29 @@ if __name__ == "__main__":
 
 	for jfile in glob.glob("PyCpp/data/test_srcs/*.java"):
 
+		# call parselib parser
 		print("parselib > processing file \"{}\"".format(jfile))
+		parsed_json = psess.parse_to_json(jfile, False)
+		# print(parsed_json)
 
-		ss = psess.parse_to_json(jfile, False)
-		print(ss)
 
 		# TODO: ctypesgen, pymodgen
-		# add namespace handling in grammar
-		hppgen = HppGenerator(stream=print)
-		cppgen = CppGenerator(stream=print)
-		templ = TemplGenerator(stream=print)
+		# string streams to hold generated code
+		sshpp, sscpp, sstemp = StringStream(), StringStream(), StringStream()
+		hppgen = HppGenerator(stream=sshpp)
+		cppgen = CppGenerator(stream=sscpp)
+		templ = TemplGenerator(stream=sstemp)
 
-		gen = pycpp.PyCppEngine(ss, observers=[hppgen, cppgen, templ])
+		# where the magic happens : json restructuring into named tuples
+		gen = pycpp.PyCppEngine(parsed_json, observers=[hppgen, cppgen, templ])
+		# call main generator
 		gen.drive()
 
-	del psess
+		print("Header --------------")
+		print(sshpp)
+		print("Source --------------")
+		print(sscpp)
+		print("Templt --------------")
+		print(sstemp)
 
+	del psess
