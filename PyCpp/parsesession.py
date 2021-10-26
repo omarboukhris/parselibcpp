@@ -2,6 +2,15 @@ import ctypes
 import json
 import os.path
 
+class StringStream:
+	def __init__(self, content: str = ""):
+		self.content = content
+
+	def __call__(self, ss: str):
+		self.content += ss
+
+	def __str__ (self):
+		return self.content
 
 class ParseSession:
 
