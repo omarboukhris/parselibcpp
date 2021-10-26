@@ -4,6 +4,8 @@ from string import Template
 
 class GatewayGenerator(Observer):
 
+	ns_template = "namespace $ns_name {\n\n"
+
 	gateway = "\
 extern \"C\" {\n\
 \
@@ -36,6 +38,7 @@ $attrtype _$classname_get_$attrname__($classname *self) {\n\
 \treturn self->get_$attrname() ;\n\
 }\n\n"
 
+	ns_temp = Template(ns_template)
 	gw_templ = Template(gateway)
 	construct_templ = Template(constructor_template)
 	method_templ = Template(method_template)
@@ -44,6 +47,21 @@ $attrtype _$classname_get_$attrname__($classname *self) {\n\
 
 	def __init__(self, stream: callable):
 		super(GatewayGenerator, self).__init__(stream)
+
+
+	def process_namespace(self):
+		ss = ""
+		for ns in self.namespace:
+			ss += GatewayGenerator.ns_temp.substitute(ns_name=ns)
+
+		self.stream(ss)
+
+	def end_process_namespace(self):
+		ss = ""
+		for ns in self.namespace:
+			ss += "}\n\n"
+
+		self.stream(ss)
 
 	def process_import(self, filenames=[]):
 		pass

@@ -3,16 +3,19 @@
 
 classdec.("class")
 import.("import")
+module.("module")
 construct_type.("constructor|destructor")
 visibility.("public|private|protected")
 base_type.("(const )?(int|char|float|double|long|string)")
 headext.(".h(pp)?")
 py.("\@py")
 
-// operators
+// bloc catchers
 
 multilinecommands.("(?s)\@\{.*?\@\}")
 multilinecomments.("(?s)\/\*.*?\*\/")
+
+// operators
 
 ref.("\&")
 ptr.("[*]")
@@ -20,6 +23,7 @@ lcrch.("\{")
 rcrch.("\}")
 semic.('\;')
 dblpt.('\:')
+pt.('\.')
 comma.("\,")
 lpar.("\(")
 rpar.("\)")

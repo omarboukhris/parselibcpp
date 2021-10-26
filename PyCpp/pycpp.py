@@ -11,8 +11,27 @@ class PyCppEngine:
 	def drive(self):
 		# print (self.json_obj)
 		for arr in self.json_obj["file"]:
+			self.register_module(arr["module_header"][0])
+			self.write_ns()
 			self.write_import(arr["imports"][0])
 			self.write_class(arr["classdef"][0])
+			self.end_write_ns()
+
+	def register_module(self, mod_headers):
+		# ns stands for namespace
+		module_ns = [ns.strip() for ns in mod_headers["module_name"][0].split()]
+		module_ns = list(filter(lambda ns: ns != ".", module_ns))
+
+		for obs in self.observers:
+			obs.register_module(module_ns)
+
+	def write_ns(self):
+		for obs in self.observers:
+			obs.process_namespace()
+
+	def end_write_ns(self):
+		for obs in self.observers:
+			obs.end_process_namespace()
 
 	def write_import(self, imports):
 		import_list = []

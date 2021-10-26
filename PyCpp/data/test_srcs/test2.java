@@ -1,4 +1,6 @@
 
+module mymodule.test2 ;
+
 import <iostream>
 import <iostream.h>
 import "parselib/local.hpp"

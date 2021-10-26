@@ -14,23 +14,16 @@ if __name__ == "__main__":
 		print("parselib > processing file \"{}\"".format(jfile))
 
 		ss = psess.parse_to_json(jfile, False)
-
-		fh = open(jfile + ".hpp", "w")
-		fc = open(jfile + ".cpp", "w")
-		ft = open(jfile + ".impl", "w")
+		print(ss)
 
 		# TODO: ctypesgen, pymodgen
 		# add namespace handling in grammar
-		hppgen = HppGenerator(stream=fh.write)
-		cppgen = CppGenerator(stream=fc.write)
-		templ = TemplGenerator(stream=ft.write)
+		hppgen = HppGenerator(stream=print)
+		cppgen = CppGenerator(stream=print)
+		templ = TemplGenerator(stream=print)
 
 		gen = pycpp.PyCppEngine(ss, observers=[hppgen, cppgen, templ])
 		gen.drive()
-
-		fh.close()
-		fc.close()
-		ft.close()
 
 	del psess
 

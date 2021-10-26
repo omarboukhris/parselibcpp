@@ -5,14 +5,31 @@ from string import Template
 
 class CppGenerator(Observer):
 
+	ns_template = "namespace $ns_name {\n\n"
+
 	constructor_template = "$classname::$classname ($args) {$content}\n\n"
 	meth_template = "$type $classname::$name ($args) {$content}\n\n"
 
+	ns_temp = Template(ns_template)
 	meth_temp = Template(meth_template)
 	constructor_temp = Template(constructor_template)
 
 	def __init__(self, stream: callable):
 		super(CppGenerator, self).__init__(stream)
+
+	def process_namespace(self):
+		ss = ""
+		for ns in self.namespace:
+			ss += CppGenerator.ns_temp.substitute(ns_name=ns)
+
+		self.stream(ss)
+
+	def end_process_namespace(self):
+		ss = ""
+		for ns in self.namespace:
+			ss += "}\n\n"
+
+		self.stream(ss)
 
 	def process_import(self, filenames=[]):
 		import_list = ["#include " + fn for fn in filenames]

@@ -5,6 +5,8 @@ from string import Template
 
 class HppGenerator(Observer):
 
+	ns_template = "namespace $ns_name {\n\n"
+
 	class_template = "\n\
 $doc\n\
 class $classname\
@@ -25,6 +27,7 @@ $protected_attributes\
 
 	meth_template = "$doc\n\t$type $name ($args);\n\n"
 
+	ns_temp = Template(ns_template)
 	class_temp = Template(class_template)
 	const_temp = Template(construct_template)
 	attr_temp = Template(attr_template)
@@ -32,6 +35,20 @@ $protected_attributes\
 
 	def __init__(self, stream: callable):
 		super(HppGenerator, self).__init__(stream)
+
+	def process_namespace(self):
+		ss = ""
+		for ns in self.namespace:
+			ss += HppGenerator.ns_temp.substitute(ns_name=ns)
+
+		self.stream(ss)
+
+	def end_process_namespace(self):
+		ss = ""
+		for ns in self.namespace:
+			ss += "}\n\n"
+
+		self.stream(ss)
 
 	def process_import(self, filenames=[]):
 		import_list = ["#include " + fn for fn in filenames]
