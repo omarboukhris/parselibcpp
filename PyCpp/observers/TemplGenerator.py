@@ -35,7 +35,7 @@ $protected_attributes\
 
 	def process_import(self, filenames=[]):
 		import_list = ["#include " + fn for fn in filenames]
-		ss = "\n".join(import_list)
+		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
 
 	def process_class(self, t_class=[]):

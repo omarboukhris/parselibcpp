@@ -11,16 +11,16 @@ if __name__ == "__main__":
 
 	for jfile in glob.glob("PyCpp/data/test_srcs/*.java"):
 
-		print ("parselib > processing file \"{}\"".format(jfile))
+		print("parselib > processing file \"{}\"".format(jfile))
 
 		ss = psess.parse_to_json(jfile, False)
-		print(ss)
 
 		fh = open(jfile + ".hpp", "w")
 		fc = open(jfile + ".cpp", "w")
 		ft = open(jfile + ".impl", "w")
 
-		# TODO: cppgen, ctypesgen, pymodgen
+		# TODO: ctypesgen, pymodgen
+		# add namespace handling in grammar
 		hppgen = HppGenerator(stream=fh.write)
 		cppgen = CppGenerator(stream=fc.write)
 		templ = TemplGenerator(stream=ft.write)
