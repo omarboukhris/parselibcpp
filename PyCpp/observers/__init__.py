@@ -1,5 +1,8 @@
 
+from .observer import Observer
+
 from .HppGenerator import HppGenerator
 from .CppGenerator import CppGenerator
 from .TemplGenerator import TemplGenerator
-from .observer import Observer
+from .GatewayGenerator import GatewayGenerator
+

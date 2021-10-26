@@ -1,6 +1,6 @@
 
 from PyCpp.parsesession import ParseSession, StringStream
-from PyCpp.observers import HppGenerator, TemplGenerator, CppGenerator
+from PyCpp.observers import HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator
 from PyCpp import pycpp
 
 import glob
@@ -19,13 +19,14 @@ if __name__ == "__main__":
 
 		# TODO: ctypesgen, pymodgen
 		# string streams to hold generated code
-		sshpp, sscpp, sstemp = StringStream(), StringStream(), StringStream()
+		sshpp, sscpp, sstemp, ssgw = StringStream(), StringStream(), StringStream(), StringStream()
 		hppgen = HppGenerator(stream=sshpp)
 		cppgen = CppGenerator(stream=sscpp)
 		templ = TemplGenerator(stream=sstemp)
+		gwgen = GatewayGenerator(stream=ssgw)
 
 		# where the magic happens : json restructuring into named tuples
-		gen = pycpp.PyCppEngine(parsed_json, observers=[hppgen, cppgen, templ])
+		gen = pycpp.PyCppEngine(parsed_json, observers=[hppgen, cppgen, templ, gwgen])
 		# call main generator
 		gen.drive()
 
@@ -35,5 +36,7 @@ if __name__ == "__main__":
 		print(sscpp)
 		print("Templt --------------")
 		print(sstemp)
+		print("Gatewy --------------")
+		print(ssgw)
 
 	del psess
