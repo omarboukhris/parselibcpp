@@ -56,7 +56,7 @@ class CppAbstractObs(Observer):
 	def end_process_namespace(self):
 		ss = ""
 		for ns in self.namespace:
-			ss += "}\n\n"
+			ss += "}} // namespace {}\n\n".format(ns)
 
 		self.stream(ss)
 
