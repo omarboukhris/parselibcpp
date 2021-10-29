@@ -107,13 +107,13 @@ Frame CYK::membership (TokenList word) {
  */
 Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
 	Frame output;
-	size_t i = 0, o_i, o_j;
+	size_t i = 0, o_j = 0;
 	for (const Row& line: mat) {
 		size_t j = 0;
 		for (const Frame& elm: line) {
 			if (elm.size() > 0) {
 				output = elm;
-				o_i = i ; o_j = j ;
+				o_j = j ;
 			}
 			j++ ;
 		}

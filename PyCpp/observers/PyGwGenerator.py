@@ -18,15 +18,15 @@ if __name__ == \"__main__\":\n\
 \t# magic happens here\n"
 
 	constructor_template = "\
-\tdef __init__(self${args}) {\n\
+\tdef __init__(self, ${args}) {\n\
 \t\tself.this_ = _${classname}_construct__($args)\n\n"
 
 	method_fn_template = "\
 \tdef ${methname}(self${args}) :\n\
-\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_${args})\n\n"
+\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
 	method_proc_template = "\
 \tdef ${methname}(self${args}) :\n\
-\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_${args})\n\n"
+\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
 
 	destructor_template = "\
 \tdef __del__(self) {\n\

@@ -16,9 +16,6 @@ if __name__ == "__main__":
 		parsed_json = psess.parse_to_json(jfile, False)
 		# print(parsed_json)
 
-
-		# TODO: ctypesgen, pymodgen
-		# string streams to hold generated code
 		sshpp, sscpp, sstemp, ssgw, pygw = StringStream(), StringStream(), StringStream(), StringStream(), StringStream()
 		hppgen = HppGenerator(stream=sshpp)
 		cppgen = CppGenerator(stream=sscpp)
@@ -42,4 +39,7 @@ if __name__ == "__main__":
 		print("Py - GW -------------")
 		print(pygw)
 
+	#
+	# add cmake generator call here
+	#
 	del psess
