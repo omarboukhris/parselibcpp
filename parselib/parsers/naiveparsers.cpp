@@ -46,7 +46,7 @@ bool SequentialParser::stillparsing () {
 }
 
 void SequentialParser::checkaxiom () {
-	int 
+	size_t
 		i = this->i, 
 		j = this->j ;
 	
@@ -69,7 +69,7 @@ void SequentialParser::checkaxiom () {
 }
 
 void SequentialParser::checkfortoken () {
-	int 
+	size_t
 		i = this->i, 
 		j = this->j ;
 	
@@ -93,7 +93,7 @@ void SequentialParser::checkfortoken () {
 }
 
 void SequentialParser::checkleftside () {
-	int 
+	size_t
 		i = this->i, 
 		j = this->j ;
 	
@@ -116,7 +116,7 @@ void SequentialParser::checkleftside () {
 }
 
 void SequentialParser::checkoperators () {
-	int 
+	size_t
 		i = this->i, 
 		j = this->j ;
 	
@@ -144,7 +144,7 @@ void SequentialParser::checkoperators () {
 }
 
 void SequentialParser::checkrightside() {
-	int 
+	size_t
 		i = this->i, 
 		j = this->j ;
 	
@@ -152,7 +152,7 @@ void SequentialParser::checkrightside() {
 		return ;
 	}
 
-	while (i < grammar.size() && 
+	while (i < grammar.size() &&
 		grammar[i].type() == "RSIDE") {
 
 		if (parsedtokens[j].type() == "TERMINAL") {
