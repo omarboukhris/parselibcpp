@@ -1,5 +1,6 @@
 
 %import "tokens.grm"
+%import "type.grm"
 
 // attribute syntax definition
 

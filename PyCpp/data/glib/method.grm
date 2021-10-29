@@ -1,5 +1,6 @@
 
 %import "tokens.grm"
+%import "type.grm"
 
 // method syntax definition
 
@@ -21,29 +22,5 @@ args ->
 	s:type args_name=identifier. comma. |
 []
 
-// type syntax definition
-
-type ->
-	template_type |
-	base_type. |
-	template_type refptr |
-	base_type. refptr |
-	identifier. |
-	identifier. refptr
-
-refptr -> 
-	ref. | ptr. |
-[]
-
-template_type ->
-	identifier. lt. type gt. |
-	identifier. lt. template_type gt. |
-	identifier. lt. type_list gt. |
-	identifier. lt. base_type. gt. 
-
-type_list ->
-	type comma. type_list |
-	type comma. type |
-	type 
 
 

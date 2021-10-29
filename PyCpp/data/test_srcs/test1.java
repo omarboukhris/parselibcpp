@@ -24,11 +24,11 @@ class myclass :
     \return processed string
     */
 	public const string b (const int param3 , string param2) @{
-	    code goes here
-	    lorem ipsum
-	    if (cond) {
+		code goes here
+		lorem ipsum
+		if (cond) {
 			block;
-	    }
+		}
 	@}
 
 	public void proc ();

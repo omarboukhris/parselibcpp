@@ -61,7 +61,7 @@ class CppAbstractObs(Observer):
 		self.stream(ss)
 
 	@classmethod
-	def process_core(cls, strcore: str, level: int = 1):
+	def process_core(cls, strcore: str, level: int = 1, tabsz: int = 2):
 		""" strips the @{ @} tokens from a function core """
 		if not strcore:
 			return ""
@@ -73,7 +73,7 @@ class CppAbstractObs(Observer):
 			tab = "\t" * level
 			delim = "\n" + tab
 			# merge_core = tab + delim.join([sc.strip() for sc in split_core])
-			merge_core = tab + delim.join([sc[level:] for sc in split_core])
+			merge_core = tab + delim.join([sc[tabsz:] for sc in split_core])
 			return merge_core[:-1]
 		else:
 			# ill formed core somehow
