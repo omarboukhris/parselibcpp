@@ -16,7 +16,7 @@ public :
 	TokenList tokens ;
 
 	AbsNode () ;
-	~AbsNode () ;
+	virtual ~AbsNode () ;
 	virtual std::string getval () = 0 ;
 	std::string strUnfold() ;
 	void push_back (Token tok) ;

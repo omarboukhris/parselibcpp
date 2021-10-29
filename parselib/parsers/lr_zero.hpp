@@ -19,7 +19,7 @@ public :
 
 	virtual ~LR_zero () {}
 
-	virtual Frame membership (TokenList word) {
+	virtual Frame membership (TokenList /*word*/) {
 		return Frame();
 	}
 

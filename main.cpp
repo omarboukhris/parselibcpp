@@ -73,14 +73,16 @@ int main(int argc, char** argv){
 		showhelp();
 	}
 
-	Preproc_ptr preproc (new parselib::utils::OnePassPreprocessor()) ;
-	Logger_ptr parseLog (new Logger(Logger::LogAll));
-	parselib::parsers::GenericGrammarParser ggp (preproc, parseLog) ;
-	parselib::Grammar grammar = ggp.parse (
-		"/home/omar/projects/parselibcpp/data/grammar.grm", verbose, /*splits*/ true) ;
-//	grammar = parselib::normoperators::get2nf(grammar) ;
+//	quick and dirty test for lr0
 
-	parselib::parsers::LR_zero lr0(grammar);
+//	Preproc_ptr preproc (new parselib::utils::OnePassPreprocessor()) ;
+//	Logger_ptr parseLog (new Logger(Logger::LogAll));
+//	parselib::parsers::GenericGrammarParser ggp (preproc, parseLog) ;
+//	parselib::Grammar grammar = ggp.parse (
+//		"/home/omar/projects/parselibcpp/data/grammar.grm", verbose, /*splits*/ true) ;
+////	grammar = parselib::normoperators::get2nf(grammar) ;
+
+//	parselib::parsers::LR_zero lr0(grammar);
 
 	return 0 ;
 }

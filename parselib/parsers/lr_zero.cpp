@@ -30,13 +30,9 @@ void LR_zero::build_table(){
 	m_graph.push_back(i0);
 	queue.push_back(i0);
 
-	Closure clos = i0;
-
-	bool keep_going = true;
-
 	while(not queue.empty()) {
 
-		clos = queue.back();
+		Closure clos(queue.back());
 
 		for (Item current_item : clos) {
 
@@ -56,7 +52,6 @@ void LR_zero::build_table(){
 					// add the new item to closures
 					newest_clos.add_transition(clos.label());
 					m_graph.push_back(newest_clos);
-					keep_going = true;
 
 					// add newest_clos to processing queue
 					queue.push_back(newest_clos);

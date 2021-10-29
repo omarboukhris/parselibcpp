@@ -107,7 +107,7 @@ public:
 			return false;
 		}
 
-		for (int i = 0; i < r1.size() ; i++) {
+		for (size_t i = 0; i < r1.size() ; i++) {
 			if (r1.at(i) != r2.at(i)){
 				return false;
 			}

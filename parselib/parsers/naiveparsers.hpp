@@ -31,7 +31,7 @@ public :
 
 private :
 
-	int i, j ;
+	size_t i, j ;
 	bool axiomflag ;
 	std::string current_rule ;
 	
