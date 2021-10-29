@@ -72,7 +72,8 @@ class CppAbstractObs(Observer):
 			assert (level > 0)
 			tab = "\t" * level
 			delim = "\n" + tab
-			merge_core = tab + delim.join([sc.strip() for sc in split_core])
+			# merge_core = tab + delim.join([sc.strip() for sc in split_core])
+			merge_core = tab + delim.join([sc[level:] for sc in split_core])
 			return merge_core[:-1]
 		else:
 			# ill formed core somehow

@@ -5,22 +5,28 @@ from string import Template
 
 class PyGwGenerator(GatewayGenerator):
 
-	import_template = "\nimport ctype.$module # change accordingly\n"
+	import_template = "\nimport ctype\n"
 
 	gateway = "\n\
 class $classname:\n\n\
+\t${modulename} = ctypes.cdll.LoadLibrary(\"change/path\")\n\n\
 ${constructors}\
 ${methods}\
 ${accessors}\
-${destructor}\n\n"
+${destructor}\n\n\
+if __name__ == \"__main__\":\n\
+\t# magic happens here\n"
 
 	constructor_template = "\
 \tdef __init__(self${args}) {\n\
-\t\tself.this_ = $classname($args)\n\n"
+\t\tself.this_ = _${classname}_construct__($args)\n\n"
 
-	method_template = "\
+	method_fn_template = "\
 \tdef ${methname}(self${args}) :\n\
-\t\t${classname}.${modulename}._${classname}_${methname}__(${args})\n\n"
+\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_${args})\n\n"
+	method_proc_template = "\
+\tdef ${methname}(self${args}) :\n\
+\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_${args})\n\n"
 
 	destructor_template = "\
 \tdef __del__(self) {\n\
@@ -35,7 +41,8 @@ ${destructor}\n\n"
 	import_templ = Template(import_template)
 	gw_templ = Template(gateway)
 	construct_templ = Template(constructor_template)
-	method_templ = Template(method_template)
+	method_fn_templ = Template(method_fn_template)
+	method_proc_templ = Template(method_proc_template)
 	accessor_templ = Template(accessor_template)
 	destructor_templ = Template(destructor_template)
 
@@ -56,12 +63,11 @@ ${destructor}\n\n"
 		ss = ""
 		for cl in t_class:
 			clname = cl.name.strip()
-			ss += PyGwGenerator.import_templ.substitute(
-				module=clname
-			)
-
+			modulename = clname.capitalize()
+			ss += PyGwGenerator.import_templ.substitute()
 			ss += PyGwGenerator.gw_templ.substitute(
 				classname=clname,
+				modulename=modulename,
 				constructors=self.process_constructors(cl.constructs, clname),
 				methods=self.process_methods(cl.methods, clname),
 				accessors=self.process_accessors(cl.attributes, clname),
@@ -74,11 +80,11 @@ ${destructor}\n\n"
 		ss = ""
 		for construct in constructors:
 			if construct.construct_type == "constructor":
-				args = cls.process_args(construct.args)
-				str_args = ", {}".format(args) if args.strip() else ""
+				args = cls.process_t_args(construct.args)
+				# str_args = ", {}".format(args) if args.strip() else ""
 				ss += PyGwGenerator.construct_templ.substitute(
 					classname=classname,
-					args=str_args,
+					args=args,
 					content=cls.process_core(construct.core, level=1)
 				)
 		return ss
@@ -88,12 +94,15 @@ ${destructor}\n\n"
 		ss = ""
 		for meth in meths:
 			if meth.visibility == "public":
-				args = cls.process_args(meth.args)
+				args = cls.process_t_args(meth.args)
 				str_args = ", {}".format(args) if args.strip() else ""
-				ss += PyGwGenerator.method_templ.substitute(
+				templ = PyGwGenerator.method_fn_templ
+				if meth.type == "void":
+					templ = PyGwGenerator.method_proc_templ
+				ss += templ.substitute(
 					type=meth.type,
 					classname=clname,
-					modulename=clname,
+					modulename=clname.capitalize(),
 					methname=meth.name,
 					args=str_args,
 					content=cls.process_core(meth.core, level=1)
@@ -108,18 +117,11 @@ ${destructor}\n\n"
 				ss += PyGwGenerator.accessor_templ.substitute(
 					type=attr.type,
 					classname=clname,
-					modulename=clname,
+					modulename=clname.capitalize(),
 					attrname=attr.name
 				)
 		return ss
 
 	@classmethod
 	def process_destructor(cls, clname: str):
-		return PyGwGenerator.destructor_templ.substitute(classname=clname, modulename=clname)
-
-	@classmethod
-	def process_args(cls, args: list):
-		ss = ""
-		for arg in args:
-			ss += "{name}, ".format(name=arg.name)
-		return ss[:-2]
+		return PyGwGenerator.destructor_templ.substitute(classname=clname, modulename=clname.capitalize())

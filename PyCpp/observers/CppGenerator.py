@@ -19,7 +19,7 @@ class CppGenerator(CppAbstractObs):
 		for cl in t_class:
 			for construct in cl.constructs:
 				ss += CppGenerator.constructor_temp.substitute(
-					classname=cl.name,
+					classname=cl.name.strip(),
 					args=self.process_args(construct.args),
 					content=self.process_core(construct.core, level=1)
 				)
@@ -27,7 +27,7 @@ class CppGenerator(CppAbstractObs):
 			for method in cl.methods:
 				ss += CppGenerator.meth_temp.substitute(
 					type=method.type,
-					classname=cl.name,
+					classname=cl.name.strip(),
 					name=method.name,
 					args=self.process_args(method.args),
 					content=self.process_core(method.core, level=1)

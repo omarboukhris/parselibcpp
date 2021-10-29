@@ -18,12 +18,23 @@ ${destructor}\n\
 
 	constructor_template = "\
 ${classname} * _${classname}_construct__(${args}) {\n\
-\treturn new ${classname}(${args});\n\
+\treturn new ${classname}(${t_args});\n\
 }\n\n"
 
-	method_template = "\
-${type} _${classname}_${methname}__(${classname} *self${args}) \
-{ ${content} }\n\n"
+	method_fn_template = "\
+${type} _${classname}_${methname}__(${classname} *self${args}) {\n\
+\treturn self->${methname}(${t_args});\n\
+}\n\n"
+	method_proc_template = "\
+void _${classname}_${methname}__(${classname} *self${args}) {\n\
+\tself->${methname}(${t_args});\n\
+}\n\n"
+	method_str_template = "\
+const char * _${classname}_${methname}__(${classname} *self${args}) {\n\
+\tstatic std::string s_out;\n\
+\ts_out = self->${methname}(${t_args});\n\
+\treturn s_out.c_str();\n\
+}\n\n"
 
 	destructor_template = "\
 void _delete_${classname}__(${classname} *self) {\n\
@@ -41,7 +52,9 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 	ns_temp = Template(ns_template)
 	gw_templ = Template(gateway)
 	construct_templ = Template(constructor_template)
-	method_templ = Template(method_template)
+	method_fn_templ = Template(method_fn_template)
+	method_proc_templ = Template(method_proc_template)
+	method_str_templ = Template(method_str_template)
 	accessor_templ = Template(accessor_template)
 	destructor_templ = Template(destructor_template)
 
@@ -69,7 +82,8 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 				ss += GatewayGenerator.construct_templ.substitute(
 					classname=classname,
 					args=cls.process_args(construct.args),
-					content=cls.process_core(construct.core, level=1)
+					content=cls.process_core(construct.core, level=1),
+					t_args=cls.process_t_args(construct.args)
 				)
 		return ss
 
@@ -80,12 +94,17 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 			if meth.visibility == "public":
 				args = cls.process_args(meth.args)
 				str_args = ", {}".format(args) if args.strip() else ""
-				ss += GatewayGenerator.method_templ.substitute(
+				templ = GatewayGenerator.method_fn_templ
+				if meth.type == "void":
+					templ = GatewayGenerator.method_proc_templ
+				elif meth.type in ["std::string", "string"]:
+					templ = GatewayGenerator.method_str_templ
+				ss += templ.substitute(
 					type=meth.type,
 					classname=clname,
 					methname=meth.name,
 					args=str_args,
-					content=cls.process_core(meth.core, level=1)
+					t_args=GatewayGenerator.process_t_args(meth.args),
 				)
 		return ss
 
@@ -104,3 +123,10 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 	@classmethod
 	def process_destructor(cls, clname: str):
 		return GatewayGenerator.destructor_templ.substitute(classname=clname)
+
+	@classmethod
+	def process_t_args(cls, args: list):
+		ss = ""
+		for arg in args:
+			ss += "{name}, ".format(name=arg.name)
+		return ss[:-2]
