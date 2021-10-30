@@ -15,21 +15,21 @@ ${methods}\
 ${accessors}\
 ${destructor}\n\n\
 if __name__ == \"__main__\":\n\
-\t# magic happens here\n"
+\t# magic happens here\n\tpass\n"
 
 	constructor_template = "\
-\tdef __init__(self, ${args}) {\n\
+\tdef __init__(self, ${args}):\n\
 \t\tself.this_ = _${classname}_construct__($args)\n\n"
 
 	method_fn_template = "\
-\tdef ${methname}(self${args}) :\n\
+\tdef ${methname}(self${args}):\n\
 \t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
 	method_proc_template = "\
-\tdef ${methname}(self${args}) :\n\
+\tdef ${methname}(self${args}):\n\
 \t\t${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
 
 	destructor_template = "\
-\tdef __del__(self) {\n\
+\tdef __del__(self):\n\
 \t\t${classname}.${modulename}._delete_${classname}__(self.this_)\n\n"
 
 	accessor_template = "\
@@ -48,15 +48,6 @@ if __name__ == \"__main__\":\n\
 
 	def __init__(self, stream: callable):
 		super(PyGwGenerator, self).__init__(stream)
-
-	def process_import(self, filenames=[]):
-		pass
-
-	def process_namespace(self):
-		pass
-
-	def end_process_namespace(self):
-		pass
 
 	def process_class(self, t_class=[]):
 		# this is where processing goes
@@ -125,3 +116,12 @@ if __name__ == \"__main__\":\n\
 	@classmethod
 	def process_destructor(cls, clname: str):
 		return PyGwGenerator.destructor_templ.substitute(classname=clname, modulename=clname.capitalize())
+
+	def process_import(self, filenames=[]):
+		pass
+
+	def process_namespace(self):
+		pass
+
+	def end_process_namespace(self):
+		pass

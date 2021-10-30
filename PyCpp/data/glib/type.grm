@@ -1,4 +1,6 @@
 
+%import "tokens.grm"
+
 // type syntax definition
 
 type ->
