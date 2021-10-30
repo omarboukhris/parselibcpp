@@ -45,19 +45,15 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME OFF)
 
-FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem python REQUIRED )
-
-# find_package(Boost 1.58 COMPONENTS regex system filesystem) 
+FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem REQUIRED )
 
 ######################################
 ####### build parselib library #######
 ######################################
 
 if(Boost_FOUND)
-	find_package(PythonInterp REQUIRED)
-	find_package(PythonLibs REQUIRED)
 
-	include_directories(${Boost_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS}) 
+	include_directories(${Boost_INCLUDE_DIR}))
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/parselib)
 

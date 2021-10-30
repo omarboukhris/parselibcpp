@@ -18,6 +18,28 @@ class StringStream:
 	def __str__ (self):
 		return self.content
 
+
+"""
+Parses arguments in the form of:
+* param=value 
+* param 
+"""
+class ArgParser:
+
+	def __init__(self, argv):
+		self.parsedargv = {}
+		for arg in argv:
+			s = arg.split("=")
+			if len(s) == 1:
+				self.parsedargv[s[0]] = True
+			elif len(s) == 2:
+				self.parsedargv[s[0]] = s[1]
+
+	def get(self, key):
+		if key in self.parsedargv.keys():
+			return self.parsedargv[key]
+		return False
+
 class ParseSession:
 
 	parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")  # change for convinience

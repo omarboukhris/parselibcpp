@@ -1,10 +1,6 @@
 
 #include <parselib/parselibinstance.hpp>
 
-#include <boost/python.hpp>
-
-using namespace boost::python ;
-
 namespace parselib {
 
 extern "C" {

@@ -45,25 +45,24 @@ This script loops through recursively globbed files and apply TemplateGenerator 
 ```python
 from PyCpp.parsesession import ParseSession
 from PyCpp.observers import HppGenerator, TemplGenerator
-from PyCpp import pycpp
+from PyCpp import pycppeng
 
 import glob
 
 if __name__ == "__main__":
-  psess = ParseSession()
-  psess.load_grammar("PyCpp/data/grammar.grm", False)
+	psess = ParseSession()
+	psess.load_grammar("PyCpp/data/grammar.grm", False)
 
-  for jfile in glob.glob("PyCpp/data/test_srcs/*.templ"):
+	for jfile in glob.glob("PyCpp/data/test_srcs/*.templ"):
+		ss = psess.parse_to_json(jfile, False)
 
-    ss = psess.parse_to_json(jfile, False)
+		# replace print by filestream.write to write in file
+		templ = TemplGenerator(stream=print)
 
-    # replace print by filestream.write to write in file
-    templ = TemplGenerator(stream=print) 
-    
-    gen = pycpp.PyCppEngine(ss, observers=[hppgen, templ])
-    gen.drive()
+		gen = pycpp.PyCppEngine(ss, observers=[hppgen, templ])
+		gen.drive()
 
-  del psess
+	del psess
 ```
 
 ## Status WIP
