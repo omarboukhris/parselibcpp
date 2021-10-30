@@ -1,4 +1,6 @@
 
+from string import Template
+
 """
 Properties:
 - project name
@@ -11,7 +13,7 @@ Properties:
 """
 class CMakeGenerator:
 
-	cmk_head_templ = """
+	cmk_head_templ = Template("""
 cmake_minimum_required(VERSION $cmkver)
 project($pname)
 
@@ -25,14 +27,14 @@ endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "$dbgflags")
-set(CMAKE_CXX_FLAGS_RELEASE "$gppflags")
-"""
+set(CMAKE_CXX_FLAGS_RELEASE "$relflags")
+""")
 
-	files_templ = """
+	files_templ = Template("""
 file(GLOB $listname
 $filenames
 )
-"""
+""")
 
 	def __init__(
 		self,
@@ -65,3 +67,27 @@ $filenames
 			out.append(cln_file_name)
 		self.files = out
 
+	def make_header(self):
+		ss = CMakeGenerator.cmk_head_templ.substitute(
+			cmkver=self.cmk_ver,
+			pname=self.name,
+			cppver=self.cpp_ver,
+			dbgflags=self.dbgflg,
+			relflags=self.relflg
+		)
+		return ss
+
+	def make_files(self):
+		ss = CMakeGenerator.files_templ.substitute(
+			listname="SOURCE_FILES",
+			filenames=self.process_file_names("cpp")
+		)
+		ss += CMakeGenerator.files_templ.substitute(
+			listname="HEADER_FILES",
+			filenames=self.process_file_names("h")
+		)
+		return ss
+
+	def process_file_names(self, ext: str):
+		ss = "\t" + "\n\t".join(["{}.{}".format(f, ext) for f in self.files])
+		return ss

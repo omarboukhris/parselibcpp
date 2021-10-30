@@ -103,7 +103,9 @@ if __name__ == "__main__":
 		argp.get("ptype"),
 		processed_files,
 		plibs,
-		cpp_ver,
-		cmk_ver
+		cmk_ver,
+		cpp_ver
 	)
 	print(cmake.files)
+	print(cmake.make_header())
+	print(cmake.make_files())
