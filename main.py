@@ -39,8 +39,8 @@ def main():
 				print(output)
 
 		# activate to write output to file
-		# for stream in active_streams:
-		# 	stream.write()
+		for stream in active_streams:
+			stream.write()
 
 		processed_files.append(jfile)
 
@@ -63,7 +63,7 @@ def main():
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
-	fstrm = FileStream("CMakeLists.txt")
+	fstrm = FileStream(ppath + "/CMakeLists.txt")
 	fnproc = FileNameProcessor(processed_files, output_ext)
 	cmake = cmk.CMakeGenerator(
 		argp.get("pname"),
@@ -83,9 +83,8 @@ def main():
 	fstrm(cmake.make_builder())
 
 	# activate line to write cmakelists file on disk
-	# fstrm.write()
-
-	print(fstrm)
+	fstrm.write()
+	# print(fstrm)
 
 
 if __name__ == "__main__":

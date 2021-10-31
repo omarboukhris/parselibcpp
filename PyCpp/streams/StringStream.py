@@ -6,7 +6,7 @@ class StringStream:
 	def reset(self):
 		self.content = ""
 
-	def close(self):
+	def write(self):
 		pass
 
 	def __call__(self, t_str: str):
