@@ -1,5 +1,11 @@
 
 class ArgParser:
+	""" For parsing cmd line arg
+	must be formatted like :
+	* param
+	* param=value
+	Value must not contain any space for Parser to work
+	"""
 
 	def __init__(self, argv):
 		self.parsedargv = {}
@@ -16,6 +22,7 @@ class ArgParser:
 		if key in self.parsedargv.keys():
 			return self.parsedargv[key]
 		return False
+
 
 def show_help(exe: str = ""):
 	print("\nusage :\n\t{} \n\
