@@ -2,8 +2,7 @@
 from .StringStream import StringStream
 
 class FileStream(StringStream):
-	"""
-	File stream to write generated code into
+	""" File stream to write generated code into
 	"""
 
 	def __init__(self, fname: str):
