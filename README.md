@@ -1,6 +1,6 @@
 ## Grammar parselib
 
-This is intended to be a simple AND efficient (at least a lot more than its Python version) framework for context free grammar (CFG) parsing.
+This is intended to be a simple and efficient (at least a lot more than its Python version) framework for context free grammar (CFG) parsing.
 
 Can be used to code a symbolic mathematical kernel, a source-to-source transcompiler or whatever.. The sky is the limit (along with the established expressive power of type 2 grammars)
 
