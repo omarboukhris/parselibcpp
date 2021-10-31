@@ -12,6 +12,9 @@ class StringStream:
 	def reset(self) -> None:
 		self.content = ""
 
+	def write(self) -> None:
+		pass
+
 	def __call__(self, t_str: str) -> None:
 		self.content += t_str
 

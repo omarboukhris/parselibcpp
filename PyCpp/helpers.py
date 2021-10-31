@@ -1,9 +1,10 @@
 
 class ArgParser:
-	"""
-	Parses arguments in the form of:
-	* param=value
+	""" For parsing cmd line arg
+	must be formatted like :
 	* param
+	* param=value
+	Value must not contain any space for Parser to work
 	"""
 
 	def __init__(self, argv):
@@ -15,13 +16,15 @@ class ArgParser:
 			elif len(s) == 2:
 				self.parsedargv[s[0]] = s[1]
 
+	# else :
+	# pass
 	def get(self, key):
 		if key in self.parsedargv.keys():
 			return self.parsedargv[key]
 		return False
 
 
-def show_help(exec_path: str = ""):
+def show_help(exe: str = ""):
 	print("\nusage :\n\t{} \n\
 \t\tpname=projectname \n\
 \t\tptype=(so|a|x) \n\
@@ -32,10 +35,10 @@ def show_help(exec_path: str = ""):
 \t\tv h\n\n\
 \tv is for verbose and h is for help\n\
 \tIf help is active, program shows this messages and exit.\n\
-\tExtensions (ext) separated by <,> should not contain spaces\n".format(exec_path))
+\tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
 
 
-def check_args(argparser: ArgParser):
+def check_arg(argparser: ArgParser):
 	""" Check if arguments contain help command or
 	if regex used for globing is valid
 
@@ -46,6 +49,7 @@ def check_args(argparser: ArgParser):
 		show_help()
 		exit()
 
+	project_path = argparser.get("path")
 	regex_glob = argparser.get("glob")
 
 	if not regex_glob or type(regex_glob) != str:
@@ -56,4 +60,6 @@ def check_args(argparser: ArgParser):
 	all_ext = ["cpp", "h", "impl", "py", "ctype"]
 	out_ext = all_ext if not argparser.get("ext") else argparser.get("ext").split(",")
 
-	return regex_glob, out_ext
+	return project_path, regex_glob, out_ext
+
+

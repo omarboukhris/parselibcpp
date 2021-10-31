@@ -138,7 +138,11 @@ target_link_libraries(\n\
 		# call some kind of lib helper
 		# fetches resources from rc folder or something
 		# in order to fill the lib dependencies
-		return ""
+		if not self.libs:
+			return ""
+		else:
+			# do processing here
+			return ""
 
 	def _get_libs(self) -> str:
 		# call some kind of lib helper

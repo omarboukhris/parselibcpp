@@ -2,23 +2,22 @@
 from PyCpp import pycppeng, cmakegen as cmk
 from PyCpp.parsesession import ParseSession
 from PyCpp.factory import PyCppFactory, FileNameProcessor
+from PyCpp.helpers import ArgParser, check_arg
 from PyCpp.streams import FileStream
-from PyCpp.helpers import ArgParser, check_args
 
 import sys
 import glob
 
-
 def main():
 	argp = ArgParser(sys.argv)
 
-	globex, output_ext = check_args(argp)
+	ppath, globex, output_ext = check_arg(argp)
 
 	psess = ParseSession()
 	psess.load_grammar("PyCpp/data/grammar.grm", False)
 
 	processed_files = []
-	for jfile in glob.glob(globex):
+	for jfile in glob.glob(ppath + globex):
 
 		# call parselib parser
 		print("parselib > processing file \"{}\"".format(jfile))
@@ -36,12 +35,12 @@ def main():
 		# output results
 		if argp.get("v"):
 			for ext, output in zip(output_ext, active_streams):
-				print(ext, "-----------------------------\n")
+				print(ext, "------------------------------\n")
 				print(output)
 
 		# activate to write output to file
-		# for stream in active_streams:
-		# 	stream.write()
+		for stream in active_streams:
+			stream.write()
 
 		processed_files.append(jfile)
 
@@ -50,8 +49,6 @@ def main():
 	#
 	# cmake generator here
 	#
-
-	# fetching parameters from cmd line arg
 	pname = argp.get("pname")
 	ptype = argp.get("ptype")
 	plibs = argp.get("plibs").split(",") if argp.get("plibs") else []
@@ -66,9 +63,8 @@ def main():
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
-	# init fnprocessor, filestream and cmkgenerator
+	fstrm = FileStream(ppath + "/CMakeLists.txt")
 	fnproc = FileNameProcessor(processed_files, output_ext)
-	fstrm = FileStream("CMakeLists.txt")
 	cmake = cmk.CMakeGenerator(
 		argp.get("pname"),
 		argp.get("ptype"),
@@ -80,16 +76,18 @@ def main():
 		rel
 	)
 
-	# write cmake code into file stream
+	# print(cmake.files.get_files())
 	fstrm(cmake.make_header())
 	fstrm(cmake.make_files())
 	fstrm(cmake.make_dependencies())
 	fstrm(cmake.make_builder())
 
-	print(fstrm)
+	# write cmakelists file on disk
+	fstrm.write()
 
-	# activate line to go live
-	# fstrm.write()
+	# output in terminal if verbose
+	if argp.get("v"):
+		print(fstrm)
 
 
 if __name__ == "__main__":
