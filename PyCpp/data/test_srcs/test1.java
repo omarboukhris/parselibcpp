@@ -8,8 +8,9 @@ import "parselib/local.hpp"
 class myclass :
     public absclass<
         abstracinexistanttype&,
-        someptrTemplate*>,
-    public xbezglife
+        someptrTemplate*
+    >,
+    private xbezglife
 {
 
     /*!

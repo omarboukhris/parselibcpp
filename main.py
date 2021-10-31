@@ -10,6 +10,7 @@ def show_help():
 	print("\nusage :\n\t{} \n\
 \t\tpname=projectname \n\
 \t\tptype=(so|a|x) \n\
+\t\tglob=regex_to_glob_files\n\
 \t\text=h,cpp,impl,py,ctype\n\
 \t\tplibs=\"list,of,libs,sep,by,comma\" \n\
 \t\tfiles=\"regex/to/glob\"\n\
@@ -18,19 +19,39 @@ def show_help():
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(sys.argv[0]))
 
+def check_arg(argparser: ArgParser):
+	""" Check if arguments contain help command or
+	if regex used for globing is valid
 
-if __name__ == "__main__":
-	argp = ArgParser(sys.argv)
-
-	if argp.get("h") or argp.get("help"):
+	:param argparser: argument parser object
+	:return: globing regex
+	"""
+	if argparser.get("h") or argparser.get("help"):
 		show_help()
 		exit()
+
+	regex_glob = argparser.get("glob")
+
+	if not regex_glob or type(regex_glob) != str:
+		print("Wrong argument : ", regex_glob)
+		show_help()
+		exit()
+
+	all_ext = ["cpp", "h", "impl", "py", "ctype"]
+	out_ext = all_ext if not argparser.get("ext") else argparser.get("ext").split(",")
+
+	return regex_glob, out_ext
+
+def main():
+	argp = ArgParser(sys.argv)
+
+	globex, output_ext = check_arg(argp)
 
 	psess = ParseSession()
 	psess.load_grammar("PyCpp/data/grammar.grm", False)
 
 	processed_files = []
-	for jfile in glob.glob("PyCpp/data/test_srcs/*.java"):
+	for jfile in glob.glob(globex):
 
 		# call parselib parser
 		print("parselib > processing file \"{}\"".format(jfile))
@@ -38,8 +59,6 @@ if __name__ == "__main__":
 		# print(parsed_json)
 
 		# prepare streams and observers
-		all_ext = ["cpp", "h", "impl", "py"]
-		output_ext = all_ext if not argp.get("ext") else argp.get("ext").split(",")
 		active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
 		observers = PyCppFactory.gen_fabric(output_ext, active_streams)
 
@@ -53,8 +72,9 @@ if __name__ == "__main__":
 				print(ext, "-----------------------------\n")
 				print(output)
 
-		for stream in active_streams:
-			stream.write()
+		# activate to write output to file
+		# for stream in active_streams:
+		# 	stream.write()
 
 		processed_files.append(jfile)
 
@@ -77,19 +97,22 @@ if __name__ == "__main__":
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
-	fnproc = FileNameProcessor(processed_files)
+	fnproc = FileNameProcessor(processed_files, output_ext)
 	cmake = cmk.CMakeGenerator(
 		argp.get("pname"),
 		argp.get("ptype"),
 		fnproc,
 		plibs,
 		cmk_ver,
-		cpp_ver
+		cpp_ver,
+		dbg,
+		rel
 	)
-	# print(cmake.files)
-	# print(cmake.make_header())
-	# print(cmake.make_files())
-	# print(cmake.make_builder())
-	#
-	# print (fnproc.make_py())
-	# print (fnproc.make_gw())
+
+	print(cmake.files.get_files())
+	print(cmake.make_header())
+	print(cmake.make_files())
+	print(cmake.make_builder())
+
+if __name__ == "__main__":
+	main()

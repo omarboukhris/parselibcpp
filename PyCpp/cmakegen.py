@@ -87,13 +87,15 @@ target_link_libraries(\n\
 		return ss
 
 	def make_files(self):
+		files = self.files.make_cpp() + "\n" + self.files.make_gw()
 		ss = CMakeGenerator.files_templ.substitute(
 			listname="SOURCE_FILES",
-			filenames=self.files.make_cpp()
+			filenames=files
 		)
+		files = self.files.make_cpp() + "\n" + self.files.make_gw()
 		ss += CMakeGenerator.files_templ.substitute(
 			listname="HEADER_FILES",
-			filenames=self.files.make_h()
+			filenames=files
 		)
 		return ss
 

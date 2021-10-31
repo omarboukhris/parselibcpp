@@ -9,8 +9,9 @@ class FileNameProcessor:
 	Supported extensions: cpp, h, py, ctype, impl
 	"""
 
-	def __init__(self, files: list = []):
+	def __init__(self, files: list = [], ext: list = []):
 		self.files = files
+		self.ext = ext
 		self._cleanup_ext()
 
 	def _cleanup_ext(self):
@@ -24,19 +25,29 @@ class FileNameProcessor:
 		return self.files
 
 	def make_cpp(self):
-		return self._make_ext("cpp")
+		if "cpp" in self.ext:
+			return self._make_ext("cpp")
+		return ""
 
 	def make_h(self):
-		return self._make_ext("h")
+		if "h" in self.ext:
+			return self._make_ext("h")
+		return ""
 
 	def make_impl(self):
-		return self._make_ext("impl")
+		if "impl" in self.ext:
+			return self._make_ext("impl")
+		return ""
 
 	def make_py(self):
-		return self._make_ext("py")
+		if "py" in self.ext:
+			return self._make_ext("py")
+		return ""
 
 	def make_gw(self):
-		return self._make_prefix_ext("pyGw_", "cpp")
+		if "ctype" in self.ext:
+			return self._make_prefix_ext("pyGw_", "cpp")
+		return ""
 
 	def _make_ext(self, ext: str):
 		return self._make_prefix_ext("", ext)
