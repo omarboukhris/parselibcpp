@@ -1,6 +1,9 @@
 
 class StringStream:
-	""" String Stream to write generated code into
+	"""
+	String Stream feeding on generated data
+	Each stream passed to a generator should
+	at least implement __init__ and __call__
 	"""
 
 	def __init__(self, content: str = ""):

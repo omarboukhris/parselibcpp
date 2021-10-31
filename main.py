@@ -82,9 +82,12 @@ def main():
 	fstrm(cmake.make_dependencies())
 	fstrm(cmake.make_builder())
 
-	# activate line to write cmakelists file on disk
+	# write cmakelists file on disk
 	fstrm.write()
-	# print(fstrm)
+
+	# output in terminal if verbose
+	if argp.get("v"):
+		print(fstrm)
 
 
 if __name__ == "__main__":
