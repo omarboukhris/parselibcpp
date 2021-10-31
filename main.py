@@ -1,51 +1,18 @@
 
 from PyCpp import pycppeng, cmakegen as cmk
-from PyCpp.parsesession import ParseSession, ArgParser
+from PyCpp.parsesession import ParseSession
 from PyCpp.factory import PyCppFactory, FileNameProcessor
+from PyCpp.streams import FileStream
+from PyCpp.helpers import ArgParser, check_args
 
 import sys
 import glob
 
-def show_help():
-	print("\nusage :\n\t{} \n\
-\t\tpname=projectname \n\
-\t\tptype=(so|a|x) \n\
-\t\tglob=regex_to_glob_files\n\
-\t\text=h,cpp,impl,py,ctype\n\
-\t\tplibs=\"list,of,libs,sep,by,comma\" \n\
-\t\tfiles=\"regex/to/glob\"\n\
-\t\tv h\n\n\
-\tv is for verbose and h is for help\n\
-\tIf help is active, program shows this messages and exit.\n\
-\tExtensions (ext) separated by <,> should not contain spaces\n".format(sys.argv[0]))
-
-def check_arg(argparser: ArgParser):
-	""" Check if arguments contain help command or
-	if regex used for globing is valid
-
-	:param argparser: argument parser object
-	:return: globing regex
-	"""
-	if argparser.get("h") or argparser.get("help"):
-		show_help()
-		exit()
-
-	regex_glob = argparser.get("glob")
-
-	if not regex_glob or type(regex_glob) != str:
-		print("Wrong argument : ", regex_glob)
-		show_help()
-		exit()
-
-	all_ext = ["cpp", "h", "impl", "py", "ctype"]
-	out_ext = all_ext if not argparser.get("ext") else argparser.get("ext").split(",")
-
-	return regex_glob, out_ext
 
 def main():
 	argp = ArgParser(sys.argv)
 
-	globex, output_ext = check_arg(argp)
+	globex, output_ext = check_args(argp)
 
 	psess = ParseSession()
 	psess.load_grammar("PyCpp/data/grammar.grm", False)
@@ -83,6 +50,8 @@ def main():
 	#
 	# cmake generator here
 	#
+
+	# fetching parameters from cmd line arg
 	pname = argp.get("pname")
 	ptype = argp.get("ptype")
 	plibs = argp.get("plibs").split(",") if argp.get("plibs") else []
@@ -97,7 +66,9 @@ def main():
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
+	# init fnprocessor, filestream and cmkgenerator
 	fnproc = FileNameProcessor(processed_files, output_ext)
+	fstrm = FileStream("CMakeLists.txt")
 	cmake = cmk.CMakeGenerator(
 		argp.get("pname"),
 		argp.get("ptype"),
@@ -109,10 +80,17 @@ def main():
 		rel
 	)
 
-	print(cmake.files.get_files())
-	print(cmake.make_header())
-	print(cmake.make_files())
-	print(cmake.make_builder())
+	# write cmake code into file stream
+	fstrm(cmake.make_header())
+	fstrm(cmake.make_files())
+	fstrm(cmake.make_dependencies())
+	fstrm(cmake.make_builder())
+
+	print(fstrm)
+
+	# activate line to go live
+	# fstrm.write()
+
 
 if __name__ == "__main__":
 	main()

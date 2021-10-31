@@ -9,6 +9,10 @@ Construct = namedtuple("Construct", ["doxy", "construct_type", "args", "core"])
 Class = namedtuple("Class", ["doxy", "name", "inherit", "constructs", "attributes", "methods"])
 
 class Observer:
+	"""
+	This is the main Abstract class describing a generator for the PyCpp language
+	The engine uses all functions and sub classes should implement the methods approriately
+	"""
 
 	def __init__(self, stream: callable):
 		self.stream = stream
@@ -31,6 +35,10 @@ class Observer:
 
 
 class CppAbstractObs(Observer):
+	"""
+	Abstract factorized C++ Helper generator
+	Methods below are common to C++ generators
+	"""
 
 	ns_template = "namespace $ns_name {\n\n"
 	ns_temp = Template(ns_template)

@@ -14,45 +14,73 @@ class FileNameProcessor:
 		self.ext = ext
 		self._cleanup_ext()
 
-	def _cleanup_ext(self):
+	def _cleanup_ext(self) -> None:
+		""" Cleans up extension from file names
+		"""
 		out = []
 		for proc in self.files:
 			cln_file_name = "".join(proc.split(".")[:-1])
 			out.append(cln_file_name)
 		self.files = out
 
-	def get_files(self):
+	#
+	# Helper methods
+	#
+
+	def get_files(self) -> list:
+		"""	Accessor to list of cleaned up files
+		"""
 		return self.files
 
-	def make_cpp(self):
+	def make_cpp(self) -> str:
+		""" called in CMakeGenerator, helper method
+		:return: C++ generated file name
+		"""
 		if "cpp" in self.ext:
 			return self._make_ext("cpp")
 		return ""
 
-	def make_h(self):
+	def make_h(self) -> str:
+		""" called in CMakeGenerator, helper method
+		:return: header (h/hpp) generated file name
+		"""
 		if "h" in self.ext:
 			return self._make_ext("h")
 		return ""
 
-	def make_impl(self):
+	def make_impl(self) -> str:
+		""" called in CMakeGenerator, helper method
+		:return: impl generated file name
+		"""
 		if "impl" in self.ext:
 			return self._make_ext("impl")
 		return ""
 
-	def make_py(self):
+	def make_py(self) -> str:
 		if "py" in self.ext:
 			return self._make_ext("py")
 		return ""
 
-	def make_gw(self):
+	def make_gw(self) -> str:
 		if "ctype" in self.ext:
 			return self._make_prefix_ext("pyGw_", "cpp")
 		return ""
 
-	def _make_ext(self, ext: str):
+	def _make_ext(self, ext: str) -> str:
+		""" Decorate file names with extension
+		:param ext: extension decorating file names
+		:return: decorated file names
+		"""
 		return self._make_prefix_ext("", ext)
 
-	def _make_prefix_ext(self, pref: str, ext: str):
+	def _make_prefix_ext(self, pref: str, ext: str) -> str:
+		""" Decorate file names with prefix and extension
+		filenames/have/this/structure/w/o/extension
+
+		:param pref: prefix
+		:param ext: extension
+		:return: decorated file names list
+		"""
 		files = []
 		if pref:
 			# add prefix to the last element in path (filename)
