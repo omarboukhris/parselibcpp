@@ -13,28 +13,32 @@ Properties:
 """
 class CMakeGenerator:
 
-	cmk_head_templ = Template("""
-cmake_minimum_required(VERSION $cmkver)
-project($pname)
+	cmk_head_templ = Template("\n\
+cmake_minimum_required(VERSION $cmkver)\n\
+project($pname)\n\n\
+set(CMAKE_CXX_STANDARD $cppver)\n\
+set(CMAKE_CXX_STANDARD_REQUIRED ON)\n\
+set(CMAKE_CXX_EXTENSIONS OFF)\n\n\
+if(NOT CMAKE_BUILD_TYPE)\n\
+\tset(CMAKE_BUILD_TYPE Release)\n\
+endif()\n\n\
+set(CMAKE_CXX_FLAGS \"-Wall -Wextra\")\n\
+set(CMAKE_CXX_FLAGS_DEBUG \"$dbgflags\")\n\
+set(CMAKE_CXX_FLAGS_RELEASE \"$relflags\")\n")
 
-set(CMAKE_CXX_STANDARD $cppver)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+	files_templ = Template("\
+file(GLOB $listname\n\
+$filenames\n)\n")
 
-if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Release)
-endif()
-
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-set(CMAKE_CXX_FLAGS_DEBUG "$dbgflags")
-set(CMAKE_CXX_FLAGS_RELEASE "$relflags")
-""")
-
-	files_templ = Template("""
-file(GLOB $listname
-$filenames
-)
-""")
+	builder_templ = "\
+add_library(${PROJECT_NAME} [[ptype]]\n\
+\t${SOURCE_FILES} \n\
+\t${HEADER_FILES}\n\
+)\n\
+target_link_libraries(\n\
+\t${PROJECT_NAME}\n\
+\t[[plibs]]\n\
+)"
 
 	def __init__(
 		self,
@@ -91,3 +95,30 @@ $filenames
 	def process_file_names(self, ext: str):
 		ss = "\t" + "\n\t".join(["{}.{}".format(f, ext) for f in self.files])
 		return ss
+
+	def make_builder(self):
+		ptype = ""
+		if self.type_ == "so":
+			ptype = "SHARED"
+		elif self.type_ == "a":
+			ptype = "STATIC"
+		else:
+			return ""
+		return CMakeGenerator.builder_templ\
+			.replace("[[plibs]]", self.get_libs())\
+			.replace("[[ptype]]", ptype)
+
+	def make_dependencies(self):
+		# call some kind of lib helper
+		# fetches resources from rc folder or something
+		# in order to fill the lib dependencies
+		pass
+
+	def get_libs(self):
+		# call some kind of lib helper
+		# fetches resources from rc folder or something
+		# in order to fill the lib dependencies
+		if not self.libs:
+			return ""
+		else:
+			return ""

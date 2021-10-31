@@ -37,10 +37,16 @@ def gen_fabric(out_ext: list = (), streams: list = ()):
 	return out
 
 def show_help():
-	print("\nusage :\n\t {} pname=projectname \
-ptype=(so|a|x) \
-plibs=\"list,of,libs,sep,by,comma\" \
-files=\"regex/to/glob\"\n".format(sys.argv[0]))
+	print("\nusage :\n\t{} \n\
+\t\tpname=projectname \n\
+\t\tptype=(so|a|x) \n\
+\t\text=h,cpp,impl,py,ctype\n\
+\t\tplibs=\"list,of,libs,sep,by,comma\" \n\
+\t\tfiles=\"regex/to/glob\"\n\
+\t\tv h\n\n\
+\tv is for verbose and h is for help\n\
+\tIf help is active, program shows this messages and exit.\n\
+\tExtensions (ext) separated by <,> should not contain spaces\n".format(sys.argv[0]))
 
 
 if __name__ == "__main__":
@@ -63,7 +69,7 @@ if __name__ == "__main__":
 
 		# prepare streams and observers
 		all_ext = ["cpp", "h", "impl", "py"]
-		print (argp.get("ext"))
+		print(argp.get("ext"))
 		output_ext = all_ext if not argp.get("ext") else argp.get("ext").split(",")
 		str_streams = ss_fabric(output_ext)
 		observers = gen_fabric(output_ext, str_streams)
@@ -73,9 +79,10 @@ if __name__ == "__main__":
 		gen.drive()
 
 		# output results
-		for ext, output in zip(output_ext, str_streams):
-			print(ext, "-----------------------------\n")
-			print(output)
+		if argp.get("v"):
+			for ext, output in zip(output_ext, str_streams):
+				print(ext, "-----------------------------\n")
+				print(output)
 
 		processed_files.append(jfile)
 
@@ -109,3 +116,4 @@ if __name__ == "__main__":
 	print(cmake.files)
 	print(cmake.make_header())
 	print(cmake.make_files())
+	print(cmake.make_builder())

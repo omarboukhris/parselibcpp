@@ -53,12 +53,12 @@ FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem REQUIRED )
 
 if(Boost_FOUND)
 
-	include_directories(${Boost_INCLUDE_DIR}))
+	include_directories(${Boost_INCLUDE_DIR})
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/parselib)
 
-	add_library(${PROJECT_NAME} SHARED 
-		${SOURCE_FILES} 
+	add_library(${PROJECT_NAME} SHARED
+		${SOURCE_FILES}
 		${HEADER_FILES} )
 	target_link_libraries(
 		${PROJECT_NAME}
