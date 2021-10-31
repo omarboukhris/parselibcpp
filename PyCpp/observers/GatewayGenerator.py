@@ -17,7 +17,7 @@ ${destructor}\n\
 }\n\n"
 
 	constructor_template = "\
-${classname} * _${classname}_construct__(${args}) {\n\
+${classname} * _${classname}_construct_${num}__(${args}) {\n\
 \treturn new ${classname}(${t_args});\n\
 }\n\n"
 
@@ -77,14 +77,17 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 	@classmethod
 	def process_constructors(cls, constructors: list, classname: str):
 		ss = ""
+		num = 0
 		for construct in constructors:
 			if construct.construct_type == "constructor":
 				ss += GatewayGenerator.construct_templ.substitute(
 					classname=classname,
 					args=cls.process_args(construct.args),
+					num=num,
 					content=cls.process_core(construct.core, level=1),
 					t_args=cls.process_t_args(construct.args)
 				)
+				num += 1
 		return ss
 
 	@classmethod

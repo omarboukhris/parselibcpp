@@ -21,7 +21,7 @@ if __name__ == \"__main__\":\n\
 
 	constructor_template = "\
 \tdef construct_object_$num(self, ${args}):\n\
-\t\tself.this_ = ${classname}.${modulename}._${classname}_construct__($args)\n\n"
+\t\tself.this_ = ${classname}.${modulename}._${classname}_construct_${num}__($args)\n\n"
 
 	method_fn_template = "\
 \tdef ${methname}(self${args}):\n\
