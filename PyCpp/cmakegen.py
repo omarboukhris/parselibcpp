@@ -41,6 +41,15 @@ target_link_libraries(\n\
 \t${PROJECT_NAME}\n\
 \t[[plibs]]\n\
 )"
+	x_templ = "\
+add_executable(${PROJECT_NAME} main.cpp\n\
+\t${SOURCE_FILES} \n\
+\t${HEADER_FILES}\n\
+)\n\
+target_link_libraries(\n\
+\t${PROJECT_NAME}\n\
+\t[[plibs]]\n\
+)"
 
 	def __init__(
 		self,
@@ -76,7 +85,11 @@ target_link_libraries(\n\
 		self.dbgflg = dbgflg
 		self.relflg = relflg
 
-	def make_header(self):
+	def make_header(self) -> str:
+		""" Make CMakeLists.txt header
+
+		:return: header as a string
+		"""
 		ss = CMakeGenerator.cmk_head_templ.substitute(
 			cmkver=self.cmk_ver,
 			pname=self.name,
@@ -86,7 +99,10 @@ target_link_libraries(\n\
 		)
 		return ss
 
-	def make_files(self):
+	def make_files(self) -> str:
+		""" Make source and header files lists
+		:return: cmake code snippet as a string
+		"""
 		files = self.files.make_cpp() + "\n" + self.files.make_gw()
 		ss = CMakeGenerator.files_templ.substitute(
 			listname="SOURCE_FILES",
@@ -99,25 +115,36 @@ target_link_libraries(\n\
 		)
 		return ss
 
-	def make_builder(self):
-		ptype = ""
-		if self.type_ == "so":
-			ptype = "SHARED"
-		elif self.type_ == "a":
-			ptype = "STATIC"
-		else:
-			return ""
-		return CMakeGenerator.builder_templ\
-			.replace("[[plibs]]", self.get_libs())\
-			.replace("[[ptype]]", ptype)
+	def make_builder(self) -> str:
+		""" Make cmake building instructions
+		:return: cmake building code snippet as a string
+		"""
+		if self.type_ in ["so", "a"]:
+			ptype = ""
+			if self.type_ == "so":
+				ptype = "SHARED"
+			elif self.type_ == "a":
+				ptype = "STATIC"
+			else:
+				return ""
+			return CMakeGenerator.builder_templ\
+				.replace("[[plibs]]", self._get_libs())\
+				.replace("[[ptype]]", ptype)
+		elif self.type_ in ["x"]:
+			return CMakeGenerator.x_templ \
+				.replace("[[plibs]]", self._get_libs())
 
-	def make_dependencies(self):
+	def make_dependencies(self) -> str:
 		# call some kind of lib helper
 		# fetches resources from rc folder or something
 		# in order to fill the lib dependencies
-		pass
+		if not self.libs:
+			return ""
+		else:
+			# do processing here
+			return ""
 
-	def get_libs(self):
+	def _get_libs(self) -> str:
 		# call some kind of lib helper
 		# fetches resources from rc folder or something
 		# in order to fill the lib dependencies
