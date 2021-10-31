@@ -5,11 +5,13 @@ from string import Template
 
 class PyGwGenerator(GatewayGenerator):
 
-	import_template = "\nimport ctype\n"
+	import_template = "\nimport ctypes\n"
 
 	gateway = "\n\
 class $classname:\n\n\
 \t${modulename} = ctypes.cdll.LoadLibrary(\"change/path\")\n\n\
+\tdef __init__(self):\n\
+\t\tself.this_ = None\n\n\
 ${constructors}\
 ${methods}\
 ${accessors}\
@@ -18,8 +20,8 @@ if __name__ == \"__main__\":\n\
 \t# magic happens here\n\tpass\n"
 
 	constructor_template = "\
-\tdef __init__(self, ${args}):\n\
-\t\tself.this_ = _${classname}_construct__($args)\n\n"
+\tdef construct_object_$num(self, ${args}):\n\
+\t\tself.this_ = ${classname}.${modulename}._${classname}_construct__($args)\n\n"
 
 	method_fn_template = "\
 \tdef ${methname}(self${args}):\n\
@@ -36,7 +38,7 @@ if __name__ == \"__main__\":\n\
 \tdef set_${attrname}(self, ${attrname}):\n\
 \t\t${classname}.${modulename}._${classname}_set_${attrname}__ (self.this_, ${attrname})\n\n\
 \tdef  get_${attrname}(self):\n\
-\t\treturn _${classname}_get_${attrname}__(self.this_)\n\n"
+\t\treturn ${classname}.${modulename}._${classname}_get_${attrname}__(self.this_)\n\n"
 
 	import_templ = Template(import_template)
 	gw_templ = Template(gateway)
@@ -52,10 +54,10 @@ if __name__ == \"__main__\":\n\
 	def process_class(self, t_class=[]):
 		# this is where processing goes
 		ss = ""
+		ss += PyGwGenerator.import_templ.substitute()
 		for cl in t_class:
 			clname = cl.name.strip()
 			modulename = clname.capitalize()
-			ss += PyGwGenerator.import_templ.substitute()
 			ss += PyGwGenerator.gw_templ.substitute(
 				classname=clname,
 				modulename=modulename,
@@ -69,15 +71,20 @@ if __name__ == \"__main__\":\n\
 	@classmethod
 	def process_constructors(cls, constructors: list, classname: str):
 		ss = ""
+		num = 0
+		modulename = classname.capitalize()
 		for construct in constructors:
 			if construct.construct_type == "constructor":
 				args = cls.process_t_args(construct.args)
 				# str_args = ", {}".format(args) if args.strip() else ""
 				ss += PyGwGenerator.construct_templ.substitute(
 					classname=classname,
+					num=num,
 					args=args,
-					content=cls.process_core(construct.core, level=1)
+					content=cls.process_core(construct.core, level=1),
+					modulename=modulename
 				)
+				num += 1
 		return ss
 
 	@classmethod

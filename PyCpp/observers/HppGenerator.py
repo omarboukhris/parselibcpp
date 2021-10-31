@@ -1,26 +1,63 @@
 
-from .TemplGenerator import TemplGenerator
+from .CppGenerator import CppAbstractObs
 
 from string import Template
 
-class HppGenerator(TemplGenerator):
+class HppGenerator(CppAbstractObs):
+
+	ns_template = "namespace $ns_name {\n\n"
+
+	class_template = "\n\
+$doc\n\
+class $classname\
+$inheritence {\n\
+\n\
+$constructors\
+$public_methods\
+$public_attributes\
+$private_methods\
+$private_attributes\
+$protected_methods\
+$protected_attributes\
+} ;\n\n"
 
 	construct_template = "$doc\n\t$classname($args);\n\n"
 
 	meth_template = "$doc\n\t$type $name ($args);\n\n"
 
-	const_temp = Template(construct_template)
+	ns_temp = Template(ns_template)
+	class_temp = Template(class_template)
+
+	construct_temp = Template(construct_template)
 	meth_temp = Template(meth_template)
 
 	def __init__(self, stream: callable):
 		super(HppGenerator, self).__init__(stream)
+
+	def process_class(self, t_class=[]):
+		ss = ""
+		for cl in t_class:
+			ss += HppGenerator.class_temp.substitute(
+				doc=cl.doxy if cl.doxy else "// No class documentation was specified",
+				classname=cl.name,
+				inheritence=": {}".format(cl.inherit[0]) if cl.inherit else "",
+				constructors=HppGenerator.process_constructors(cl.constructs, cl.name),
+				public_attributes=self.process_attributes("public", cl.attributes),
+				public_methods=HppGenerator.process_methods("public", cl.methods),
+				private_attributes=self.process_attributes("private", cl.attributes),
+				private_methods=HppGenerator.process_methods("private", cl.methods),
+				protected_attributes=self.process_attributes("protected", cl.attributes),
+				protected_methods=HppGenerator.process_methods("protected", cl.methods),
+			)
+
+		self.stream(ss)
 
 	@classmethod
 	def process_constructors(cls, constructors: list, classname: str):
 		ss = ""
 		for construct in constructors:
 			cname_prefix = "" if construct.construct_type == "constructor" else "~"
-			ss += HppGenerator.const_temp.substitute(
+			ss += HppGenerator.construct_temp.substitute(
 				doc=HppGenerator.process_doc(construct.doxy),
 				classname=cname_prefix + classname,
 				args=HppGenerator.process_args(construct.args)

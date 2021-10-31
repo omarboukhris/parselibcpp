@@ -69,6 +69,7 @@ class PyCppFactory:
 		:param pref: file prefix
 		:return: constructed file name
 		"""
+		fname = "".join(fname.split(".")[:-1])
 		if pref:
 			# add prefix to the last element in path (filename)
 			fsplit = fname.split("/")
@@ -90,7 +91,8 @@ class PyCppFactory:
 			pref = ""
 			if ext in ["ctype"]:
 				pref = "pyGw_"
-			if ext in ["cpp", "h", "hpp", "pyc", "py", "impl", "ctype"]:
+				ext = "cpp"
+			if ext in ["cpp", "h", "hpp", "py", "impl", "ctype"]:
 				out.append(FileStream(
 					fname=PyCppFactory.single_fn_fabric(
 						fname=fname,
@@ -109,7 +111,7 @@ class PyCppFactory:
 		"""
 		out = []
 		for ext in out_ext:
-			if ext in ["cpp", "h", "hpp", "pyc", "py", "ctype", "impl"]:
+			if ext in ["cpp", "h", "hpp", "py", "ctype", "impl"]:
 				out.append(StringStream())
 		return out
 
@@ -127,7 +129,7 @@ class PyCppFactory:
 				out.append(CppGenerator(stream))
 			elif ext in ["h", "hpp"]:
 				out.append(HppGenerator(stream))
-			elif ext in ["pyc"]:
+			elif ext in ["py"]:
 				out.append(PyGwGenerator(stream))
 			elif ext in ["ctype"]:
 				out.append(GatewayGenerator(stream))

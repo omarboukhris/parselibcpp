@@ -53,6 +53,9 @@ if __name__ == "__main__":
 				print(ext, "-----------------------------\n")
 				print(output)
 
+		for stream in active_streams:
+			stream.write()
+
 		processed_files.append(jfile)
 
 	del psess
@@ -83,10 +86,10 @@ if __name__ == "__main__":
 		cmk_ver,
 		cpp_ver
 	)
-	print(cmake.files)
-	print(cmake.make_header())
-	print(cmake.make_files())
-	print(cmake.make_builder())
-
-	print (fnproc.make_py())
-	print (fnproc.make_gw())
+	# print(cmake.files)
+	# print(cmake.make_header())
+	# print(cmake.make_files())
+	# print(cmake.make_builder())
+	#
+	# print (fnproc.make_py())
+	# print (fnproc.make_gw())
