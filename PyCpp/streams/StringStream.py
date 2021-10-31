@@ -3,7 +3,8 @@ class StringStream:
 	"""
 	String Stream feeding on generated data
 	Each stream passed to a generator should
-	at least implement __init__ and __call__
+	at least implement __init__, __call__, write
+	and __str__
 	"""
 
 	def __init__(self, content: str = ""):
