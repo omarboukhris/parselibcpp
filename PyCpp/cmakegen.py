@@ -1,4 +1,6 @@
 
+from PyCpp.factory import FileNameProcessor
+
 from string import Template
 
 """
@@ -44,13 +46,25 @@ target_link_libraries(\n\
 		self,
 		p_name: str,
 		p_type: str,
-		p_files: list = [],
+		p_files: FileNameProcessor,
 		p_libs: list = [],
 		cmk_version: str = "3.5",
 		cpp_version: str = "17",
 		dbgflg: str = "-g",
 		relflg: str = "-O2"
 	):
+		""" Class constructor
+
+		:param p_name: project name
+		:param p_type: project type (so/a/x)
+		:param p_files: project files in a FileNameProcessor object
+		:param p_libs: project linked libraries
+		:param cmk_version: cmake minimum version
+		:param cpp_version: c++ minimum version
+		:param dbgflg: Debug flags
+		:param relflg: Release flags
+		"""
+
 		self.name = p_name
 		self.type_ = p_type
 		self.files = p_files
@@ -61,15 +75,6 @@ target_link_libraries(\n\
 
 		self.dbgflg = dbgflg
 		self.relflg = relflg
-
-		self._cleanup_ext()
-
-	def _cleanup_ext(self):
-		out = []
-		for proc in self.files:
-			cln_file_name = "".join(proc.split(".")[:-1])
-			out.append(cln_file_name)
-		self.files = out
 
 	def make_header(self):
 		ss = CMakeGenerator.cmk_head_templ.substitute(
@@ -84,16 +89,12 @@ target_link_libraries(\n\
 	def make_files(self):
 		ss = CMakeGenerator.files_templ.substitute(
 			listname="SOURCE_FILES",
-			filenames=self.process_file_names("cpp")
+			filenames=self.files.make_cpp()
 		)
 		ss += CMakeGenerator.files_templ.substitute(
 			listname="HEADER_FILES",
-			filenames=self.process_file_names("h")
+			filenames=self.files.make_h()
 		)
-		return ss
-
-	def process_file_names(self, ext: str):
-		ss = "\t" + "\n\t".join(["{}.{}".format(f, ext) for f in self.files])
 		return ss
 
 	def make_builder(self):
@@ -121,4 +122,5 @@ target_link_libraries(\n\
 		if not self.libs:
 			return ""
 		else:
+			# do processing here
 			return ""

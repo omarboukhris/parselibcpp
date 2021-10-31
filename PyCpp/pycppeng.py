@@ -17,7 +17,12 @@ class PyCppEngine:
 			self.write_class(arr["classdef"][0])
 			self.end_write_ns()
 
-	def register_module(self, mod_headers):
+	def register_module(self, mod_headers) -> None:
+		""" Registers namespaces in observers for later use in code generation
+
+		:param mod_headers: module headers
+		:return: None
+		"""
 		# ns stands for namespace
 		module_ns = [ns.strip() for ns in mod_headers["module_name"][0].split()]
 		module_ns = list(filter(lambda ns: ns != ".", module_ns))
@@ -25,15 +30,28 @@ class PyCppEngine:
 		for obs in self.observers:
 			obs.register_module(module_ns)
 
-	def write_ns(self):
+	def write_ns(self) -> None:
+		""" Call namespace processing on all observers
+
+		:return: None
+		"""
 		for obs in self.observers:
 			obs.process_namespace()
 
-	def end_write_ns(self):
+	def end_write_ns(self) -> None:
+		""" Finishes namespace processing on all observers
+
+		:return: None
+		"""
 		for obs in self.observers:
 			obs.end_process_namespace()
 
-	def write_import(self, imports):
+	def write_import(self, imports) -> None:
+		""" Process imports and calls code generation on observers
+
+		:param imports: list of import files
+		:return: None
+		"""
 		import_list = []
 		for files in imports["importfile"]:
 			import_fname = "".join(files.split())
@@ -42,7 +60,12 @@ class PyCppEngine:
 		for obs in self.observers:
 			obs.process_import(import_list)
 
-	def write_class(self, classdef):
+	def write_class(self, classdef) -> None:
+		""" Process parsed classes and calls code generation in observers
+
+		:param classdef: classes definition in a json object
+		:return: None
+		"""
 		out = []
 		for classname, classbody in zip(classdef["classname"], classdef["classbody"]):
 			classobj = Class(
@@ -59,7 +82,12 @@ class PyCppEngine:
 			obs.process_class(out)
 
 	@staticmethod
-	def write_construct(construct_list):
+	def write_construct(construct_list) -> list:
+		""" Processes constructor json node
+
+		:param construct_list: list of constructor json nodes
+		:return: constructors processed in a list of named tuples
+		"""
 		out = []
 		for construct in construct_list:
 			out.append(Construct(
@@ -71,7 +99,12 @@ class PyCppEngine:
 		return out
 
 	@staticmethod
-	def write_attr(attr_list):
+	def write_attr(attr_list) -> list:
+		""" Processes attributes json node
+
+		:param attr_list: list of attributes json nodes
+		:return: attributes processed in a list of named tuples
+		"""
 		out = []
 		for attr in attr_list:
 			out.append(Attribute(
@@ -84,7 +117,12 @@ class PyCppEngine:
 		return out
 
 	@staticmethod
-	def write_meth(meth_list):
+	def write_meth(meth_list) -> list:
+		""" Processes methods json node
+
+		:param meth_list: list of methods json nodes
+		:return: methods processed in a list of named tuples
+		"""
 		out = []
 		for meth in meth_list:
 			out.append(Method(
@@ -99,7 +137,12 @@ class PyCppEngine:
 		return out
 
 	@staticmethod
-	def process_type(attr):
+	def process_type(attr) -> list:
+		""" processes type json node
+
+		:param attr: attribute
+		:return: attribute types processed in a list of named tuples
+		"""
 		attr_spl = attr["type"][0].split()
 		if attr_spl[0] == "const":
 			ty = "const " + "".join(attr_spl[1:])
@@ -109,7 +152,12 @@ class PyCppEngine:
 		return ty
 
 	@staticmethod
-	def process_args(meth):
+	def process_args(meth) -> list:
+		""" Processes method arguments json node
+
+		:param meth: method json node to process
+		:return: arguments processed in a list of named tuples
+		"""
 		out = []
 		if "args" in meth.keys():
 			_args = meth["args"][0]

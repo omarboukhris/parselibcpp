@@ -1,40 +1,10 @@
 
-from PyCpp.parsesession import ParseSession, StringStream, ArgParser
-from PyCpp.observers import HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
 from PyCpp import pycppeng, cmakegen as cmk
+from PyCpp.parsesession import ParseSession, ArgParser
+from PyCpp.factory import PyCppFactory, FileNameProcessor
 
 import sys
 import glob
-
-def ss_fabric(out_ext: list = []):
-	out = []
-	for ext in out_ext:
-		if ext in ["cpp"]:
-			out.append(StringStream())
-		elif ext in ["h", "hpp"]:
-			out.append(StringStream())
-		elif ext in ["pyc"]:
-			out.append(StringStream())
-		elif ext in ["ctype"]:
-			out.append(StringStream())
-		elif ext in ["impl"]:
-			out.append(StringStream())
-	return out
-
-def gen_fabric(out_ext: list = (), streams: list = ()):
-	out = []
-	for ext, stream in zip(out_ext, streams):
-		if ext in ["cpp"]:
-			out.append(CppGenerator(stream))
-		elif ext in ["h", "hpp"]:
-			out.append(HppGenerator(stream))
-		elif ext in ["pyc"]:
-			out.append(PyGwGenerator(stream))
-		elif ext in ["ctype"]:
-			out.append(GatewayGenerator(stream))
-		elif ext in ["impl"]:
-			out.append(TemplGenerator(stream))
-	return out
 
 def show_help():
 	print("\nusage :\n\t{} \n\
@@ -69,10 +39,9 @@ if __name__ == "__main__":
 
 		# prepare streams and observers
 		all_ext = ["cpp", "h", "impl", "py"]
-		print(argp.get("ext"))
 		output_ext = all_ext if not argp.get("ext") else argp.get("ext").split(",")
-		str_streams = ss_fabric(output_ext)
-		observers = gen_fabric(output_ext, str_streams)
+		active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
+		observers = PyCppFactory.gen_fabric(output_ext, active_streams)
 
 		# call main generator
 		gen = pycppeng.PyCppEngine(parsed_json, observers)
@@ -80,7 +49,7 @@ if __name__ == "__main__":
 
 		# output results
 		if argp.get("v"):
-			for ext, output in zip(output_ext, str_streams):
+			for ext, output in zip(output_ext, active_streams):
 				print(ext, "-----------------------------\n")
 				print(output)
 
@@ -105,10 +74,11 @@ if __name__ == "__main__":
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
+	fnproc = FileNameProcessor(processed_files)
 	cmake = cmk.CMakeGenerator(
 		argp.get("pname"),
 		argp.get("ptype"),
-		processed_files,
+		fnproc,
 		plibs,
 		cmk_ver,
 		cpp_ver
@@ -117,3 +87,6 @@ if __name__ == "__main__":
 	print(cmake.make_header())
 	print(cmake.make_files())
 	print(cmake.make_builder())
+
+	print (fnproc.make_py())
+	print (fnproc.make_gw())
