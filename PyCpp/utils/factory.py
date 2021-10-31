@@ -34,6 +34,7 @@ class FileNameProcessor:
 
 	def make_cpp(self) -> str:
 		""" called in CMakeGenerator, helper method
+
 		:return: C++ generated file name
 		"""
 		if "cpp" in self.ext:
@@ -42,6 +43,7 @@ class FileNameProcessor:
 
 	def make_h(self) -> str:
 		""" called in CMakeGenerator, helper method
+
 		:return: header (h/hpp) generated file name
 		"""
 		if "h" in self.ext:
@@ -50,6 +52,7 @@ class FileNameProcessor:
 
 	def make_impl(self) -> str:
 		""" called in CMakeGenerator, helper method
+
 		:return: impl generated file name
 		"""
 		if "impl" in self.ext:
@@ -68,6 +71,7 @@ class FileNameProcessor:
 
 	def _make_ext(self, ext: str) -> str:
 		""" Decorate file names with extension
+
 		:param ext: extension decorating file names
 		:return: decorated file names
 		"""

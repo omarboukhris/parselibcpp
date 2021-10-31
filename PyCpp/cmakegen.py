@@ -1,5 +1,5 @@
 
-from PyCpp.factory import FileNameProcessor
+from PyCpp.utils.factory import FileNameProcessor
 
 from string import Template
 
@@ -101,6 +101,7 @@ target_link_libraries(\n\
 
 	def make_files(self) -> str:
 		""" Make source and header files lists
+
 		:return: cmake code snippet as a string
 		"""
 		files = self.files.make_cpp() + "\n" + self.files.make_gw()
@@ -117,6 +118,7 @@ target_link_libraries(\n\
 
 	def make_builder(self) -> str:
 		""" Make cmake building instructions
+
 		:return: cmake building code snippet as a string
 		"""
 		if self.type_ in ["so", "a"]:

@@ -1,8 +1,8 @@
 
 from PyCpp import pycppeng, cmakegen as cmk
 from PyCpp.parsesession import ParseSession
-from PyCpp.factory import PyCppFactory, FileNameProcessor
-from PyCpp.helpers import ArgParser, check_arg
+from PyCpp.utils.factory import PyCppFactory, FileNameProcessor
+from PyCpp.utils.helpers import ArgParser, check_arg
 from PyCpp.streams import FileStream
 
 import sys
