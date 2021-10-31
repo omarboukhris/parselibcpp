@@ -7,13 +7,52 @@
     <x>0</x>
     <y>0</y>
     <width>402</width>
-    <height>236</height>
+    <height>267</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PyCpp GUI</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="1" colspan="5">
+    <widget class="QLineEdit" name="lineEdit_2"/>
+   </item>
+   <item row="2" column="3" colspan="3">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Gateway options</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_2">
+        <property name="text">
+         <string>C gateway</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Py gateway</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QPushButton" name="pushButton_4">
+     <property name="text">
+      <string>Help</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
@@ -21,22 +60,12 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="5">
-    <widget class="QLineEdit" name="lineEdit">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
+   <item row="3" column="0" colspan="2">
+    <widget class="QPushButton" name="pushButton_2">
      <property name="text">
-      <string>Glob regex</string>
+      <string>Generate Code</string>
      </property>
     </widget>
-   </item>
-   <item row="1" column="1" colspan="5">
-    <widget class="QLineEdit" name="lineEdit_2"/>
    </item>
    <item row="2" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox">
@@ -74,39 +103,24 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="3" colspan="3">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Glob regex</string>
      </property>
-     <property name="title">
-      <string>Gateway options</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox_2">
-        <property name="text">
-         <string>C gateway</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="checkBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Py gateway</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton_2">
+   <item row="3" column="5">
+    <widget class="QPushButton" name="pushButton_3">
      <property name="text">
-      <string>Generate Code</string>
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="5">
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="enabled">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -117,17 +131,10 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="4">
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="text">
-      <string>Help</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="5">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>Close</string>
+   <item row="4" column="0" colspan="6">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>0</number>
      </property>
     </widget>
    </item>
