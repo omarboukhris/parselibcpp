@@ -38,6 +38,8 @@ file(GLOB HEADER_FILES
 	parselib/*.hpp
 )
 
+list(REMOVE_ITEM SOURCE_FILES "parselib/main.cpp")
+
 #############################
 ### parselib depends on boost
 #############################
@@ -75,7 +77,7 @@ endif()
 # build test exemple if needed
 if(BUILD_EX)
 	set(APP parcexlib)
-	add_executable(${APP} main.cpp)
+	add_executable(${APP} parselib/main.cpp)
 	target_link_libraries(${APP} 
 		${PROJECT_NAME} 
 		${Boost_LIBRARIES}
