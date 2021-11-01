@@ -1,8 +1,8 @@
 
 from PyCpp import pycppeng, cmakegen as cmk
 from PyCpp.parsesession import ParseSession
-from PyCpp.factory import PyCppFactory, FileNameProcessor
-from PyCpp.helpers import ArgParser, check_arg
+from PyCpp.utils.factory import PyCppFactory, FileNameProcessor
+from PyCpp.utils.helpers import ArgParser, check_arg
 from PyCpp.streams import FileStream
 
 import sys
@@ -63,7 +63,8 @@ def main():
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
-	fstrm = FileStream(ppath + "/CMakeLists.txt")
+	# fstrm = FileStream(ppath + "/CMakeLists.txt")
+	fstrm = FileStream("/CMakeLists.txt")
 	fnproc = FileNameProcessor(processed_files, output_ext)
 	cmake = cmk.CMakeGenerator(
 		argp.get("pname"),
@@ -83,7 +84,7 @@ def main():
 	fstrm(cmake.make_builder())
 
 	# write cmakelists file on disk
-	fstrm.write()
+	# fstrm.write()
 
 	# output in terminal if verbose
 	if argp.get("v"):

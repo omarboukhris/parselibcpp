@@ -16,6 +16,7 @@ class ParseSession:
 
 	def load_grammar(self, filepath: str, verbose: bool = False) -> None:
 		""" Loads grammar from file
+
 		:param filepath: str file path
 		:param verbose: set to True for verbose output
 		"""
@@ -24,6 +25,7 @@ class ParseSession:
 
 	def parse_to_json_file(self, filepath: str, verbose: bool = False) -> None:
 		""" Parse source file into json file. Must be called after loading grammar
+
 		:param filepath: str file path to source code
 		:param verbose: set to True for verbose
 		"""
@@ -32,6 +34,7 @@ class ParseSession:
 
 	def parse_to_json(self, filepath: str, verbose: bool = False):
 		""" Parse source file into json data structure. Must be called after loading grammar
+
 		:param filepath: str file path to source code
 		:param verbose: set to True for verbose
 		"""
