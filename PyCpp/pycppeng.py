@@ -9,7 +9,9 @@ class PyCppEngine:
 		self.observers = observers
 
 	def drive(self):
-		# print (self.json_obj)
+		""" Launches json data structure parsing into named tuples
+		"""
+
 		for arr in self.json_obj["file"]:
 			self.register_module(arr["module_header"][0])
 			self.write_import(arr["imports"][0])

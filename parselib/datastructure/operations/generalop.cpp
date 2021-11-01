@@ -10,38 +10,34 @@ PatternsMap GenericGrammarTokenizer::grammartokens = {
 	{"\\%(import|include) \"(.+)(/([^/]+))?\\.grm\"",	"IMPORT"},
 
 	//KEYWORDS
-	{"(//|\\;).*",						"LINECOMMENT"},
-	{"\'\'|\"\"",						"EMPTY"},
-	{"AXIOM",							"AXIOM"},
+	{"(//|\\;).*",                      "LINECOMMENT"},
+	{"\'\'|\"\"",                       "EMPTY"},
+	{"AXIOM",                           "AXIOM"},
 
 	// SPECIAL OPERATORS
-	{"(\\_\\_list\\_\\_|\\[\\])",		"LIST"},
-	{"\\!",								"EXCL"},
-	{"s\\:",							"STR"},
-	{"\\(\".*\"\\)|\\(\'.*\'\\)",		"REGEX"},
-	{"\".*\"|\'.*\'",					"AREGEX"}, //a for anonymous
-	{"(\\->|\\=)",						"EQUAL"},
-	{"\\,",								"COMMA"},
-	{"\\|",								"OR"},
-	{"\\(",								"LPAR"},
-	{"\\)",								"RPAR"},
-// 	{"\[",								"LCRCH"},
-// 	{"\]",								"RCRCH"},
+	{"(\\_\\_list\\_\\_|\\[\\])",       "LIST"},
+	{"\\!",                             "EXCL"},
+	{"s\\:",                            "STR"},
+	{"\\(\".*\"\\)|\\(\'.*\'\\)",       "REGEX"},
+	{"\".*\"|\'.*\'",                   "AREGEX"}, //a for anonymous
+	{"(\\->|\\=)",                      "EQUAL"},
+	{"\\,",                             "COMMA"},
+	{"\\|",                             "OR"},
+	{"\\(",                             "LPAR"},
+	{"\\)",                             "RPAR"},
 
 	//OPERANDS
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*\\.",	"TERMINAL"},
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",		"NONTERMINAL"}
+	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*\\.",    "TERMINAL"},
+	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",       "NONTERMINAL"}
 } ;
 
 PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
-	{"LINECOMMENT",						          "LINECOMMENT"},
-	{"AXIOM EQUAL NONTERMINAL",							"AXIOM"},
-	{"TERMINAL REGEX",									"TOKEN"},
-	{"NONTERMINAL EQUAL",								"LSIDE"},
-	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY",	"RSIDE"},
+	{"LINECOMMENT",                                     "LINECOMMENT"},
+	{"AXIOM EQUAL NONTERMINAL",                         "AXIOM"},
+	{"TERMINAL REGEX",                                  "TOKEN"},
+	{"NONTERMINAL EQUAL",                               "LSIDE"},
+	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY", "RSIDE"},
 	{"OR", "OR"},
-// 	{"LCRCH",		"LCRCH"},
-// 	{"RCRCH",		"RCRCH"}
 } ;
 
 /*!
