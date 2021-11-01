@@ -29,7 +29,7 @@ def show_help(exe: str = ""):
 \t\tglob=regex_to_glob_files\n\
 \t\text=h,cpp,impl,py,ctype\n\
 \t\tplibs=\"list,of,libs,sep,by,comma\" \n\
-\t\tfiles=\"regex/to/glob\"\n\
+\t\tpath=\"regex/to/glob\"\n\
 \t\tv h\n\n\
 \tv is for verbose and h is for help\n\
 \tIf help is active, program shows this messages and exit.\n\

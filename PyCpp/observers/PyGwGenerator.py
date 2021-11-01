@@ -37,7 +37,7 @@ if __name__ == \"__main__\":\n\
 	accessor_template = "\
 \tdef set_${attrname}(self, ${attrname}):\n\
 \t\t${classname}.${modulename}._${classname}_set_${attrname}__ (self.this_, ${attrname})\n\n\
-\tdef  get_${attrname}(self):\n\
+\tdef get_${attrname}(self):\n\
 \t\treturn ${classname}.${modulename}._${classname}_get_${attrname}__(self.this_)\n\n"
 
 	import_templ = Template(import_template)
