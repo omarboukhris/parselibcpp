@@ -1,5 +1,5 @@
 
-from PyCpp.observers.observer import *
+from observers.observer import *
 
 
 class PyCppEngine:
@@ -139,7 +139,7 @@ class PyCppEngine:
 		return out
 
 	@staticmethod
-	def process_type(attr) -> list:
+	def process_type(attr) -> str:
 		""" processes type json node
 
 		:param attr: attribute

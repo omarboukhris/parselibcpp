@@ -1,19 +1,20 @@
 
-from PyCppWidget import Ui_pyCppGui
+from gui.PyCppWidget import Ui_pyCppGui
 
 from PyQt6.QtWidgets import QApplication, QWidget, QFileDialog
 from PyQt6.QtCore import QCoreApplication, QMetaObject
 
-from PyCpp.parsesession import ParseSession
-from PyCpp.utils.factory import PyCppFactory, FileNameProcessor
-from PyCpp.streams import FileStream
+from utils.parsesession import ParseSession
+from utils.factory import PyCppFactory, FileNameProcessor
+from streams import FileStream
 
-import PyCpp.pycppeng as pycppeng
-import PyCpp.cmakegen as cmk
+import utils.pycppeng as pycppeng
+import utils.cmakegen as cmk
 
 import sys
 import glob
-
+import os.path
+import pathlib
 
 class PyCppGui(QWidget, Ui_pyCppGui):
 
@@ -83,33 +84,42 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			return
 
 		# init parse session with grammar
+		grammarpath = str(pathlib.Path(__file__).parent / "data/grammar.grm")
 		psess = ParseSession()
-		psess.load_grammar("../data/grammar.grm", False)
+		psess.load_grammar(grammarpath, False)
 
-		filelist = glob.glob("{}/{}".format(ppath, globex))
+		filelist = glob.glob(os.path.join(ppath, globex))
 		i, numfiles = 0, len(filelist)
 		processed_files = []
 		for jfile in filelist:
 
 			# call parselib parser
+			print("parselib > processing file \"{}\"".format(jfile))
 			self.status_label.setText("parselib > processing file \"{}\"".format(jfile))
 			parsed_json = psess.parse_to_json(jfile, False)
+			if parsed_json:
+				# prepare streams and observers
+				active_streams = PyCppFactory.fs_fabric(jfile, out_ext)
+				observers = PyCppFactory.gen_fabric(out_ext, active_streams)
 
-			# prepare streams and observers
-			active_streams = PyCppFactory.fs_fabric(jfile, out_ext)
-			observers = PyCppFactory.gen_fabric(out_ext, active_streams)
+				# call main generator
+				gen = pycppeng.PyCppEngine(parsed_json, observers)
+				gen.drive()
 
-			# call main generator
-			gen = pycppeng.PyCppEngine(parsed_json, observers)
-			gen.drive()
+				# activate to write output to file
+				for stream in active_streams:
+					stream.write()
 
-			# activate to write output to file
-			for stream in active_streams:
-				stream.write()
-
+				processed_files.append(jfile)
+			else:
+				if not psess:
+					print("err > parse session not initialized")
+				if not psess.grammar_loaded:
+					print("err > grammar has not been loaded")
+				print("unprocessed file is : ", psess.unprocessed_file)
 			i += 1
-			processed_files.append(jfile)
 			self.progressBar.setValue(int((i/numfiles)*100))
+
 		del psess
 
 		self.status_label.setText("pycpp > finished parsing sources, now generating CMakeLists")

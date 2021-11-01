@@ -1,48 +1,59 @@
 
-from PyCpp import pycppeng, cmakegen as cmk
-from PyCpp.parsesession import ParseSession
-from PyCpp.utils.factory import PyCppFactory, FileNameProcessor
-from PyCpp.utils.helpers import ArgParser, check_arg
-from PyCpp.streams import FileStream
+from utils import pycppeng, cmakegen as cmk
+from utils.parsesession import ParseSession
+from utils.factory import PyCppFactory, FileNameProcessor
+from utils.helpers import ArgParser, check_arg
+from streams import FileStream
 
 import sys
 import glob
+import os.path
+import pathlib
 
 def main():
 	argp = ArgParser(sys.argv)
 
 	ppath, globex, output_ext = check_arg(argp)
 
+	grammarpath = str(pathlib.Path(__file__).parent / "data/grammar.grm")
 	psess = ParseSession()
-	psess.load_grammar("PyCpp/data/grammar.grm", False)
+	psess.load_grammar(grammarpath, False)
 
+	filelist = os.path.join(ppath, globex)
 	processed_files = []
-	for jfile in glob.glob(ppath + globex):
+	for jfile in glob.glob(filelist):
 
 		# call parselib parser
 		print("parselib > processing file \"{}\"".format(jfile))
 		parsed_json = psess.parse_to_json(jfile, False)
 		# print(parsed_json)
+		if parsed_json:
+			# prepare streams and observers
+			active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
+			observers = PyCppFactory.gen_fabric(output_ext, active_streams)
 
-		# prepare streams and observers
-		active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
-		observers = PyCppFactory.gen_fabric(output_ext, active_streams)
+			# call main generator
+			gen = pycppeng.PyCppEngine(parsed_json, observers)
+			gen.drive()
 
-		# call main generator
-		gen = pycppeng.PyCppEngine(parsed_json, observers)
-		gen.drive()
+			# output results
+			if argp.get("v"):
+				for ext, output in zip(output_ext, active_streams):
+					print(ext, "------------------------------\n")
+					print(output)
 
-		# output results
-		if argp.get("v"):
-			for ext, output in zip(output_ext, active_streams):
-				print(ext, "------------------------------\n")
-				print(output)
+			# activate to write output to file
+			for stream in active_streams:
+				stream.write()
 
-		# activate to write output to file
-		for stream in active_streams:
-			stream.write()
-
-		processed_files.append(jfile)
+			processed_files.append(jfile)
+		else:
+			# track error
+			if not psess:
+				print("err > parse session not initialized")
+			if not psess.grammar_loaded:
+				print("err > grammar has not been loaded")
+			print("unprocessed file is : ", psess.unprocessed_file)
 
 	del psess
 

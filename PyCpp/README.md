@@ -45,7 +45,7 @@ This script loops through recursively globbed files and apply TemplateGenerator 
 ```python
 from PyCpp.parsesession import ParseSession
 from PyCpp.observers import HppGenerator, TemplGenerator
-from PyCpp import pycppeng
+from PyCpp.utils import pycppeng
 
 import glob
 

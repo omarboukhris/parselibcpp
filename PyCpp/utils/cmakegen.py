@@ -1,5 +1,5 @@
 
-from PyCpp.utils.factory import FileNameProcessor
+from utils.factory import FileNameProcessor
 
 from string import Template
 

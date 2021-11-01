@@ -13,6 +13,8 @@ class ParseSession:
 
 	def __init__(self, log_level: int = 0):
 		self.sess = ParseSession.parselib.new_session(log_level)
+		self.grammar_loaded = False
+		self.unprocessed_file = ""
 
 	def load_grammar(self, filepath: str, verbose: bool = False) -> None:
 		""" Loads grammar from file
@@ -22,6 +24,9 @@ class ParseSession:
 		"""
 		if os.path.isfile(filepath) and self.sess:
 			ParseSession.parselib.load_grammar(self.sess, filepath.encode(), verbose)
+			self.grammar_loaded = True
+		else:
+			print("err > grammar not loaded ", filepath)
 
 	def parse_to_json_file(self, filepath: str, verbose: bool = False) -> None:
 		""" Parse source file into json file. Must be called after loading grammar
@@ -29,8 +34,10 @@ class ParseSession:
 		:param filepath: str file path to source code
 		:param verbose: set to True for verbose
 		"""
-		if os.path.isfile(filepath) and self.sess:
+		if os.path.isfile(filepath) and self.sess and self.grammar_loaded:
 			ParseSession.parselib.store_json(self.sess, filepath.encode(), verbose)
+		else:
+			self.unprocessed_file = filepath
 
 	def parse_to_json(self, filepath: str, verbose: bool = False):
 		""" Parse source file into json data structure. Must be called after loading grammar
@@ -38,10 +45,12 @@ class ParseSession:
 		:param filepath: str file path to source code
 		:param verbose: set to True for verbose
 		"""
-		if os.path.isfile(filepath) and self.sess:
+		if os.path.isfile(filepath) and self.sess and self.grammar_loaded:
 			jsonstr = ParseSession.parselib.get_json(self.sess, filepath.encode(), verbose)
 			output = json.loads(jsonstr.decode())
 			return output
+		else:
+			self.unprocessed_file = filepath
 		return None
 
 	def __del__(self):

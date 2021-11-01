@@ -1,6 +1,6 @@
 
-from PyCpp.observers import HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
-from PyCpp.streams import StringStream, FileStream
+from observers import HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
+from streams import StringStream, FileStream
 
 class FileNameProcessor:
 	"""
