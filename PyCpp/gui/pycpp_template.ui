@@ -6,57 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>403</width>
-    <height>497</height>
+    <width>601</width>
+    <height>551</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PyCpp GUI</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Root folder</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="5">
-    <widget class="QLineEdit" name="lineEdit">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="4">
-    <widget class="QPushButton" name="pushButton_4">
-     <property name="text">
-      <string>Help</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="text">
-      <string>Generate Code</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="5">
-    <widget class="QPushButton" name="pushButton_3">
-     <property name="text">
-      <string>Close</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2" colspan="2">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Select Folder</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3" colspan="3">
+   <item row="3" column="3" colspan="3">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="enabled">
       <bool>false</bool>
@@ -66,14 +24,14 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="cgw_checkBox">
         <property name="text">
          <string>C gateway</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="pygw_checkBox">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -85,35 +43,35 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0" colspan="6">
+   <item row="5" column="2" colspan="3">
+    <widget class="QPushButton" name="gencode_pushButton">
+     <property name="text">
+      <string>Generate Code</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="6">
     <widget class="QProgressBar" name="progressBar">
      <property name="value">
       <number>0</number>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Glob regex</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="3">
+   <item row="3" column="0" colspan="3">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Project type</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="3" column="0">
-       <widget class="QRadioButton" name="radioButton_3">
+       <widget class="QRadioButton" name="x_radioButton">
         <property name="text">
          <string>Executable</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="so_radioButton">
         <property name="text">
          <string>Shared Object</string>
         </property>
@@ -123,7 +81,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QRadioButton" name="radioButton_2">
+       <widget class="QRadioButton" name="static_radioButton">
         <property name="text">
          <string>Static Library</string>
         </property>
@@ -135,10 +93,49 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="1" colspan="5">
-    <widget class="QLineEdit" name="lineEdit_2"/>
+   <item row="5" column="0" colspan="2">
+    <widget class="QPushButton" name="getfolder_pushButton">
+     <property name="text">
+      <string>Select Folder</string>
+     </property>
+    </widget>
    </item>
-   <item row="3" column="0" colspan="6">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Root folder</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="5">
+    <widget class="QLineEdit" name="globex_lineEdit">
+     <property name="text">
+      <string>*.cpy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QPushButton" name="close_pushButton">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Glob regex</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="5">
+    <widget class="QLineEdit" name="rootfolder_lineEdit">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="6">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
       <string>CMake param</string>
@@ -152,9 +149,9 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="cppver_comboBox">
         <property name="currentText">
-         <string>17</string>
+         <string>03</string>
         </property>
         <item>
          <property name="text">
@@ -191,7 +188,11 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_3"/>
+       <widget class="QLineEdit" name="cmkver_lineEdit">
+        <property name="text">
+         <string>3.5</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_3">
@@ -201,7 +202,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="buildtype_comboBox">
         <item>
          <property name="text">
           <string>Release</string>
@@ -222,7 +223,11 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="lineEdit_4"/>
+       <widget class="QLineEdit" name="relflg_lineEdit">
+        <property name="text">
+         <string>-O2</string>
+        </property>
+       </widget>
       </item>
       <item row="4" column="0">
        <widget class="QLabel" name="label_5">
@@ -232,7 +237,11 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QLineEdit" name="lineEdit_5"/>
+       <widget class="QLineEdit" name="dbgflg_lineEdit">
+        <property name="text">
+         <string>-g</string>
+        </property>
+       </widget>
       </item>
       <item row="5" column="0">
        <widget class="QLabel" name="label_8">
@@ -242,38 +251,55 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QLineEdit" name="lineEdit_6"/>
+       <widget class="QLineEdit" name="libs_lineEdit"/>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="5">
+    <widget class="QLineEdit" name="projectname_lineEdit"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Project name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="6">
+    <widget class="QLabel" name="status_label">
+     <property name="text">
+      <string>status: idle</string>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>lineEdit_2</tabstop>
-  <tabstop>radioButton_2</tabstop>
-  <tabstop>radioButton</tabstop>
-  <tabstop>radioButton_3</tabstop>
-  <tabstop>checkBox_2</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>lineEdit_3</tabstop>
-  <tabstop>comboBox_2</tabstop>
-  <tabstop>lineEdit_4</tabstop>
-  <tabstop>lineEdit_5</tabstop>
-  <tabstop>lineEdit_6</tabstop>
-  <tabstop>pushButton_2</tabstop>
-  <tabstop>pushButton</tabstop>
-  <tabstop>pushButton_4</tabstop>
-  <tabstop>pushButton_3</tabstop>
+  <tabstop>projectname_lineEdit</tabstop>
+  <tabstop>rootfolder_lineEdit</tabstop>
+  <tabstop>globex_lineEdit</tabstop>
+  <tabstop>static_radioButton</tabstop>
+  <tabstop>so_radioButton</tabstop>
+  <tabstop>x_radioButton</tabstop>
+  <tabstop>cgw_checkBox</tabstop>
+  <tabstop>pygw_checkBox</tabstop>
+  <tabstop>cppver_comboBox</tabstop>
+  <tabstop>cmkver_lineEdit</tabstop>
+  <tabstop>buildtype_comboBox</tabstop>
+  <tabstop>relflg_lineEdit</tabstop>
+  <tabstop>dbgflg_lineEdit</tabstop>
+  <tabstop>libs_lineEdit</tabstop>
+  <tabstop>getfolder_pushButton</tabstop>
+  <tabstop>gencode_pushButton</tabstop>
+  <tabstop>close_pushButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>checkBox_2</sender>
+   <sender>cgw_checkBox</sender>
    <signal>clicked(bool)</signal>
-   <receiver>checkBox</receiver>
+   <receiver>pygw_checkBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -287,7 +313,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton</sender>
+   <sender>so_radioButton</sender>
    <signal>clicked(bool)</signal>
    <receiver>groupBox_2</receiver>
    <slot>setEnabled(bool)</slot>
@@ -303,7 +329,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_2</sender>
+   <sender>static_radioButton</sender>
    <signal>clicked(bool)</signal>
    <receiver>groupBox_2</receiver>
    <slot>setDisabled(bool)</slot>
@@ -319,7 +345,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_3</sender>
+   <sender>x_radioButton</sender>
    <signal>clicked(bool)</signal>
    <receiver>groupBox_2</receiver>
    <slot>setDisabled(bool)</slot>
@@ -335,7 +361,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_3</sender>
+   <sender>close_pushButton</sender>
    <signal>clicked()</signal>
    <receiver>pyCppGui</receiver>
    <slot>close()</slot>

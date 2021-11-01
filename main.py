@@ -67,8 +67,8 @@ def main():
 	fstrm = FileStream("/CMakeLists.txt")
 	fnproc = FileNameProcessor(processed_files, output_ext)
 	cmake = cmk.CMakeGenerator(
-		argp.get("pname"),
-		argp.get("ptype"),
+		pname,
+		ptype,
 		fnproc,
 		plibs,
 		cmk_ver,
