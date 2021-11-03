@@ -164,25 +164,29 @@ target_link_libraries(\n\
 				lib_name = lib_name[1:]
 				required = "REQUIRED"
 
-			# load parameters from json
-			filepath = os.path.join(current_path, lib_name + ".json")
-			fstr = open(filepath, "r")
-			content = "\n".join(fstr.readlines())
-			fstr.close()
-			lib_params = json.loads(content)
+			try:
+				# load parameters from json
+				filepath = os.path.join(current_path, lib_name + ".json")
+				fstr = open(filepath, "r")
+				content = "\n".join(fstr.readlines())
+				fstr.close()
+				lib_params = json.loads(content)
 
-			# check components
-			if not components:
-				components = lib_params["find_kw"][0]["default_components"]
+				# check components
+				if not components:
+					components = lib_params["find_kw"][0]["default_components"]
 
-			# substitute in template
-			out += CMakeGenerator.find_pck_templ.substitute(
-				package_name=lib_params["package_name"],
-				kw=lib_params["find_kw"][0]["kw"],
-				components=components,
-				required_state=required
-			)
-			out += "\n"
+				# substitute in template
+				out += CMakeGenerator.find_pck_templ.substitute(
+					package_name=lib_params["package_name"],
+					kw=lib_params["find_kw"][0]["kw"],
+					components=components,
+					required_state=required
+				)
+				out += "\n"
+			except Exception as e:
+				print("(cmakegen.make_dependency) An exception occured > ", e)
+
 		return out + "\n"
 
 	def _get_libs(self) -> str:
@@ -200,12 +204,16 @@ target_link_libraries(\n\
 			if lib_name[0] == "!":
 				lib_name = lib_name[1:]
 
-			filepath = os.path.join(current_path, lib_name + ".json")
-			fstr = open(filepath, "r")
-			content = "\n".join(fstr.readlines())
-			fstr.close()
+			try:
+				filepath = os.path.join(current_path, lib_name + ".json")
+				fstr = open(filepath, "r")
+				content = "\n".join(fstr.readlines())
+				fstr.close()
 
-			lib_params = json.loads(content)
-			if "link_library" in lib_params.keys():
-				out += "\t{}\n".format(lib_params["link_library"])
+				lib_params = json.loads(content)
+				if "link_library" in lib_params.keys():
+					out += "\t{}\n".format(lib_params["link_library"])
+			except Exception as e:
+				print("(cmakegen._get_libs) An exception occured > ", e)
+
 		return out

@@ -110,7 +110,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 				for stream in active_streams:
 					stream.write()
 
-				processed_files.append(jfile)
+				processed_files.append(jfile.replace(ppath, ""))
 			else:
 				if not psess:
 					print("err > parse session not initialized")
