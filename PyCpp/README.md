@@ -71,7 +71,7 @@ A command line interface for generating Python/C++ gateways.
 
 Launch it with "h" or "help" options to display usage and parameters to fill:
 
-```sh
+```
 $ python PyCppCli.py h
 
 usage :
