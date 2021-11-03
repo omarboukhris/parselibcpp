@@ -19,7 +19,7 @@ def main():
 	psess = ParseSession()
 	psess.load_grammar(grammarpath, False)
 
-	filelist = os.path.join(ppath, globex)
+	filelist = os.path.join(ppath, "**", globex)
 	processed_files = []
 	for jfile in glob.glob(filelist):
 
@@ -46,7 +46,7 @@ def main():
 			for stream in active_streams:
 				stream.write()
 
-			processed_files.append(jfile)
+			processed_files.append(jfile.replace(ppath, ""))
 		else:
 			# track error
 			if not psess:
@@ -74,8 +74,8 @@ def main():
 	assert ptype in ["so", "a", "x"], \
 		"Specify project type -> ptype=(so|a|x), ptype value is <{}>".format(ptype)
 
-	# fstrm = FileStream(ppath + "/CMakeLists.txt")
-	fstrm = FileStream("/CMakeLists.txt")
+	fstrm = FileStream(ppath + "/CMakeLists.txt")
+	# fstrm = FileStream("/CMakeLists.txt")
 	fnproc = FileNameProcessor(processed_files, output_ext)
 	cmake = cmk.CMakeGenerator(
 		pname,
@@ -95,7 +95,7 @@ def main():
 	fstrm(cmake.make_builder())
 
 	# write cmakelists file on disk
-	# fstrm.write()
+	fstrm.write()
 
 	# output in terminal if verbose
 	if argp.get("v"):
