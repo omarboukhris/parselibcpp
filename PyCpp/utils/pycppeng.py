@@ -111,7 +111,8 @@ class PyCppEngine:
 		for attr in attr_list:
 			out.append(Attribute(
 				doxy=attr["doxy"][0] if "doxy" in attr.keys() else "",
-				visibility=attr["visibility"][0],
+				# change this line if needed, default visibility on attribute is private
+				visibility=attr["visibility"][0] if "visibility" in attr.keys() else "private",
 				py="py" in attr.keys(),
 				type=PyCppEngine.process_type(attr),
 				name=attr["att_name"][0]
@@ -129,7 +130,8 @@ class PyCppEngine:
 		for meth in meth_list:
 			out.append(Method(
 				doxy=meth["doxy"][0] if "doxy" in meth.keys() else "",
-				visibility=meth["visibility"][0],
+				# change this line if needed, default visibility on method is public
+				visibility=meth["visibility"][0] if "visibility" in meth.keys() else "public",
 				py="py" in meth.keys(),
 				type=PyCppEngine.process_type(meth),
 				name=meth["met_name"][0],

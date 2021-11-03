@@ -1,0 +1,13 @@
+{
+  "package_name" : "Boost",
+  "version" : "1.40",
+  "include_dir" : "${Boost_INCLUDE_DIR}",
+  "library_dir" : "${Boost_LIBRARY_DIR}",
+  "link_library" : "${Boost_LIBRARIES}",
+  "find_kw" : [
+    {
+      "kw" : "COMPONENTS",
+      "default_components": "system filesystem"
+    }
+  ]
+}

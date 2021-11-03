@@ -24,7 +24,7 @@ class myclass :
     \param param3 description
     \return processed string
     */
-	public const string b (const int param3 , string param2) @{
+	const string b (const int param3 , string param2) @{
 		code goes here
 		lorem ipsum
 		if (cond) {
@@ -36,7 +36,5 @@ class myclass :
 
 	public @py int e (const int t);
 
-	protected vector<pair<int*, int**, vector<int>, int>> e;
+	vector<pair<int*, int**, vector<int>, int>> e;
 } ;
-
-

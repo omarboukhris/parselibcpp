@@ -1,5 +1,8 @@
 
 from utils.factory import FileNameProcessor
+import json
+import pathlib
+import os.path
 
 from string import Template
 
@@ -26,7 +29,7 @@ if(NOT CMAKE_BUILD_TYPE)\n\
 endif()\n\n\
 set(CMAKE_CXX_FLAGS \"-Wall -Wextra\")\n\
 set(CMAKE_CXX_FLAGS_DEBUG \"$dbgflags\")\n\
-set(CMAKE_CXX_FLAGS_RELEASE \"$relflags\")\n")
+set(CMAKE_CXX_FLAGS_RELEASE \"$relflags\")\n\n")
 
 	files_templ = Template("\
 file(GLOB $listname\n\
@@ -36,20 +39,21 @@ $filenames\n)\n")
 add_library(${PROJECT_NAME} [[ptype]]\n\
 \t${SOURCE_FILES} \n\
 \t${HEADER_FILES}\n\
-)\n\
+)\n\n\
 target_link_libraries(\n\
 \t${PROJECT_NAME}\n\
-\t[[plibs]]\n\
+[[plibs]]\n\
 )"
 	x_templ = "\
 add_executable(${PROJECT_NAME} main.cpp\n\
 \t${SOURCE_FILES} \n\
 \t${HEADER_FILES}\n\
-)\n\
+)\n\n\
 target_link_libraries(\n\
 \t${PROJECT_NAME}\n\
 \t[[plibs]]\n\
 )"
+	find_pck_templ = Template("find_package(${package_name} ${kw} ${components} ${required_state})\n")
 
 	def __init__(
 		self,
@@ -137,21 +141,71 @@ target_link_libraries(\n\
 				.replace("[[plibs]]", self._get_libs())
 
 	def make_dependencies(self) -> str:
+		""" :returns: str for finding libraries
+		"""
 		# call some kind of lib helper
 		# fetches resources from rc folder or something
 		# in order to fill the lib dependencies
-		if not self.libs:
-			return ""
-		else:
-			# do processing here
-			return ""
+		out = "\n"
+		current_path = str(pathlib.Path(__file__).parent.parent / "data/rc_libs/")
+		for lib in self.libs:
+			lib_name = lib.strip()
+			components = ""
+
+			# split name and components if defined
+			if lib_name.find(")") == len(lib_name) - 1:
+				lib_tab = lib_name[:-1].split("(")
+				lib_name = lib_tab[0]
+				components = " ".join(lib_tab[1:])
+
+			# get required state
+			required = ""
+			if lib_name[0] == "!":
+				lib_name = lib_name[1:]
+				required = "REQUIRED"
+
+			# load parameters from json
+			filepath = os.path.join(current_path, lib_name + ".json")
+			fstr = open(filepath, "r")
+			content = "\n".join(fstr.readlines())
+			fstr.close()
+			lib_params = json.loads(content)
+
+			# check components
+			if not components:
+				components = lib_params["find_kw"][0]["default_components"]
+
+			# substitute in template
+			out += CMakeGenerator.find_pck_templ.substitute(
+				package_name=lib_params["package_name"],
+				kw=lib_params["find_kw"][0]["kw"],
+				components=components,
+				required_state=required
+			)
+			out += "\n"
+		return out + "\n"
 
 	def _get_libs(self) -> str:
-		# call some kind of lib helper
-		# fetches resources from rc folder or something
-		# in order to fill the lib dependencies
-		if not self.libs:
-			return ""
-		else:
-			# do processing here
-			return ""
+		""" :returns: str for linking libraries
+		"""
+		out = ""
+		current_path = str(pathlib.Path(__file__).parent.parent / "data/rc_libs/")
+		for lib in self.libs:
+			lib_name = lib.strip()
+			# get name
+			if lib_name.find(")") == len(lib_name)-1:
+				lib_tab = lib_name[:-1].split("(")
+				lib_name = lib_tab[0]
+
+			if lib_name[0] == "!":
+				lib_name = lib_name[1:]
+
+			filepath = os.path.join(current_path, lib_name + ".json")
+			fstr = open(filepath, "r")
+			content = "\n".join(fstr.readlines())
+			fstr.close()
+
+			lib_params = json.loads(content)
+			if "link_library" in lib_params.keys():
+				out += "\t{}\n".format(lib_params["link_library"])
+		return out

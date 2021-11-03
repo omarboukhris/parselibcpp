@@ -62,7 +62,7 @@ def main():
 	#
 	pname = argp.get("pname")
 	ptype = argp.get("ptype")
-	plibs = argp.get("plibs").split(",") if argp.get("plibs") else []
+	plibs = argp.get("plibs").split(":") if argp.get("plibs") else []
 	cpp_ver = argp.get("cpp") if argp.get("cpp") in ["11", "14", "17", "20"] else "17"
 	cmk_ver = argp.get("cmk") if argp.get("cmk") else "3.5"
 	dbg = argp.get("dbgflg") if argp.get("dbgflg") else "-g"

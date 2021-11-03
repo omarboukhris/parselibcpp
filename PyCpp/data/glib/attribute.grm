@@ -11,5 +11,13 @@ attribute ->
 
 	// documented attribute
 	doxy=multilinecomments. !visibility. s:type att_name=identifier. semic. |
-	doxy=multilinecomments. !visibility. !py. s:type att_name=identifier. semic.
+	doxy=multilinecomments. !visibility. !py. s:type att_name=identifier. semic. |
+
+    // undocumented attribute
+	s:type att_name=identifier. semic. |
+	!py. s:type att_name=identifier. semic. |
+
+	// documented attribute
+	doxy=multilinecomments. s:type att_name=identifier. semic. |
+	doxy=multilinecomments. !py. s:type att_name=identifier. semic.
 
