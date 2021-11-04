@@ -45,13 +45,13 @@ class ParseSession:
 		:param filepath: str file path to source code
 		:param verbose: set to True for verbose
 		"""
+		output = None
 		if os.path.isfile(filepath) and self.sess and self.grammar_loaded:
 			jsonstr = ParseSession.parselib.get_json(self.sess, filepath.encode(), verbose)
 			output = json.loads(jsonstr.decode())
-			return output
 		else:
 			self.unprocessed_file = filepath
-		return None
+		return output
 
 	def __del__(self):
 		""" Calls destroyer from C/ctype interface

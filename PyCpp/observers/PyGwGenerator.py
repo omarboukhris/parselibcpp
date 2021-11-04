@@ -9,7 +9,8 @@ class PyGwGenerator(GatewayGenerator):
 
 	gateway = "\n\
 class $classname:\n\n\
-\t${modulename} = ctypes.cdll.LoadLibrary(\"change/path\")\n\n\
+\t${modulename} = ctypes.cdll.LoadLibrary(\"change/path\")\n\
+${special_type_def}\n\n\
 \tdef __init__(self):\n\
 \t\tself.this_ = None\n\n\
 ${constructors}\
@@ -28,7 +29,7 @@ if __name__ == \"__main__\":\n\
 \t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
 	method_proc_template = "\
 \tdef ${methname}(self${args}):\n\
-\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
+\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})${extend_fn}\n\n"
 
 	destructor_template = "\
 \tdef __del__(self):\n\
@@ -48,6 +49,9 @@ if __name__ == \"__main__\":\n\
 	accessor_templ = Template(accessor_template)
 	destructor_templ = Template(destructor_template)
 
+	string_type_def_templ = Template(
+		"${classname}.${modulename}._${classname}_${methname}__.res_type = ctypes.c_char_p\n")
+
 	def __init__(self, stream: callable):
 		super(PyGwGenerator, self).__init__(stream)
 
@@ -61,12 +65,26 @@ if __name__ == \"__main__\":\n\
 			ss += PyGwGenerator.gw_templ.substitute(
 				classname=clname,
 				modulename=modulename,
+				special_type_def=self.process_special_type_def(cl.methods, clname),
 				constructors=self.process_constructors(cl.constructs, clname),
 				methods=self.process_methods(cl.methods, clname),
 				accessors=self.process_accessors(cl.attributes, clname),
 				destructor=self.process_destructor(clname)
 			)
 		self.stream(ss)
+
+	@classmethod
+	def process_special_type_def(cls, methods: list, clname: str):
+		ss = ""
+		for meth in methods:
+			if meth.visibility == "public" and meth.type == "string":
+				ss += "\t{}".format(PyGwGenerator.string_type_def_templ.substitute(
+					type=meth.type,
+					classname=clname,
+					modulename=clname.capitalize(),
+					methname=meth.name,
+				))
+		return ss
 
 	@classmethod
 	def process_constructors(cls, constructors: list, classname: str):
@@ -92,18 +110,23 @@ if __name__ == \"__main__\":\n\
 		ss = ""
 		for meth in meths:
 			if meth.visibility == "public":
+				# prepare template arguments
 				args = cls.process_t_args(meth.args)
 				str_args = ", {}".format(args) if args.strip() else ""
 				templ = PyGwGenerator.method_fn_templ
+				extended = ".decode()" if meth.type == "string" else ""
 				if meth.type == "void":
 					templ = PyGwGenerator.method_proc_templ
+
+				# substitute in template
 				ss += templ.substitute(
 					type=meth.type,
 					classname=clname,
 					modulename=clname.capitalize(),
 					methname=meth.name,
 					args=str_args,
-					content=cls.process_core(meth.core, level=1)
+					content=cls.process_core(meth.core, level=1),
+					extend_fn=extended
 				)
 		return ss
 
