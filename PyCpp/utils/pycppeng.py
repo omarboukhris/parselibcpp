@@ -98,6 +98,8 @@ class PyCppEngine:
 				args=PyCppEngine.process_args(construct),
 				core=construct["construct_core"][0] if "construct_core" in construct.keys() else ""
 			))
+		destruct = Construct(doxy=None, construct_type="destructor", core="", args=[])
+		out.append(destruct)
 		return out
 
 	@staticmethod

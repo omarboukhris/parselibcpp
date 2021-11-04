@@ -1,5 +1,5 @@
 
-from .observer import CppAbstractObs
+from .observer import CppAbstractObs, Construct
 
 from string import Template
 

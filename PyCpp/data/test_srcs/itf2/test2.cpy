@@ -16,11 +16,6 @@ class myclass {
 
     constructor(int a, const float b);
 
-    /*!
-    destruct comment
-    */
-    destructor();
-
     /*! \brief attr doxy doc */
 	public @py const long &a2 ;
 	private char *& c3;
