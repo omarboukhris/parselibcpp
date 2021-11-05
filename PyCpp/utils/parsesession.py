@@ -22,6 +22,7 @@ class ParseSession:
 		:param filepath: str file path
 		:param verbose: set to True for verbose output
 		"""
+		self.grammar_loaded = False
 		if os.path.isfile(filepath) and self.sess:
 			ParseSession.parselib.load_grammar(self.sess, filepath.encode(), verbose)
 			self.grammar_loaded = True

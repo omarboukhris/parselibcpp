@@ -61,25 +61,9 @@ public :
 	}
 	
 	void update (size_t i) {
-		std::cout << "[" ;
-		size_t k = 0 ;
-		while (k++ < size_t(i*1.f*width/max)) {
-			std::cout << "=" ;
-		}
-		std::cout << ">" ;
-		while (k++ < width) {
-			std::cout << " " ;
-		}
-		std::cout << "] " << int(i*100.0f/max) << "% " ;
+		std::cout << "\r" << int(i*100.0f/max) << "%" << std::flush;
 		if (i == max-1) {
-			std::cout << "\r[" ;
-			for (size_t k = 0 ; k++ < width-1;) {
-				std::cout << "=" ;
-			}
-			std::cout << ">] 100%     finished" ;
-		} else {
-			std::cout << "] " << int(i*100.0f/max) << "% " ;
-			std::cout << "loading\r" ;
+			std::cout << "\r100%" ;
 		}
 	}
 
