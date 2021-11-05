@@ -7,17 +7,19 @@ namespace parselib {
 
 namespace parsetree {
 
-AbsNode::AbsNode () : type("tree") {
-	tokens = std::vector<Token> () ;
-}
+AbsNode::AbsNode ()
+	: type(NodeType::Branch)
+	, tokens()
+{}
 
-AbsNode::~AbsNode() {
-	for (auto &&tok : tokens) {
-		if (tok.second != nullptr) {
-			delete tok.second;
-		}
-	}
-}
+AbsNode::AbsNode (AbsNode* node)
+	: type(node->type)
+	, tokens(node->tokens)
+{}
+
+
+AbsNode::~AbsNode()
+{}
 
 void AbsNode::push_back(AbsNode::Token tok) {
 	tokens.push_back(tok) ;
@@ -46,42 +48,8 @@ AbsNode* AbsNode::merge(AbsNode* tree) {
 	return this ;
 }
 
-
-std::string AbsNode::strUnfold() {
-	std::string ss = "" ;
-	for (AbsNode::Token tok : tokens) {
-		if (tok.second->type == "leaf") {
-			ss += tok.second->getval() + " ";
-		} else { //type is tree
-			ss += tok.second->strUnfold() ;
-		}
-	}
-	return ss ;
-}
-
-
-Leaf::Leaf(std::string s) {
-	type = "leaf" ;
-	val = s ;
-}
-
-std::string Leaf::getval() {
-	return val ;
-}
-
-
-Tree::Tree() {
-	tokens = AbsNode::TokenList () ;
-}
-Tree::Tree(AbsNode* node) {
-	tokens = AbsNode::TokenList () ;
-	for (Token tok : node->tokens) {
-		tokens.push_back(tok);
-	}
-}
-
-size_t Tree::keyInTree(std::string key) {
-	size_t i = 0 ;
+int AbsNode::keyInTree(std::string key) {
+	int i = 0 ;
 	for (auto item : tokens) {
 		std::string tokentype = item.first ;
 		if (tokentype == key) {
@@ -89,19 +57,49 @@ size_t Tree::keyInTree(std::string key) {
 		}
 		i++ ;
 	}
-	return -1 ; 
+	return -1 ;
 }
 
 
-std::string Tree::getval() {
-	return strUnfold() ;
+std::string AbsNode::strUnfold() {
+
+	std::string ss = "" ;
+
+	for (AbsNode::Token tok : tokens) {
+		ss += tok.second->getval() + " ";
+	}
+
+	return ss ;
 }
 
-std::ostream& operator<<(std::ostream& out, Tree* tree) {
+
+AbsNode::AbsNode(std::string s) {
+	type = NodeType::Leaf ;
+	val = s ;
+}
+
+std::string AbsNode::getval() {
+
+	std::string output ;
+
+	switch(type){
+	case NodeType::Leaf:
+		output = val;
+		break;
+	case NodeType::Branch:
+		output = strUnfold();
+		break;
+	}
+
+	return output;
+}
+
+
+std::ostream& operator<<(std::ostream& out, AbsNode* tree) {
 	out << tree->dump(tree) ;
 	return out ;
 }
-std::ostream& operator<<(std::ostream& out, Tree tree) {
+std::ostream& operator<<(std::ostream& out, AbsNode tree) {
 	out << tree.dump(&tree) ;
 	return out ;
 }
@@ -109,20 +107,20 @@ std::ostream& operator<<(std::ostream& out, Tree tree) {
 /*!
  * \brief Tree::dump dumps the content of a tree into a std::string
  */
-std::string Tree::dump(AbsNode* tree, std::string tab) {
+std::string AbsNode::dump(AbsNode* tree, std::string tab) {
 	std::string ss = "" ;
 	// count how many terminals displayed
 	int count = 0;
 	// count if we dump non terminals
 	bool dump_nonterminal = false;
 	for (AbsNode::Token tok : tree->tokens) {
-		if (tok.second->type == "leaf") {
+		if (tok.second->type == NodeType::Leaf) {
 			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
 			count++ ;
 		} else {
 			dump_nonterminal = true;
 			ss += tab + tok.first + " = {\n" 
-				+ dump(tok.second, tab+"\t")  
+				+ dump(tok.second, tab+"\t")
 				+ tab + "}\n" ;
 		}
 	}
@@ -170,11 +168,11 @@ TokenNode::TokenNode(std::string nodetype, std::string val) {
 }
 
 AbsNode* TokenNode::unfold(std::string) {
-	Tree *tree = new Tree() ;
+	AbsNode *tree = new AbsNode() ;
 	tree->push_back(
 		AbsNode::Token(
 			nodetype, 
-			new Leaf(val)
+			new AbsNode(val)
 		)
 	) ;
 	return tree ;

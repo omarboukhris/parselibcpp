@@ -109,7 +109,7 @@ parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string pa
 
 		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
 		if (element.first == "AXIOM") {
-			return parse (new parsetree::Tree(element.second), "AXIOM") ;
+			return parse (new parsetree::AbsNode(element.second), "AXIOM") ;
 		}
 		
 		element.first = processnodename(element.first) ;
@@ -132,7 +132,7 @@ parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string pa
 			//std::cout << (grammar.isTokenSavable(parent, element.first)) << std::endl ; 
 			if (grammar.keyIsStr(element.first)) {
 				std::string out_elementstr = element.second->strUnfold () ;
-				out_element = new parsetree::Leaf(out_elementstr) ;
+				out_element = new parsetree::AbsNode(out_elementstr) ;
 			} else if (grammar.isTokenSavable(parent, element.first)) {
 				out_element = processnode (element) ;
 			} else { //not savable, pass
@@ -152,9 +152,9 @@ parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string pa
 parsetree::AbsNode* ParseSession::processnode(parsetree::AbsNode::Token element) {
 // 	for each comp in element => copy element.second in result if Leaf
 // 								call parse() if com is Tree
-	if (element.second->type == "tree") {
+	if (element.second->type == parsetree::AbsNode::NodeType::Branch) {
 		return parse(
-			new parsetree::Tree(element.second),
+			new parsetree::AbsNode(element.second),
 			element.first
 		) ;
 	} else { // terminal node
@@ -172,12 +172,12 @@ pt::ptree ParseSession::to_ptree(parsetree::AbsNode *tree) {
 	// something is fucked up otherwise in json
 	Map map = Map() ; 
 	for (parsetree::AbsNode::Token tok : tree->tokens) {
-		if (tok.second->type == "leaf") {
-			pt::ptree tmp, tmplist ;
+		if (tok.second->type == parsetree::AbsNode::NodeType::Leaf) {
+			pt::ptree tmp ;
 			tmp.put ("", tok.second->getval()) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		} else {
-			pt::ptree tmp = to_ptree(tok.second), tmplist ;
+			pt::ptree tmp = to_ptree(tok.second) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		}
 	}

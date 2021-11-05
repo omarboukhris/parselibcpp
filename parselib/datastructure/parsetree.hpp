@@ -12,15 +12,31 @@ public :
 	typedef std::pair<std::string, AbsNode*> Token ;
 	typedef std::vector<Token> TokenList ;
 
+	enum class NodeType {
+		Leaf,
+		Branch
+	};
+
 	AbsNode () ;
+	AbsNode (std::string) ;
+	AbsNode(AbsNode* node) ;
+
 
 	virtual ~AbsNode () ;
 
 	/*!
-	 * \brief getval get token value
-	 * \return
+	 * \brief getval get token value if leaf
+	 * unfolds if branch
+	 * \return value
 	 */
-	virtual std::string getval () = 0 ;
+	std::string getval () ;
+
+	/*!
+	 * \brief keyInTree check if the key is in the tree
+	 * \param key to look for
+	 * \return position if found, -1 otherwise
+	 */
+	int keyInTree (std::string key) ;
 
 	/*!
 	 * \brief strUnfold unfolds Node into string
@@ -65,58 +81,15 @@ public :
 	 */
 	AbsNode * merge (AbsNode *tree) ;
 
+	friend std::ostream & operator<< (std::ostream& out, AbsNode* tree) ;
+	friend std::ostream & operator<< (std::ostream& out, AbsNode tree) ;
 
-
-	std::string type ;
-	TokenList tokens ;
-} ;
-
-// terminal node (a leaf in the tree)
-class Leaf : public AbsNode {
-public :
-	Leaf (std::string s) ;
-	virtual std::string getval () ;
+	NodeType type ;
 	std::string val ;
-} ;
+	TokenList tokens ;
 
-// tree (still branching)
-class Tree : public AbsNode {
+protected:
 
-public :
-
-	//
-	// Constructors
-	//
-
-	Tree() ;
-	Tree(AbsNode* node) ;
-
-	//
-	// Helpers and acccessors
-	//
-
-	/*!
-	 * \brief keyInTree check if the key is in the tree
-	 * \param key to look for
-	 * \return boolean
-	 */
-	size_t keyInTree (std::string key) ;
-
-	/*!
-	 * \brief getval, no token to get its value
-	 * wraps strunfold
-	 * \return unfolded node into string
-	 */
-	virtual std::string getval () ;
-
-	//
-	// stream operators
-	//
-
-	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
-	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
-
-private :
 	/*!
 	 * \brief dumps content of a tree into a string
 	 * \param tree tree to unfold
@@ -124,7 +97,8 @@ private :
 	 * \return tree recursive dump of *tree parameter
 	 */
 	std::string dump (AbsNode *tree, std::string tab="") ;
-};
+
+} ;
 
 /*!
  * \brief abstract node : generates the parse tree
