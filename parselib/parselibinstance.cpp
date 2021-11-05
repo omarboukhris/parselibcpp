@@ -61,7 +61,7 @@ std::string ParseSession::process_to_json (std::string filename, bool verbose, s
 	return ss.str();
 }
 
-parsetree::AbsNode* ParseSession::process_source(std::string filename, bool verbose, size_t index) {
+parsetree::Tree* ParseSession::process_source(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
 	parser = new parsers::CYK (grammar) ;
@@ -102,14 +102,14 @@ parsetree::AbsNode* ParseSession::process_source(std::string filename, bool verb
 	}
 }
 
-parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string parent) {
+parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
 	//needs a do over
-	parsetree::AbsNode* out = new parsetree::Tree() ;
-	for (parsetree::AbsNode::Token element : code->tokens) {
+	parsetree::Tree* out = new parsetree::Tree() ;
+	for (parsetree::Tree::Token element : code->tokens) {
 
-		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
+		parsetree::Tree::Token out_element = parsetree::Tree::Token() ;
 		if (element.first == "AXIOM") {
-			return parse (new parsetree::AbsNode(element.second), "AXIOM") ;
+			return parse (new parsetree::Tree(element.second), "AXIOM") ;
 		}
 		
 		element.first = processnodename(element.first) ;
@@ -128,11 +128,11 @@ parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string pa
 		// check if element.first in keeper
 		//std::cout << element.first << grammar.inKeeperKeys(element.first) << std::endl ;
 		if (grammar.inKeeperKeys(element.first)) {
-			parsetree::AbsNode* out_element = new parsetree::Tree();
+			parsetree::Tree* out_element = new parsetree::Tree();
 			//std::cout << (grammar.isTokenSavable(parent, element.first)) << std::endl ; 
 			if (grammar.keyIsStr(element.first)) {
 				std::string out_elementstr = element.second->strUnfold () ;
-				out_element = new parsetree::AbsNode(out_elementstr) ;
+				out_element = new parsetree::Tree(out_elementstr) ;
 			} else if (grammar.isTokenSavable(parent, element.first)) {
 				out_element = processnode (element) ;
 			} else { //not savable, pass
@@ -149,12 +149,12 @@ parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string pa
 	return out ;
 }
 
-parsetree::AbsNode* ParseSession::processnode(parsetree::AbsNode::Token element) {
+parsetree::Tree* ParseSession::processnode(parsetree::Tree::Token element) {
 // 	for each comp in element => copy element.second in result if Leaf
 // 								call parse() if com is Tree
-	if (element.second->type == parsetree::AbsNode::NodeType::Branch) {
+	if (element.second->type == parsetree::Tree::NodeType::Branch) {
 		return parse(
-			new parsetree::AbsNode(element.second),
+			new parsetree::Tree(element.second),
 			element.first
 		) ;
 	} else { // terminal node
@@ -162,7 +162,7 @@ parsetree::AbsNode* ParseSession::processnode(parsetree::AbsNode::Token element)
 	}
 }
 
-pt::ptree ParseSession::to_ptree(parsetree::AbsNode *tree) {
+pt::ptree ParseSession::to_ptree(parsetree::Tree *tree) {
 	using Map = std::map<std::string, pt::ptree> ;
 	if (tree == nullptr) {
 		return pt::ptree() ;
@@ -171,8 +171,8 @@ pt::ptree ParseSession::to_ptree(parsetree::AbsNode *tree) {
 	// use map to correctly parse into ptree
 	// something is fucked up otherwise in json
 	Map map = Map() ; 
-	for (parsetree::AbsNode::Token tok : tree->tokens) {
-		if (tok.second->type == parsetree::AbsNode::NodeType::Leaf) {
+	for (parsetree::Tree::Token tok : tree->tokens) {
+		if (tok.second->type == parsetree::Tree::NodeType::Leaf) {
 			pt::ptree tmp ;
 			tmp.put ("", tok.second->getval()) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;

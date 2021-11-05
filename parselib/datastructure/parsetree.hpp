@@ -7,9 +7,10 @@ namespace parselib {
 namespace parsetree {
 
 // abstract class for composite pattern
-class AbsNode {
+class Tree {
 public :
-	typedef std::pair<std::string, AbsNode*> Token ;
+	typedef std::unique_ptr<Tree> TreePtr;
+	typedef std::pair<std::string, Tree*> Token ;
 	typedef std::vector<Token> TokenList ;
 
 	enum class NodeType {
@@ -17,12 +18,12 @@ public :
 		Branch
 	};
 
-	AbsNode () ;
-	AbsNode (std::string) ;
-	AbsNode(AbsNode* node) ;
+	Tree () ;
+	Tree (std::string) ;
+	Tree(Tree* node) ;
 
 
-	virtual ~AbsNode () ;
+	virtual ~Tree () ;
 
 	/*!
 	 * \brief getval get token value if leaf
@@ -79,10 +80,10 @@ public :
 	 * \param tree tree to merge with *this
 	 * \return current tree
 	 */
-	AbsNode * merge (AbsNode *tree) ;
+	Tree * merge (Tree *tree) ;
 
-	friend std::ostream & operator<< (std::ostream& out, AbsNode* tree) ;
-	friend std::ostream & operator<< (std::ostream& out, AbsNode tree) ;
+	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
+	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
 
 	NodeType type ;
 	std::string val ;
@@ -96,7 +97,7 @@ protected:
 	 * \param tab used for recursive tab stack tracking
 	 * \return tree recursive dump of *tree parameter
 	 */
-	std::string dump (AbsNode *tree, std::string tab="") ;
+	std::string dump (Tree *tree, std::string tab="") ;
 
 } ;
 
@@ -107,10 +108,6 @@ protected:
 class Node {
 
 public :
-
-	//
-	// Constructors
-	//
 
 	Node () ;
 
@@ -131,7 +128,7 @@ public :
 	 * \param parent  parent node
 	 * \return Tree pointer
 	 */
-	virtual AbsNode* unfold (std::string parent="") = 0 ;
+	virtual Tree* unfold (std::string parent="") = 0 ;
 
 	/// \brief node type (terminal or non terminal)
 	std::string nodetype ;
@@ -141,7 +138,7 @@ public :
 class UnitNode : public Node {
 public :
 	UnitNode (std::string nodetype, Node* unit) ;
-	virtual AbsNode* unfold (std::string parent="") ;
+	virtual Tree* unfold (std::string parent="") ;
 private :
 	Node* unit ;
 } ;
@@ -149,7 +146,7 @@ private :
 class TokenNode : public Node {
 public :
 	TokenNode(std::string nodetype, std::string val) ;
-	virtual AbsNode* unfold (std::string /*parent=""*/) ;
+	virtual Tree* unfold (std::string /*parent=""*/) ;
 
 	std::string val ;
 } ;
@@ -157,7 +154,7 @@ public :
 class BinNode : public Node { 
 public :
 	BinNode(std::string nodetype, Node* left, Node* right) ;
-	virtual AbsNode* unfold (std::string parent="") ;
+	virtual Tree* unfold (std::string parent="") ;
 
  private:
 	Node* left ;
