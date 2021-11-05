@@ -12,11 +12,15 @@ Tree::Tree ()
 	, tokens()
 {}
 
-Tree::Tree (Tree* node)
+Tree::Tree (TreePtr node)
 	: type(node->type)
 	, tokens(node->tokens)
 {}
 
+Tree::Tree (Tree* node)
+	: type(node->type)
+	, tokens(node->tokens)
+{}
 
 Tree::~Tree()
 {}
@@ -41,16 +45,16 @@ size_t Tree::size() {
 	return tokens.size() ;
 }
 
-Tree* Tree::merge(Tree* tree) {
-	for (Token leaf : *tree) {
+Tree::TreePtr Tree::merge(Tree::TreePtr tree) {
+	for (auto&& leaf : *tree) {
 		tokens.push_back(leaf);
 	}
-	return this ;
+	return std::make_shared<Tree>(this) ;
 }
 
 int Tree::keyInTree(std::string key) {
 	int i = 0 ;
-	for (auto item : tokens) {
+	for (auto&& item : tokens) {
 		std::string tokentype = item.first ;
 		if (tokentype == key) {
 			return i ;
@@ -65,7 +69,7 @@ std::string Tree::strUnfold() {
 
 	std::string ss = "" ;
 
-	for (Tree::Token tok : tokens) {
+	for (auto&& tok : tokens) {
 		ss += tok.second->getval() + " ";
 	}
 
@@ -95,31 +99,31 @@ std::string Tree::getval() {
 }
 
 
-std::ostream& operator<<(std::ostream& out, Tree* tree) {
+std::ostream& operator<<(std::ostream& out, Tree::TreePtr tree) {
 	out << tree->dump(tree) ;
 	return out ;
 }
 std::ostream& operator<<(std::ostream& out, Tree tree) {
-	out << tree.dump(&tree) ;
+	out << tree.dump(std::make_shared<Tree>(&tree)) ;
 	return out ;
 }
 
 /*!
  * \brief Tree::dump dumps the content of a tree into a std::string
  */
-std::string Tree::dump(Tree* tree, std::string tab) {
+std::string Tree::dump(Tree::TreePtr tree, std::string tab) {
 	std::string ss = "" ;
 	// count how many terminals displayed
 	int count = 0;
 	// count if we dump non terminals
 	bool dump_nonterminal = false;
-	for (Tree::Token tok : tree->tokens) {
+	for (Tree::Token &tok : tree->tokens) {
 		if (tok.second->type == NodeType::Leaf) {
 			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
 			count++ ;
 		} else {
 			dump_nonterminal = true;
-			ss += tab + tok.first + " = {\n" 
+			ss += tab + tok.first + " = {\n"
 				+ dump(tok.second, tab+"\t")
 				+ tab + "}\n" ;
 		}
@@ -148,12 +152,12 @@ UnitNode::UnitNode(std::string nodetype, Node* unit) {
 	this->unit = unit ;
 }
 
-Tree* UnitNode::unfold(std::string parent){
+Tree::TreePtr UnitNode::unfold(std::string parent){
 	if (iscompacted() || parent == nodetype) {
 		return unit->unfold(nodetype) ;
 	} else { //if parent != None :
 		//insert token in a tree and return it
-		Tree *tree = new Tree() ;
+		Tree::TreePtr tree = std::make_shared<Tree>(new Tree()) ;
 		tree->push_back (
 			Tree::Token(nodetype, unit->unfold(nodetype))
 		) ;
@@ -167,32 +171,35 @@ TokenNode::TokenNode(std::string nodetype, std::string val) {
 	this->nodetype = nodetype ;
 }
 
-Tree* TokenNode::unfold(std::string) {
-	Tree *tree = new Tree() ;
-	tree->push_back(
-		Tree::Token(
-			nodetype, 
-			new Tree(val)
-		)
-	) ;
-	return tree ;
+Tree::TreePtr TokenNode::unfold(std::string) {
+
+	Tree::Token token (
+		nodetype,
+		new Tree(val)
+	);
+
+	Tree tree ;
+	tree.push_back(token) ;
+
+	return std::make_shared<Tree>(&tree);
 }
 
 
 BinNode::BinNode(std::string nodetype, Node* left, Node* right) {
-	this->left = left ; 
-	this->right = right ; 
+	this->left = left ;
+	this->right = right ;
 	this->nodetype = nodetype ;
 }
 
-Tree* BinNode::unfold(std::string parent) {
-	Tree* tree = left->unfold(nodetype) ;
+Tree::TreePtr BinNode::unfold(std::string parent) {
+	Tree::TreePtr tree = left->unfold(nodetype) ;
 	tree->merge(right->unfold(nodetype)) ;
-	if (iscompacted() || parent == nodetype) { 
+
+	if (iscompacted() || parent == nodetype) {
 		return tree ;
 	} else {
 		Tree::Token tok = std::make_pair(nodetype, tree) ;
-		Tree* treeout = new Tree() ;
+		Tree::TreePtr treeout = std::make_shared<Tree>(new Tree()) ;
 		treeout->push_back(tok);
 		return treeout ;
 	}

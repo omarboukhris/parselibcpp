@@ -83,7 +83,10 @@ parsetree::Tree* ParseSession::process_source(std::string filename, bool verbose
 		index = (index > 0 && index < result.size()) ? index : 0 ;
 
 		if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
-			return parse (result[index]->unfold(), "") ;
+
+//			std::cout << "got axiom" << result[index]->unfold() << std::endl ;
+
+			return parse (result[index]->unfold().get(), "") ;
 		} else {
 			std::fstream fstr (filename + ".log", std::fstream::out);
 			if (fstr.is_open()) {
@@ -105,11 +108,11 @@ parsetree::Tree* ParseSession::process_source(std::string filename, bool verbose
 parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
 	//needs a do over
 	parsetree::Tree* out = new parsetree::Tree() ;
-	for (parsetree::Tree::Token element : code->tokens) {
+	for (auto&& element : code->tokens) {
 
 		parsetree::Tree::Token out_element = parsetree::Tree::Token() ;
 		if (element.first == "AXIOM") {
-			return parse (new parsetree::Tree(element.second), "AXIOM") ;
+			return parse (element.second.get(), "AXIOM") ;
 		}
 		
 		element.first = processnodename(element.first) ;
@@ -142,7 +145,7 @@ parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) 
 
 			// appending to result
 			out->tokens.push_back(
-				std::make_pair(element.first, out_element));
+				std::make_pair(element.first, std::make_shared<parsetree::Tree>(out_element)));
 		}
 	}
 //	std::cout << out << std::endl ;
@@ -154,11 +157,11 @@ parsetree::Tree* ParseSession::processnode(parsetree::Tree::Token element) {
 // 								call parse() if com is Tree
 	if (element.second->type == parsetree::Tree::NodeType::Branch) {
 		return parse(
-			new parsetree::Tree(element.second),
+			element.second.get(),
 			element.first
 		) ;
 	} else { // terminal node
-		return element.second ;
+		return element.second.get() ;
 	}
 }
 
@@ -171,13 +174,14 @@ pt::ptree ParseSession::to_ptree(parsetree::Tree *tree) {
 	// use map to correctly parse into ptree
 	// something is fucked up otherwise in json
 	Map map = Map() ; 
-	for (parsetree::Tree::Token tok : tree->tokens) {
+	for (auto&& tok : tree->tokens) {
 		if (tok.second->type == parsetree::Tree::NodeType::Leaf) {
+			std::cout << tok.first << ":" << tok.second->strUnfold() << std::endl ;
 			pt::ptree tmp ;
 			tmp.put ("", tok.second->getval()) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		} else {
-			pt::ptree tmp = to_ptree(tok.second) ;
+			pt::ptree tmp = to_ptree(tok.second.get()) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		}
 	}

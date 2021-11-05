@@ -9,8 +9,8 @@ namespace parsetree {
 // abstract class for composite pattern
 class Tree {
 public :
-	typedef std::unique_ptr<Tree> TreePtr;
-	typedef std::pair<std::string, Tree*> Token ;
+	typedef std::shared_ptr<Tree> TreePtr;
+	typedef std::pair<std::string, TreePtr> Token ;
 	typedef std::vector<Token> TokenList ;
 
 	enum class NodeType {
@@ -19,7 +19,10 @@ public :
 	};
 
 	Tree () ;
+	Tree (const Tree &other) = delete;
+	Tree (const Tree &&other) = delete;
 	Tree (std::string) ;
+	Tree(Tree::TreePtr node) ;
 	Tree(Tree* node) ;
 
 
@@ -80,9 +83,9 @@ public :
 	 * \param tree tree to merge with *this
 	 * \return current tree
 	 */
-	Tree * merge (Tree *tree) ;
+	TreePtr merge (TreePtr tree) ;
 
-	friend std::ostream & operator<< (std::ostream& out, Tree* tree) ;
+	friend std::ostream & operator<< (std::ostream& out, TreePtr tree) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
 
 	NodeType type ;
@@ -97,7 +100,7 @@ protected:
 	 * \param tab used for recursive tab stack tracking
 	 * \return tree recursive dump of *tree parameter
 	 */
-	std::string dump (Tree *tree, std::string tab="") ;
+	std::string dump (TreePtr tree, std::string tab="") ;
 
 } ;
 
@@ -124,11 +127,11 @@ public :
 
 	/*!
 	 * \brief abstract, pure virtual
-	 * unfolds the Node into a parse tree : Tree*
+	 * unfolds the Node into a parse tree : Tree::TreePtr
 	 * \param parent  parent node
 	 * \return Tree pointer
 	 */
-	virtual Tree* unfold (std::string parent="") = 0 ;
+	virtual Tree::TreePtr unfold (std::string parent="") = 0 ;
 
 	/// \brief node type (terminal or non terminal)
 	std::string nodetype ;
@@ -138,7 +141,7 @@ public :
 class UnitNode : public Node {
 public :
 	UnitNode (std::string nodetype, Node* unit) ;
-	virtual Tree* unfold (std::string parent="") ;
+	virtual Tree::TreePtr unfold (std::string parent="") ;
 private :
 	Node* unit ;
 } ;
@@ -146,15 +149,15 @@ private :
 class TokenNode : public Node {
 public :
 	TokenNode(std::string nodetype, std::string val) ;
-	virtual Tree* unfold (std::string /*parent=""*/) ;
+	virtual Tree::TreePtr unfold (std::string /*parent=""*/) ;
 
 	std::string val ;
 } ;
 
-class BinNode : public Node { 
+class BinNode : public Node {
 public :
 	BinNode(std::string nodetype, Node* left, Node* right) ;
-	virtual Tree* unfold (std::string parent="") ;
+	virtual Tree::TreePtr unfold (std::string parent="") ;
 
  private:
 	Node* left ;
