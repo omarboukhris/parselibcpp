@@ -66,7 +66,7 @@ public :
 	 * True (by default) to print results, otherwise False
 	 * \return Tree* processed parsetree if exists
 	 */
-	parsetree::Tree* process_source (std::string filename, bool verbose=false, size_t index=0) ;
+	parsetree::AbsNode* process_source (std::string filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
@@ -76,7 +76,7 @@ private :
 	 * \param parent : str => node's parent name
 	 * \param verbose : bool true to talk
 	 */
-	parsetree::Tree* parse (parsetree::Tree* code=new parsetree::Tree(), std::string parent="") ;
+	parsetree::AbsNode* parse (parsetree::AbsNode* code=new parsetree::Tree(), std::string parent="") ;
 
 	parsetree::AbsNode* processnode(parsetree::AbsNode::Token element);
 

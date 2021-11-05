@@ -39,6 +39,12 @@ size_t AbsNode::size() {
 	return tokens.size() ;
 }
 
+AbsNode* AbsNode::merge(AbsNode* tree) {
+	for (Token leaf : *tree) {
+		tokens.push_back(leaf);
+	}
+	return this ;
+}
 
 
 std::string AbsNode::strUnfold() {
@@ -74,13 +80,6 @@ Tree::Tree(AbsNode* node) {
 	}
 }
 
-Tree* Tree::merge(Tree* tree) {
-	for (Token leaf : *tree) {
-		tokens.push_back(leaf);
-	}
-	return this ;
-}
-
 size_t Tree::keyInTree(std::string key) {
 	size_t i = 0 ;
 	for (auto item : tokens) {
@@ -95,7 +94,7 @@ size_t Tree::keyInTree(std::string key) {
 
 
 std::string Tree::getval() {
-	return "" ;
+	return strUnfold() ;
 }
 
 std::ostream& operator<<(std::ostream& out, Tree* tree) {
@@ -151,7 +150,7 @@ UnitNode::UnitNode(std::string nodetype, Node* unit) {
 	this->unit = unit ;
 }
 
-Tree* UnitNode::unfold(std::string parent){
+AbsNode* UnitNode::unfold(std::string parent){
 	if (iscompacted() || parent == nodetype) {
 		return unit->unfold(nodetype) ;
 	} else { //if parent != None :
@@ -170,7 +169,7 @@ TokenNode::TokenNode(std::string nodetype, std::string val) {
 	this->nodetype = nodetype ;
 }
 
-Tree* TokenNode::unfold(std::string) {
+AbsNode* TokenNode::unfold(std::string) {
 	Tree *tree = new Tree() ;
 	tree->push_back(
 		AbsNode::Token(
@@ -188,14 +187,14 @@ BinNode::BinNode(std::string nodetype, Node* left, Node* right) {
 	this->nodetype = nodetype ;
 }
 
-Tree* BinNode::unfold(std::string parent) {
-	Tree* tree = left->unfold(nodetype) ;
+AbsNode* BinNode::unfold(std::string parent) {
+	AbsNode* tree = left->unfold(nodetype) ;
 	tree->merge(right->unfold(nodetype)) ;
 	if (iscompacted() || parent == nodetype) { 
 		return tree ;
 	} else {
 		AbsNode::Token tok = std::make_pair(nodetype, tree) ;
-		Tree* treeout = new Tree() ;
+		AbsNode* treeout = new Tree() ;
 		treeout->push_back(tok);
 		return treeout ;
 	}

@@ -12,19 +12,63 @@ public :
 	typedef std::pair<std::string, AbsNode*> Token ;
 	typedef std::vector<Token> TokenList ;
 
+	AbsNode () ;
+
+	virtual ~AbsNode () ;
+
+	/*!
+	 * \brief getval get token value
+	 * \return
+	 */
+	virtual std::string getval () = 0 ;
+
+	/*!
+	 * \brief strUnfold unfolds Node into string
+	 * \return unfolded node into string
+	 */
+	std::string strUnfold() ;
+
+	/*!
+	 * \brief push_back add token to tokens lsit
+	 * \param tok token
+	 */
+	void push_back (Token tok) ;
+
+	/*!
+	 * \brief clear tokens list
+	 */
+	void clear () ;
+
+	/*!
+	 * \brief begin, iterator wrapper
+	 * \return iterator
+	 */
+	TokenList::iterator begin () ;
+
+	/*!
+	 * \brief end, iterator wrapper
+	 * \return iterator
+	 */
+	TokenList::iterator end () ;
+
+	/*!
+	 * \brief Get tokens list size
+	 * \return size as size_t
+	 */
+	size_t size () ;
+
+
+	/*!
+	 * \brief merge inplace two trees into one
+	 * \param tree tree to merge with *this
+	 * \return current tree
+	 */
+	AbsNode * merge (AbsNode *tree) ;
+
+
+
 	std::string type ;
 	TokenList tokens ;
-
-	AbsNode () ;
-	virtual ~AbsNode () ;
-	virtual std::string getval () = 0 ;
-	std::string strUnfold() ;
-	void push_back (Token tok) ;
-	void clear () ;
-	TokenList::iterator begin () ;
-	TokenList::iterator end () ;
-	size_t size () ;
-	
 } ;
 
 // terminal node (a leaf in the tree)
@@ -52,19 +96,17 @@ public :
 	//
 
 	/*!
-	 * \brief merge inplace two trees into one
-	 * \param tree tree to merge with *this
-	 * \return current tree
-	 */
-	Tree * merge (Tree *tree) ;
-
-	/*!
 	 * \brief keyInTree check if the key is in the tree
 	 * \param key to look for
 	 * \return boolean
 	 */
 	size_t keyInTree (std::string key) ;
 
+	/*!
+	 * \brief getval, no token to get its value
+	 * wraps strunfold
+	 * \return unfolded node into string
+	 */
 	virtual std::string getval () ;
 
 	//
@@ -115,7 +157,7 @@ public :
 	 * \param parent  parent node
 	 * \return Tree pointer
 	 */
-	virtual Tree* unfold (std::string parent="") = 0 ;
+	virtual AbsNode* unfold (std::string parent="") = 0 ;
 
 	/// \brief node type (terminal or non terminal)
 	std::string nodetype ;
@@ -125,7 +167,7 @@ public :
 class UnitNode : public Node {
 public :
 	UnitNode (std::string nodetype, Node* unit) ;
-	virtual Tree* unfold (std::string parent="") ;
+	virtual AbsNode* unfold (std::string parent="") ;
 private :
 	Node* unit ;
 } ;
@@ -133,7 +175,7 @@ private :
 class TokenNode : public Node {
 public :
 	TokenNode(std::string nodetype, std::string val) ;
-	virtual Tree* unfold (std::string /*parent=""*/) ;
+	virtual AbsNode* unfold (std::string /*parent=""*/) ;
 
 	std::string val ;
 } ;
@@ -141,7 +183,7 @@ public :
 class BinNode : public Node { 
 public :
 	BinNode(std::string nodetype, Node* left, Node* right) ;
-	virtual Tree* unfold (std::string parent="") ;
+	virtual AbsNode* unfold (std::string parent="") ;
 
  private:
 	Node* left ;

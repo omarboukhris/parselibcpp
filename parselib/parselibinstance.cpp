@@ -61,7 +61,7 @@ std::string ParseSession::process_to_json (std::string filename, bool verbose, s
 	return ss.str();
 }
 
-parsetree::Tree* ParseSession::process_source(std::string filename, bool verbose, size_t index) {
+parsetree::AbsNode* ParseSession::process_source(std::string filename, bool verbose, size_t index) {
 
 // 	StructFactory.readGrammar(self.grammar)
 	parser = new parsers::CYK (grammar) ;
@@ -102,9 +102,9 @@ parsetree::Tree* ParseSession::process_source(std::string filename, bool verbose
 	}
 }
 
-parsetree::Tree* ParseSession::parse(parsetree::Tree* code, std::string parent) {
+parsetree::AbsNode* ParseSession::parse(parsetree::AbsNode* code, std::string parent) {
 	//needs a do over
-	parsetree::Tree* out = new parsetree::Tree() ;
+	parsetree::AbsNode* out = new parsetree::Tree() ;
 	for (parsetree::AbsNode::Token element : code->tokens) {
 
 		parsetree::AbsNode::Token out_element = parsetree::AbsNode::Token() ;
