@@ -137,17 +137,20 @@ public :
 	std::string nodetype ;
 } ;
 
+typedef std::shared_ptr<Node> NodePtr ;
 
 class UnitNode : public Node {
 public :
-	UnitNode (std::string nodetype, Node* unit) ;
+	UnitNode (UnitNode *other) ;
+	UnitNode (std::string nodetype, NodePtr unit) ;
 	virtual Tree::TreePtr unfold (std::string parent="") ;
 private :
-	Node* unit ;
+	NodePtr unit ;
 } ;
 
 class TokenNode : public Node {
 public :
+	TokenNode(TokenNode *other);
 	TokenNode(std::string nodetype, std::string val) ;
 	virtual Tree::TreePtr unfold (std::string /*parent=""*/) ;
 
@@ -156,12 +159,13 @@ public :
 
 class BinNode : public Node {
 public :
-	BinNode(std::string nodetype, Node* left, Node* right) ;
+	BinNode(BinNode *other);
+	BinNode(std::string nodetype, NodePtr left, NodePtr right) ;
 	virtual Tree::TreePtr unfold (std::string parent="") ;
 
  private:
-	Node* left ;
-	Node* right ;
+	NodePtr left ;
+	NodePtr right ;
 } ;
 
 } //namespace parsetree

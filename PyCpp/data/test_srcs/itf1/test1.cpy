@@ -13,19 +13,12 @@ class myclass :
     private xbezglife
 {
 
-    /*!
-    doc goes here
-    */
-    constructor();
+	constructor();
 
     constructor(int a, const float b);
 
-    /*! method documentation
-    \param param3 description
-    \return processed string
-    */
 	const string b (const int param3 , string param2) @{
-		code goes here
+		code goes here01
 		lorem ipsum
 		if (cond) {
 			block;

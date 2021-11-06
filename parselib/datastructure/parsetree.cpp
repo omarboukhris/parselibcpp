@@ -12,6 +12,11 @@ Tree::Tree ()
 	, tokens()
 {}
 
+Tree::Tree(std::string s)
+	: type (NodeType::Leaf)
+	, val (s)
+{}
+
 Tree::Tree (TreePtr node)
 	: type(node->type)
 	, tokens(node->tokens)
@@ -46,7 +51,7 @@ size_t Tree::size() {
 }
 
 Tree::TreePtr Tree::merge(Tree::TreePtr tree) {
-	for (auto&& leaf : *tree) {
+	for (auto& leaf : *tree) {
 		tokens.push_back(leaf);
 	}
 	return std::make_shared<Tree>(this) ;
@@ -54,7 +59,7 @@ Tree::TreePtr Tree::merge(Tree::TreePtr tree) {
 
 int Tree::keyInTree(std::string key) {
 	int i = 0 ;
-	for (auto&& item : tokens) {
+	for (auto& item : tokens) {
 		std::string tokentype = item.first ;
 		if (tokentype == key) {
 			return i ;
@@ -69,33 +74,26 @@ std::string Tree::strUnfold() {
 
 	std::string ss = "" ;
 
-	for (auto&& tok : tokens) {
-		ss += tok.second->getval() + " ";
+	for (Tree::Token &tok : tokens) {
+		if (tok.second->type == NodeType::Leaf) {
+			ss += tok.second->getval() + " ";
+		} else { //type is tree
+			ss += tok.second->strUnfold() ;
+		}
 	}
 
 	return ss ;
 }
 
 
-Tree::Tree(std::string s) {
-	type = NodeType::Leaf ;
-	val = s ;
-}
-
 std::string Tree::getval() {
 
-	std::string output ;
-
-	switch(type){
-	case NodeType::Leaf:
-		output = val;
-		break;
-	case NodeType::Branch:
-		output = strUnfold();
-		break;
+	if (this->type == NodeType::Leaf){
+		return val;
 	}
-
-	return output;
+	else {
+		return "";
+	}
 }
 
 
@@ -117,11 +115,14 @@ std::string Tree::dump(Tree::TreePtr tree, std::string tab) {
 	int count = 0;
 	// count if we dump non terminals
 	bool dump_nonterminal = false;
+
 	for (Tree::Token &tok : tree->tokens) {
+
 		if (tok.second->type == NodeType::Leaf) {
 			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
 			count++ ;
-		} else {
+		}
+		else {
 			dump_nonterminal = true;
 			ss += tab + tok.first + " = {\n"
 				+ dump(tok.second, tab+"\t")
@@ -147,7 +148,12 @@ bool Node::iscompacted() {
 }
 
 
-UnitNode::UnitNode(std::string nodetype, Node* unit) {
+UnitNode::UnitNode(UnitNode *other) {
+	this->nodetype = other->nodetype ;
+	this->unit = other->unit ;
+}
+
+UnitNode::UnitNode(std::string nodetype, NodePtr unit) {
 	this->nodetype = nodetype ;
 	this->unit = unit ;
 }
@@ -166,6 +172,11 @@ Tree::TreePtr UnitNode::unfold(std::string parent){
 }
 
 
+TokenNode::TokenNode(TokenNode *other) {
+	this->val = other->val ;
+	this->nodetype = other->nodetype ;
+}
+
 TokenNode::TokenNode(std::string nodetype, std::string val) {
 	this->val = val ;
 	this->nodetype = nodetype ;
@@ -178,14 +189,20 @@ Tree::TreePtr TokenNode::unfold(std::string) {
 		new Tree(val)
 	);
 
-	Tree tree ;
-	tree.push_back(token) ;
+	Tree::TreePtr tree (new Tree());
+	tree->push_back(token) ;
 
-	return std::make_shared<Tree>(&tree);
+	return tree;
 }
 
 
-BinNode::BinNode(std::string nodetype, Node* left, Node* right) {
+BinNode::BinNode(BinNode *other) {
+	this->left = other->left ;
+	this->right = other->right ;
+	this->nodetype = other->nodetype ;
+}
+
+BinNode::BinNode(std::string nodetype, NodePtr left, NodePtr right) {
 	this->left = left ;
 	this->right = right ;
 	this->nodetype = nodetype ;

@@ -6,7 +6,7 @@
 
 namespace parselib {
 
-typedef std::vector<parsetree::Node*> Frame ;
+typedef std::vector<parsetree::NodePtr> Frame ;
 typedef std::vector<Frame> Row ;
 typedef std::vector<Row> CYKMatrix ;
 
