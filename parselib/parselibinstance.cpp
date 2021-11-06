@@ -90,7 +90,7 @@ parsetree::Tree::TreePtr ParseSession::process_source(std::string filename, bool
 
 			std::cout << "got axiom" << result[index]->unfold() << std::endl ;
 
-			return parse (result[index]->unfold(), "") ; // something went horribly wrong here
+			return parse (result[index]->unfold(), "") ; // something goes horribly wrong here
 		}
 		else { // handle error
 			std::fstream fstr (filename + ".log", std::fstream::out);
@@ -112,16 +112,19 @@ parsetree::Tree::TreePtr ParseSession::process_source(std::string filename, bool
 	}
 }
 
+/*!
+TODO:  THIS NEEDS TO BE REBUILT FROM THE GROUND UP
+ */
 parsetree::Tree::TreePtr ParseSession::parse(parsetree::Tree::TreePtr code, std::string parent) {
 	using namespace std;
 	//needs a do over
 	parsetree::Tree* out = new parsetree::Tree() ;
+
 	for (parsetree::Tree::Token& element : code->tokens) {
 
 //		parsetree::Tree::Token out_element = parsetree::Tree::Token() ;
 		if (element.first == "AXIOM") {
 
-			cout << "axiom processing" << endl;
 			return parse (element.second, "AXIOM") ;
 		}
 		
