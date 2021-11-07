@@ -12,8 +12,10 @@ namespace parselib {
 
 using TreeList = std::vector<pt::ptree> ;
 
+using ParserPtr = std::shared_ptr<parsers::AbstractParser> ;
+
 /*!
- * \brief eliminates the last char of a string if it's a dot (.)
+ * \brief eliminates the last char of a string iTreePtrf it's a dot (.)
  * \param name : node name to process
  */
 std::string processnodename (std::string name) ;
@@ -66,7 +68,7 @@ public :
 	 * True (by default) to print results, otherwise False
 	 * \return Tree* processed parsetree if exists
 	 */
-	parsetree::Tree::TreePtr process_source (std::string filename, bool verbose=false, size_t index=0) ;
+	parsetree::Tree process_source (std::string filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
@@ -76,14 +78,14 @@ private :
 	 * \param parent : str => node's parent name
 	 * \param verbose : bool true to talk
 	 */
-	parsetree::Tree::TreePtr parse (parsetree::Tree::TreePtr code, std::string parent="") ;
+	parsetree::Tree parse (parsetree::Tree::TreePtr code, std::string parent="") ;
 
 	pt::ptree to_ptree (parsetree::Tree::TreePtr tree) ;
 
 protected :
 
 	Grammar grammar ;
-	parsers::AbstractParser *parser ;
+	ParserPtr parser ;
 	lexer::Lexer tokenizer ;
 	utils::Logger_ptr logger ;
 	

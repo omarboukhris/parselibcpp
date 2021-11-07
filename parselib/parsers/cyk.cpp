@@ -143,7 +143,7 @@ Frame CYK::getterminal (Token token) {
 				rule[0].type() == "TERMINAL"
 			) {
 				parsetree::NodePtr node = std::make_shared<parsetree::TokenNode>(
-					new parsetree::TokenNode (key, token.value())) ;
+					parsetree::TokenNode (key, token.value())) ;
 				terminals.push_back (node) ;
 			}
 		}
@@ -211,7 +211,7 @@ Frame CYK::getrulenames(Frame line) {
 			if (rule[0].value() == line[0]->nodetype &&
 				rule[1].value() == line[1]->nodetype) {
 				parsetree::NodePtr node = std::make_shared<parsetree::BinNode>(
-					new parsetree::BinNode (key, line[0], line[1])) ;
+					parsetree::BinNode (key, line[0], line[1])) ;
 				rulenames.push_back (node) ;
 			}
 		}
@@ -230,7 +230,7 @@ Frame CYK::invUnitRelation(Frame M) {
 			StrList units = item.second ;
 			if (std::find(units.begin(), units.end(), node->nodetype) != units.end()) {
 				parsetree::NodePtr nodeOut = std::make_shared<parsetree::UnitNode>(
-					new parsetree::UnitNode (key, node)) ;
+					parsetree::UnitNode (key, node)) ;
 				rulenames.push_back (nodeOut) ;
 			}
 		}

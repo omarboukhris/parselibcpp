@@ -19,8 +19,8 @@ public :
 	};
 
 	Tree () ;
-	Tree (const Tree &other) = delete;
-	Tree (const Tree &&other) = delete;
+//	Tree (const Tree &other) = delete;
+//	Tree (const Tree &&other) = delete;
 	Tree (std::string) ;
 	Tree(Tree::TreePtr node) ;
 	Tree(Tree* node) ;

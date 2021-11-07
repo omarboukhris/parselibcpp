@@ -25,7 +25,8 @@ Tree::Tree (TreePtr node)
 Tree::Tree (Tree* node)
 	: type(node->type)
 	, tokens(node->tokens)
-{}
+{
+}
 
 Tree::~Tree()
 {}
@@ -71,29 +72,39 @@ int Tree::keyInTree(std::string key) {
 
 
 std::string Tree::strUnfold() {
+	std::string ss;
 
-	std::string ss = "" ;
+	if (type == NodeType::Leaf) {
+		ss = val;
+	}
+	else { // NodeType::Branch
 
-	for (Tree::Token &tok : tokens) {
-		if (tok.second->type == NodeType::Leaf) {
-			ss += tok.second->getval() + " ";
-		} else { //type is tree
-			ss += tok.second->strUnfold() ;
+		for (Tree::Token &tok : tokens) {
+
+			if (tok.second->type == NodeType::Leaf) {
+				ss += tok.second->getval() + " ";
+			}
+			else { //type is tree
+				ss += tok.second->strUnfold();
+			}
 		}
 	}
 
-	return ss ;
+	return ss;
 }
 
 
 std::string Tree::getval() {
 
+	std::string output ;
+
 	if (this->type == NodeType::Leaf){
-		return val;
+		output = val;
 	}
 	else {
-		return "";
+		output = "None";
 	}
+	return output;
 }
 
 
@@ -163,11 +174,11 @@ Tree::TreePtr UnitNode::unfold(std::string parent){
 		return unit->unfold(nodetype) ;
 	} else { //if parent != None :
 		//insert token in a tree and return it
-		Tree::TreePtr tree = std::make_shared<Tree>(new Tree()) ;
-		tree->push_back (
+		Tree tree ;
+		tree.push_back (
 			Tree::Token(nodetype, unit->unfold(nodetype))
 		) ;
-		return tree ;
+		return std::make_shared<Tree>(tree);
 	}
 }
 
@@ -186,13 +197,13 @@ Tree::TreePtr TokenNode::unfold(std::string) {
 
 	Tree::Token token (
 		nodetype,
-		new Tree(val)
+		std::make_shared<Tree>(Tree(val))
 	);
 
-	Tree::TreePtr tree (new Tree());
-	tree->push_back(token) ;
+	Tree tree;
+	tree.push_back(token) ;
 
-	return tree;
+	return std::make_shared<Tree>(tree);
 }
 
 
@@ -216,9 +227,9 @@ Tree::TreePtr BinNode::unfold(std::string parent) {
 		return tree ;
 	} else {
 		Tree::Token tok = std::make_pair(nodetype, tree) ;
-		Tree::TreePtr treeout = std::make_shared<Tree>(new Tree()) ;
-		treeout->push_back(tok);
-		return treeout ;
+		Tree treeout ;
+		treeout.push_back(tok);
+		return std::make_shared<Tree>(treeout) ;
 	}
 }
 
