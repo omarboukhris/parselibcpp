@@ -52,23 +52,14 @@ public :
 	std::string process_to_json (std::string filename, bool verbose=false, size_t index=0);
 
 	/*!
-	 * \brief process2ptree processes input file into pt::ptree
-	 * \param filename  input filen name
-	 * \param verbose
-	 * \param index     index of solution to use
-	 * \return
-	 */
-	pt::ptree process2ptree (std::string filename, bool verbose=false, size_t index=0) ;
-
-	/*!
 	 * \brief parses source code in filename,
 	 * unfolds the parse tree and optionnaly prints it
 	 * \param filename : string path to file containing text to load
 	 * \param verbose : bool
 	 * True (by default) to print results, otherwise False
-	 * \return Tree* processed parsetree if exists
+	 * \return boost ptree containing the parsed savable data or empty result if an error occured
 	 */
-	parsetree::Tree process_source (std::string filename, bool verbose=false, size_t index=0) ;
+	pt::ptree process_source_to_ptree (std::string filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
@@ -77,8 +68,9 @@ private :
 	 * \param code : parse tree => result from membership method
 	 * \param parent : str => node's parent name
 	 * \param verbose : bool true to talk
+	 * \return boost ptree containing the parsed savable data
 	 */
-	parsetree::Tree parse (parsetree::Tree code, std::string parent="") ;
+	pt::ptree parse (parsetree::Tree code, std::string parent="") ;
 
 	pt::ptree to_ptree (parsetree::Tree::TreePtr tree) ;
 

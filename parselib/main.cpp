@@ -52,7 +52,7 @@ int main(int argc, char** argv){
 			std::string sourcefilename = argvlex.get("--src") ;
 			Printer::showinfo("now processing source code : " + sourcefilename);
 
-			pt::ptree out = parsesession.process2ptree(sourcefilename, verbose);
+			pt::ptree out = parsesession.process_source_to_ptree(sourcefilename, verbose);
 			
 			Printer::showinfo("written json to : " + sourcefilename + ".json") ;
 			pt::write_json(sourcefilename+".json", out) ;
