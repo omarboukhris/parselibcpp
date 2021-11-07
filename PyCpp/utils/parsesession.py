@@ -2,13 +2,14 @@
 import ctypes
 import json
 import os.path
-
+import pathlib
 
 class ParseSession:
 	""" ParseSession Python wrapper of C++ ParseSession
 	"""
 
-	parselib = ctypes.cdll.LoadLibrary("build/libparselib.so")
+	parselib_path = str(pathlib.Path(__file__).parent.parent / "build/libparselib.so")
+	parselib = ctypes.cdll.LoadLibrary(parselib_path)
 	parselib.get_json.restype = ctypes.c_char_p
 
 	def __init__(self, log_level: int = 0):
