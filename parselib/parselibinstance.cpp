@@ -39,9 +39,10 @@ void ParseSession::load_grammar(std::string filename, bool verbose) {
 
 pt::ptree ParseSession::process2ptree(std::string filename, bool verbose, size_t index) {
 	parsetree::Tree psrc = process_source(filename, verbose, index);
-//	std::cout << "in" << std::endl;
+	std::cout << "in" << std::endl;
 	std::cout << psrc.strUnfold() << std::endl;
-//	std::cout << "out" << std::endl;
+//	std::cout << psrc.tokens.size() << std::endl; // size is 1 but node is empty
+	std::cout << "out" << std::endl;
 	pt::ptree out ;//= to_ptree(psrc) ;
 
 //	if (verbose) {
@@ -86,9 +87,9 @@ parsetree::Tree ParseSession::process_source(std::string filename, bool verbose,
 
 		if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
 
-			std::cout << "got axiom" << result[index]->unfold() << std::endl ;
+			std::cout << "got axiom" << *result[index]->unfold().get() << std::endl ;
 
-			return parse (result[index]->unfold(), "") ; // something goes horribly wrong here
+			return parse (*result[index]->unfold().get(), "") ; // something goes horribly wrong here
 		}
 		else { // handle error
 			std::fstream fstr (filename + ".log", std::fstream::out);
@@ -114,12 +115,12 @@ parsetree::Tree ParseSession::process_source(std::string filename, bool verbose,
 /*!
 TODO:  THIS NEEDS TO BE REBUILT FROM THE GROUND UP
  */
-parsetree::Tree ParseSession::parse(parsetree::Tree::TreePtr code, std::string parent) {
+parsetree::Tree ParseSession::parse(parsetree::Tree code, std::string parent) {
 	using namespace std;
 	//needs a do over
 	parsetree::Tree out ;
 
-	for (parsetree::Tree::Token& element : code->tokens) {
+	for (parsetree::Tree::Token& element : code.tokens) {
 
 //		parsetree::Tree::Token out_element = parsetree::Tree::Token() ;
 		if (element.first == "AXIOM") {
@@ -147,27 +148,35 @@ parsetree::Tree ParseSession::parse(parsetree::Tree::TreePtr code, std::string p
 		} //element.first is type, .second is val
 
 		// check if element.first in keeper
-		 std::cout << element.first << " " << grammar.inKeeperKeys(element.first) << std::endl ;
+		// std::cout << element.first << " " << grammar.inKeeperKeys(element.first) << std::endl ;
 		if (grammar.inKeeperKeys(element.first)) {
 
 			parsetree::Tree out_element;
 
+			//-------------------------------------------------
+			// ok
+			// part handling str tokens
 			if (grammar.keyIsStr(element.first)) {
 				std::string out_elementstr = element.second->strUnfold () ;
 				out_element = parsetree::Tree(out_elementstr);
-				std::cout << "keyIsStr : " << out_element.strUnfold() << std::endl ;
 			}
+			// ko
+			// part handling savable tokens as structs
 			else if (grammar.isTokenSavable(parent, element.first)) {
 
 				if (element.second->type == parsetree::Tree::NodeType::Branch) {
+					std::cout << "begin " << element.first << "{" << std::endl;
+					std::cout << "save : " << element.second->strUnfold() << std::endl ;
+					parsetree::Tree &param = *element.second.get();
+					out_element = parse(param, element.first) ;
 
-					out_element = parse(element.second, element.first) ;
-					std::cout << "token save branch : " << out_element.strUnfold() << std::endl ;
+					std::cout << "token save " << element.first << " : " << out_element.tokens.size() <<
+						(out_element.type == parsetree::Tree::NodeType::Branch ? "branch":"leaf")
+						<< std::endl ;
+					std::cout << "}" << std::endl;
 				}
 				else { // terminal node
-					std::cout << "elmt : " << element.second << std::endl;
-					out_element = parsetree::Tree(element.second) ;
-					std::cout << "terminal save : " << out_element.getval() << std::endl ;
+					out_element = parsetree::Tree(element.second->getval()) ;
 				}
 			}
 			else { //not savable, pass
@@ -180,7 +189,6 @@ parsetree::Tree ParseSession::parse(parsetree::Tree::TreePtr code, std::string p
 					element.first,
 					std::make_shared<parsetree::Tree>(
 						&out_element)));
-
 		}
 	}
 //	std::cout << std::make_shared<parsetree::Tree>(out) << std::endl ;
@@ -199,13 +207,12 @@ pt::ptree ParseSession::to_ptree(parsetree::Tree::TreePtr tree) {
 	Map map = Map() ; 
 	for (auto& tok : tree->tokens) {
 		if (tok.second->type == parsetree::Tree::NodeType::Leaf) {
-			std::cout << tok.first << ":" << tok.second->strUnfold() << std::endl ;
 			pt::ptree tmp ;
 			tmp.put ("", tok.second->getval()) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		} else {
-//			pt::ptree tmp = to_ptree(tok.second) ;
-//			map[tok.first].push_back(std::make_pair("", tmp)) ;
+			pt::ptree tmp = to_ptree(tok.second) ;
+			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		}
 	}
 

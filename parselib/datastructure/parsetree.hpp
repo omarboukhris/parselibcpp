@@ -28,6 +28,10 @@ public :
 
 	virtual ~Tree () ;
 
+	void switch_type(NodeType t_type);
+	void set_to_leaf();
+	void set_to_branch();
+
 	/*!
 	 * \brief getval get token value if leaf
 	 * unfolds if branch

@@ -15,7 +15,13 @@ Tree::Tree ()
 Tree::Tree(std::string s)
 	: type (NodeType::Leaf)
 	, val (s)
-{}
+{
+	tokens.push_back(
+		Token(
+			std::make_pair<std::string, TreePtr>(
+				"TERMINAL",
+				std::make_shared<Tree>(this))));
+}
 
 Tree::Tree (TreePtr node)
 	: type(node->type)
@@ -30,6 +36,18 @@ Tree::Tree (Tree* node)
 
 Tree::~Tree()
 {}
+
+void Tree::switch_type(NodeType t_type) {
+	type = t_type;
+}
+
+void Tree::set_to_leaf() {
+	switch_type(NodeType::Leaf);
+}
+
+void Tree::set_to_branch() {
+	switch_type(NodeType::Branch);
+}
 
 void Tree::push_back(Tree::Token tok) {
 	tokens.push_back(tok) ;
@@ -80,13 +98,7 @@ std::string Tree::strUnfold() {
 	else { // NodeType::Branch
 
 		for (Tree::Token &tok : tokens) {
-
-			if (tok.second->type == NodeType::Leaf) {
-				ss += tok.second->getval() + " ";
-			}
-			else { //type is tree
-				ss += tok.second->strUnfold();
-			}
+			ss += tok.second.get()->strUnfold();
 		}
 	}
 
