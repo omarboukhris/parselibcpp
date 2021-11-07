@@ -164,6 +164,7 @@ void full_work_flow (std::string t_grammar_filename, std::string t_source_filena
   parsers::GenericGrammarParser ggp (preproc) ; //define the grammar parser
 
   auto grammar = ggp.parse (t_grammar_filename, verbose) ; //..and parse
+  delete preproc; // delete preprocessor, not needed anymore
 
   parsers::CYK parser (grammar) ; //instantiate CYK parser
   std::string source = utils::gettextfilecontent(t_source_filename) ; //load source from text file
