@@ -28,16 +28,24 @@ public :
 
 	virtual ~Tree () ;
 
-	void switch_type(NodeType t_type);
-	void set_to_leaf();
-	void set_to_branch();
+	/*!
+	 * \brief tokens : accessor to list of tokens
+	 * \return reference to list of tokens
+	 */
+	TokenList &tokens() ;
 
 	/*!
-	 * \brief getval get token value if leaf
+	 * \brief type : accessor to node type, leaf or branch
+	 * \return leaf or branch, by value
+	 */
+	NodeType type() ;
+
+	/*!
+	 * \brief val get token value if leaf
 	 * unfolds if branch
 	 * \return value
 	 */
-	std::string getval () ;
+	std::string val () ;
 
 	/*!
 	 * \brief keyInTree check if the key is in the tree
@@ -92,10 +100,6 @@ public :
 	friend std::ostream & operator<< (std::ostream& out, TreePtr tree) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
 
-	NodeType type ;
-	std::string val ;
-	TokenList tokens ;
-
 protected:
 
 	/*!
@@ -106,7 +110,14 @@ protected:
 	 */
 	std::string dump (TreePtr tree, std::string tab="") ;
 
+	NodeType m_type ; ///< Node type : leaf or branch
+	std::string m_val ; ///< value if leaf
+	TokenList m_tokens ; ///< list of tokens if branch
 } ;
+
+using TreePtr = Tree::TreePtr;
+using NodeType = Tree::NodeType;
+using TokenList = Tree::TokenList;
 
 /*!
  * \brief abstract node : generates the parse tree

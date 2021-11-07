@@ -110,7 +110,7 @@ pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
 
 	Map map = Map() ;
 
-	for (parsetree::Tree::Token& element : code.tokens) {
+	for (parsetree::Tree::Token& element : code.tokens()) {
 
 		if (element.first == "AXIOM") {
 
@@ -152,14 +152,14 @@ pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
 			// part handling savable tokens as structs
 			else if (grammar.isTokenSavable(parent, element.first)) {
 
-				if (element.second->type == parsetree::Tree::NodeType::Branch) {
+				if (element.second->type() == parsetree::Tree::NodeType::Branch) {
 					parsetree::Tree &param = *element.second.get();
 					pt::ptree tmp = parse(param, element.first) ;
 					map[element.first].push_back(std::make_pair("", tmp)) ;
 				}
 				else { // terminal node
 					pt::ptree tmp  ;
-					tmp.put ("", element.second->getval()) ;
+					tmp.put ("", element.second->val()) ;
 					map[element.first].push_back(std::make_pair("", tmp)) ;
 				}
 			}
@@ -186,10 +186,10 @@ pt::ptree ParseSession::to_ptree(parsetree::Tree::TreePtr tree) {
 	// use map to correctly parse into ptree
 	// something is fucked up otherwise in json
 	Map map = Map() ; 
-	for (auto& tok : tree->tokens) {
-		if (tok.second->type == parsetree::Tree::NodeType::Leaf) {
+	for (auto& tok : tree->tokens()) {
+		if (tok.second->type() == parsetree::Tree::NodeType::Leaf) {
 			pt::ptree tmp ;
-			tmp.put ("", tok.second->getval()) ;
+			tmp.put ("", tok.second->val()) ;
 			map[tok.first].push_back(std::make_pair("", tmp)) ;
 		} else {
 			pt::ptree tmp = to_ptree(tok.second) ;

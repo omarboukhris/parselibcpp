@@ -8,77 +8,59 @@ namespace parselib {
 namespace parsetree {
 
 Tree::Tree ()
-	: type(NodeType::Branch)
-	, tokens()
+	: m_type(NodeType::Branch)
+	, m_tokens()
 {}
 
 Tree::Tree(std::string s)
-	: type (NodeType::Leaf)
-	, val (s)
-{
-	tokens.push_back(
-		Token(
-			std::make_pair<std::string, TreePtr>(
-				"TERMINAL",
-				std::make_shared<Tree>(this))));
-}
+	: m_type (NodeType::Leaf)
+	, m_val (s)
+{}
 
 Tree::Tree (TreePtr node)
-	: type(node->type)
-	, tokens(node->tokens)
+	: m_type(node->m_type)
+	, m_tokens(node->m_tokens)
 {}
 
 Tree::Tree (Tree* node)
-	: type(node->type)
-	, tokens(node->tokens)
+	: m_type(node->m_type)
+	, m_tokens(node->m_tokens)
 {
 }
 
 Tree::~Tree()
 {}
 
-void Tree::switch_type(NodeType t_type) {
-	type = t_type;
-}
-
-void Tree::set_to_leaf() {
-	switch_type(NodeType::Leaf);
-}
-
-void Tree::set_to_branch() {
-	switch_type(NodeType::Branch);
-}
-
 void Tree::push_back(Tree::Token tok) {
-	tokens.push_back(tok) ;
+	m_tokens.push_back(tok) ;
 }
 
 void Tree::clear() {
-	tokens.clear() ;
+	m_tokens.clear() ;
 }
 
 Tree::TokenList::iterator Tree::begin() {
-	return tokens.begin() ;
+	return m_tokens.begin() ;
 }
 
 Tree::TokenList::iterator Tree::end() {
-	return tokens.end() ;
+	return m_tokens.end() ;
 }
 
 size_t Tree::size() {
-	return tokens.size() ;
+	return m_tokens.size() ;
 }
 
 Tree::TreePtr Tree::merge(Tree::TreePtr tree) {
 	for (auto& leaf : *tree) {
-		tokens.push_back(leaf);
+		m_tokens.push_back(leaf);
 	}
 	return std::make_shared<Tree>(this) ;
 }
 
 int Tree::keyInTree(std::string key) {
 	int i = 0 ;
-	for (auto& item : tokens) {
+	for (auto& item : m_tokens) {
 		std::string tokentype = item.first ;
 		if (tokentype == key) {
 			return i ;
@@ -92,12 +74,12 @@ int Tree::keyInTree(std::string key) {
 std::string Tree::strUnfold() {
 	std::string ss;
 
-	if (type == NodeType::Leaf) {
-		ss = val;
+	if (m_type == NodeType::Leaf) {
+		ss = m_val;
 	}
 	else { // NodeType::Branch
 
-		for (Tree::Token &tok : tokens) {
+		for (Tree::Token &tok : m_tokens) {
 			ss += tok.second.get()->strUnfold();
 		}
 	}
@@ -105,13 +87,20 @@ std::string Tree::strUnfold() {
 	return ss;
 }
 
+Tree::TokenList &Tree::tokens() {
+	return m_tokens;
+}
 
-std::string Tree::getval() {
+Tree::NodeType Tree::type() {
+	return m_type;
+}
+
+std::string Tree::val() {
 
 	std::string output ;
 
-	if (this->type == NodeType::Leaf){
-		output = val;
+	if (m_type == NodeType::Leaf){
+		output = m_val;
 	}
 	else {
 		output = "None";
@@ -139,10 +128,10 @@ std::string Tree::dump(Tree::TreePtr tree, std::string tab) {
 	// count if we dump non terminals
 	bool dump_nonterminal = false;
 
-	for (Tree::Token &tok : tree->tokens) {
+	for (Tree::Token &tok : tree->m_tokens) {
 
-		if (tok.second->type == NodeType::Leaf) {
-			ss += tab + "(" + tok.first + ":" + tok.second->getval() + ")\n";
+		if (tok.second->m_type == NodeType::Leaf) {
+			ss += tab + "(" + tok.first + ":" + tok.second->val() + ")\n";
 			count++ ;
 		}
 		else {
