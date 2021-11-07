@@ -6,7 +6,7 @@ namespace parselib {
 
 namespace parsetree {
 
-// abstract class for composite pattern
+// Tree class for composite pattern
 class Tree {
 public :
 	typedef std::shared_ptr<Tree> TreePtr;
@@ -19,8 +19,6 @@ public :
 	};
 
 	Tree () ;
-//	Tree (const Tree &other) = delete;
-//	Tree (const Tree &&other) = delete;
 	Tree (std::string) ;
 	Tree(Tree::TreePtr node) ;
 	Tree(Tree* node) ;
@@ -146,7 +144,7 @@ public :
 	 * \param parent  parent node
 	 * \return Tree pointer
 	 */
-	virtual Tree::TreePtr unfold (std::string parent="") = 0 ;
+	virtual TreePtr unfold (std::string parent="") = 0 ;
 
 	/// \brief node type (terminal or non terminal)
 	std::string nodetype ;
@@ -154,33 +152,67 @@ public :
 
 typedef std::shared_ptr<Node> NodePtr ;
 
+/*!
+ * \brief The UnitNode class represents a unit node with the form
+ * ProductionRule_a -> ProductionRule_b
+ */
 class UnitNode : public Node {
 public :
+
 	UnitNode (UnitNode *other) ;
 	UnitNode (std::string nodetype, NodePtr unit) ;
-	virtual Tree::TreePtr unfold (std::string parent="") ;
+
+	/*!
+	 * \brief applies lazy node unfolding of unit node U1 -> U2 into
+	 * a Tree datastructure
+	 * \param parent node name
+	 * \return unfolded TreePtr (parsable into pt::ptree/json)
+	 */
+	virtual TreePtr unfold (std::string parent="") ;
 private :
 	NodePtr unit ;
 } ;
 
+/*!
+ * \brief The TokenNode class represents a token
+ * It is the terminal datastructure in a parsing graph
+ */
 class TokenNode : public Node {
 public :
+
 	TokenNode(TokenNode *other);
 	TokenNode(std::string nodetype, std::string val) ;
-	virtual Tree::TreePtr unfold (std::string /*parent=""*/) ;
+
+	/*!
+	 * \brief unfolds the terminal graph node into a terminal Tree node
+	 * \return Terminal Tree node
+	 */
+	virtual TreePtr unfold (std::string /*parent=""*/) ;
 
 	std::string val ;
 } ;
 
+/*!
+ * \brief The BinNode class represents a binary production rule
+ * A -> A1 A2
+ */
 class BinNode : public Node {
 public :
+
 	BinNode(BinNode *other);
 	BinNode(std::string nodetype, NodePtr left, NodePtr right) ;
-	virtual Tree::TreePtr unfold (std::string parent="") ;
+
+	/*!
+	 * \brief unfolds binary production rule into a parse Tree
+	 * \param parent node name
+	 * \return TreePtr parsable into boost ptree or json
+	 */
+	virtual TreePtr unfold (std::string parent="") ;
 
  private:
-	NodePtr left ;
-	NodePtr right ;
+
+	NodePtr left ; ///< left node lhs
+	NodePtr right ; ///< right node lrs
 } ;
 
 } //namespace parsetree

@@ -51,7 +51,7 @@ size_t Tree::size() {
 	return m_tokens.size() ;
 }
 
-Tree::TreePtr Tree::merge(Tree::TreePtr tree) {
+TreePtr Tree::merge(TreePtr tree) {
 	for (auto& leaf : *tree) {
 		m_tokens.push_back(leaf);
 	}
@@ -109,7 +109,7 @@ std::string Tree::val() {
 }
 
 
-std::ostream& operator<<(std::ostream& out, Tree::TreePtr tree) {
+std::ostream& operator<<(std::ostream& out, TreePtr tree) {
 	out << tree->dump(tree) ;
 	return out ;
 }
@@ -121,7 +121,7 @@ std::ostream& operator<<(std::ostream& out, Tree tree) {
 /*!
  * \brief Tree::dump dumps the content of a tree into a std::string
  */
-std::string Tree::dump(Tree::TreePtr tree, std::string tab) {
+std::string Tree::dump(TreePtr tree, std::string tab) {
 	std::string ss = "" ;
 	// count how many terminals displayed
 	int count = 0;
@@ -170,7 +170,7 @@ UnitNode::UnitNode(std::string nodetype, NodePtr unit) {
 	this->unit = unit ;
 }
 
-Tree::TreePtr UnitNode::unfold(std::string parent){
+TreePtr UnitNode::unfold(std::string parent){
 	if (iscompacted() || parent == nodetype) {
 		return unit->unfold(nodetype) ;
 	} else { //if parent != None :
@@ -194,7 +194,7 @@ TokenNode::TokenNode(std::string nodetype, std::string val) {
 	this->nodetype = nodetype ;
 }
 
-Tree::TreePtr TokenNode::unfold(std::string) {
+TreePtr TokenNode::unfold(std::string) {
 
 	Tree::Token token (
 		nodetype,
@@ -220,8 +220,8 @@ BinNode::BinNode(std::string nodetype, NodePtr left, NodePtr right) {
 	this->nodetype = nodetype ;
 }
 
-Tree::TreePtr BinNode::unfold(std::string parent) {
-	Tree::TreePtr tree = left->unfold(nodetype) ;
+TreePtr BinNode::unfold(std::string parent) {
+	TreePtr tree = left->unfold(nodetype) ;
 	tree->merge(right->unfold(nodetype)) ;
 
 	if (iscompacted() || parent == nodetype) {

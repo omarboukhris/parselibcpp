@@ -177,7 +177,7 @@ pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
 	return out ;
 }
 
-pt::ptree ParseSession::to_ptree(parsetree::Tree::TreePtr tree) {
+pt::ptree ParseSession::to_ptree(parsetree::TreePtr tree) {
 	using Map = std::map<std::string, pt::ptree> ;
 	if (tree == nullptr) {
 		return pt::ptree() ;

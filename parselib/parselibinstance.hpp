@@ -21,7 +21,6 @@ using ParserPtr = std::shared_ptr<parsers::AbstractParser> ;
 std::string processnodename (std::string name) ;
 
 class ParseSession {
-
 public :
 
 	ParseSession (int logLevel=utils::Logger::LogBasic) ;
@@ -72,7 +71,7 @@ private :
 	 */
 	pt::ptree parse (parsetree::Tree code, std::string parent="") ;
 
-	pt::ptree to_ptree (parsetree::Tree::TreePtr tree) ;
+	pt::ptree to_ptree (parsetree::TreePtr tree) ;
 
 protected :
 
