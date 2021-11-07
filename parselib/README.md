@@ -27,7 +27,7 @@ int main(int argc, char** argv){
   
   // parse some source code if parsable
   // return type is boost::property_tree::ptree 
-  auto out = parsesession.processSource("data/test.java", verbose) ; 
+  auto out = parsesession.process_source_to_ptree("data/test.java", verbose) ; 
 
   return 0 ;
 }
