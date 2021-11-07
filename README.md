@@ -1,10 +1,14 @@
 ## Grammar parselib
 
-This is intended to be a simple and efficient (at least a lot more than its Python version) framework for context free grammar (CFG) parsing.
+This is intended to be a simple and efficient framework for context free grammar (CFG) parsing.
 
 Can be used to code a symbolic mathematical kernel, a source-to-source transcompiler or whatever.. The sky is the limit (along with the established expressive power of type 2 grammars)
 
-boost1.58 and cmake3.5 (at least) are required as a dependency to build the project.
+boost1.40 and cmake3.5 (at least) are required as a dependency to build the project.
+
+## PyCpp 
+
+PyCpp is an extensible gateway language between Python and C++. It is designed to generate ctypes interfaces of C++ code automatically starting using a subset of C++ language. 
 
 ### Build the project :
 
@@ -15,6 +19,8 @@ cd build
 cmake ..
 make
 ```
+
+Make sure when using PyCpp to link the shared object (\*.so file) appropriately to the ctype interface (*parsesession.py*).
 
 ### Main Generator & Test Case :
 
