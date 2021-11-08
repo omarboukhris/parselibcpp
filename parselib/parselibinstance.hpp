@@ -23,7 +23,7 @@ std::string processnodename (std::string name) ;
 class ParseSession {
 public :
 
-	ParseSession (int logLevel=utils::Logger::LogBasic) ;
+	ParseSession (utils::LogLevel logLevel=utils::LogLevel::LogBasic) ;
 	~ParseSession() ;
 
 	/*!
@@ -32,7 +32,7 @@ public :
 	 * \param filename : string path to file containing text to load
 	 */
 	void load_grammar (std::string filename, bool verbose=false) ;
-	
+
 	/*!
 	 * \brief store_json processes input file into json output
 	 * \param filename        input filename
@@ -78,8 +78,8 @@ protected :
 	Grammar grammar ;
 	ParserPtr parser ;
 	lexer::Lexer tokenizer ;
-	utils::Logger_ptr logger ;
-	
+	utils::LoggerPtr logger ;
+
 } ; //class ParseSession
 
 } //namespace parselib

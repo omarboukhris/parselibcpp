@@ -36,7 +36,7 @@ public :
 	}
 } ;
 
-typedef std::shared_ptr<utils::Preprocessor> Preproc_ptr;
+typedef std::shared_ptr<utils::Preprocessor> PreprocPtr;
 
 class OnePassPreprocessor : public Preprocessor {
 

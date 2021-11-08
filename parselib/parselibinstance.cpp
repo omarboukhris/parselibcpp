@@ -11,7 +11,7 @@
 
 namespace parselib {
 
-ParseSession::ParseSession(int logLevel) {
+ParseSession::ParseSession(utils::LogLevel logLevel) {
 	grammar   = Grammar() ;
 	parser    = std::make_shared<parsers::CYK> (parsers::CYK()) ;
 	tokenizer = lexer::Lexer () ;
@@ -29,7 +29,7 @@ std::string processnodename(std::string name) {
 }
 
 void ParseSession::load_grammar(std::string filename, bool verbose) {
-	utils::Preproc_ptr preproc (new utils::OnePassPreprocessor()) ;
+	utils::PreprocPtr preproc (new utils::OnePassPreprocessor()) ;
 	parsers::GenericGrammarParser ggp (preproc, logger) ;
 
 	Grammar grammar = ggp.parse (filename, verbose, true) ;

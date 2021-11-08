@@ -19,15 +19,15 @@ class GenericGrammarParser {
 
 protected:
 
-	utils::Preproc_ptr preproc ;
-	utils::Logger_ptr logger;
+	utils::PreprocPtr preproc ;
+	utils::LoggerPtr logger;
 
 public:
 	/*!
 	 * \brief GenericGrammarParser constructor
 	 * \param preproc shared pointer of preprocessor object
 	 */
-	GenericGrammarParser (utils::Preproc_ptr preproc, utils::Logger_ptr logger) ;
+	GenericGrammarParser (utils::PreprocPtr preproc, utils::LoggerPtr logger) ;
 
 	/*!
 	 * \brief lex a grammar from textual form to tokenized
@@ -41,4 +41,3 @@ public:
 } // parsers namespace 
 
 } // parselib namespace
-

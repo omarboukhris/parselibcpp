@@ -12,13 +12,13 @@ class Logger
 {
 public:
 
-	enum {
-		LogNone=0,
-		LogBasic=1,
-		LogAll=2
+	enum class LogLevel {
+		LogNone,
+		LogBasic,
+		LogAll
 	};
 
-	Logger(int logLevel=LogNone);
+	Logger(LogLevel logLevel=LogLevel::LogNone);
 
 	void log_basic_info(std::string content) ;
 	void log_all_info (std::string content) ;
@@ -28,15 +28,16 @@ public:
 
 private:
 
-	inline void log_mile(std::string content, int level);
+	inline void log_mile(std::string content, LogLevel level);
 
-	inline void log_error(std::string content, int level);
+	inline void log_error(std::string content, LogLevel level);
 
 private:
-	int m_log_level;
+	LogLevel m_log_level;
 };
 
-typedef std::shared_ptr<Logger> Logger_ptr;
+using LogLevel = Logger::LogLevel;
+using LoggerPtr = std::shared_ptr<Logger> ;
 
 }
 
