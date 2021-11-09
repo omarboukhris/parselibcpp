@@ -22,7 +22,7 @@ using namespace grammaroperators ;
 using namespace utils ;
 
 
-GenericGrammarParser::GenericGrammarParser (Preproc_ptr preproc, Logger_ptr logger) {
+GenericGrammarParser::GenericGrammarParser (PreprocPtr preproc, LoggerPtr logger) {
 	//preprocessor class
 	this->preproc = preproc ;
 	this->logger  = logger  ;

@@ -12,8 +12,8 @@ class ParseSession:
 	parselib = ctypes.cdll.LoadLibrary(parselib_path)
 	parselib.get_json.restype = ctypes.c_char_p
 
-	def __init__(self, log_level: int = 0):
-		self.sess = ParseSession.parselib.new_session(log_level)
+	def __init__(self):
+		self.sess = ParseSession.parselib.new_session()
 		self.grammar_loaded = False
 		self.unprocessed_file = ""
 
