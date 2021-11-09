@@ -5,20 +5,20 @@
 // attribute syntax definition
 
 attribute ->
-    // undocumented attribute
-//	!visibility. s:type att_name=identifier. "\;" |
-	!visibility. s:type att_name=identifier. "\;" |
-	!visibility. !py. s:type att_name=identifier. "\;" |
+	// undocumented attribute
+//	!visibility. s:type att_name=identifier. semic. |
+	!visibility. s:type att_name=identifier. semic. |
+	!visibility. !py. s:type att_name=identifier. semic. |
 
 	// documented attribute
-	doxy=multilinecomments. !visibility. s:type att_name=identifier. "\;" |
-	doxy=multilinecomments. !visibility. !py. s:type att_name=identifier. "\;" |
+	doxy=multilinecomments. !visibility. s:type att_name=identifier. semic. |
+	doxy=multilinecomments. !visibility. !py. s:type att_name=identifier. semic. |
 
-    // undocumented attribute
-	s:type att_name=identifier. "\;" |
-	!py. s:type att_name=identifier. "\;" |
+	// undocumented attribute
+	s:type att_name=identifier. semic. |
+	!py. s:type att_name=identifier. semic. |
 
 	// documented attribute
-	doxy=multilinecomments. s:type att_name=identifier. "\;" |
-	doxy=multilinecomments. !py. s:type att_name=identifier. "\;"
+	doxy=multilinecomments. s:type att_name=identifier. semic. |
+	doxy=multilinecomments. !py. s:type att_name=identifier. semic.
 
