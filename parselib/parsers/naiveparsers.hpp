@@ -31,43 +31,47 @@ public :
 
 private :
 
-	size_t i, j ;
-	bool axiomflag ;
-	std::string current_rule ;
+	size_t
+		i,  // operations' operators counter
+		j ; // token counter
+	bool axiomflag ; // whether axiom got read or not
+	std::string current_rule ; // name of production rule currently being processed
 	
-	TokenList grammar ;
+	TokenList grammar ; // grammar's tokens
 	TokenList parsedtokens ;
 	
-	ProductionRules addoperandtocurrentrule (Token tok) ;
+	ProductionRules add_operand_to_current_rule (Token tok) ;
 
 	std::string getstr () ;
 
-	bool stillparsing () ;
-	
-	void checkaxiom () ;
+	inline bool stillparsing () {
+		return i < grammar.size() ;
+	}
+
+	void check_axiom () ;
 
 	/*!
 	 * \brief Read : TERMINAL REGEX
 	 */
-	void checkfortoken () ;
+	void check_for_token () ;
 		
-	void checkleftside () ;
+	void check_left_side () ;
 	
-	void checkoperators() ;
+	void check_operators() ;
 
-	void checkrightside () ;
+	void check_right_side () ;
 
 	/// operators on grammar datastructure
-	void processlabel(std::string label, std::string operand) ;
+	void process_label(std::string label, std::string operand) ;
 
-	void makelist() ;
+	void make_list() ;
 
-	void makeregex(int j) ;
+	void make_regex(int j) ;
 		
 	/// add to keeper to tell the parser to save this node's content
-	void addtokeeper(int j) ;
+	void add_to_keeper(int j) ;
 
-	void addtostr(int j) ;
+	void add_to_str_rules(int j) ;
 
 } ;
 
