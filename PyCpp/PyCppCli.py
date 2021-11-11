@@ -87,14 +87,12 @@ def main():
 		cmk_ver,
 		cpp_ver,
 		dbg,
-		rel
+		rel,
+		observers=[fstrm]
 	)
 
 	# print(cmake.files.get_files())
-	fstrm(cmake.make_header())
-	fstrm(cmake.make_files())
-	fstrm(cmake.make_dependencies())
-	fstrm(cmake.make_builder())
+	cmake.drive()
 
 	# write cmakelists file on disk
 	fstrm.write()

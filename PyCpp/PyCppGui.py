@@ -136,13 +136,11 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			cmk_ver,
 			cpp_ver,
 			dbg,
-			rel
+			rel,
+			observers=[fstrm]
 		)
 
-		fstrm(cmake.make_header())
-		fstrm(cmake.make_files())
-		fstrm(cmake.make_dependencies())
-		fstrm(cmake.make_builder())
+		cmake.drive()
 
 		# write cmakelists file on disk
 		fstrm.write()

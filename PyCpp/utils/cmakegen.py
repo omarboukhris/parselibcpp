@@ -64,7 +64,8 @@ target_link_libraries(\n\
 		cmk_version: str = "3.5",
 		cpp_version: str = "17",
 		dbgflg: str = "-g",
-		relflg: str = "-O2"
+		relflg: str = "-O2",
+		observers: list = None
 	):
 		""" Class constructor
 
@@ -88,6 +89,15 @@ target_link_libraries(\n\
 
 		self.dbgflg = dbgflg
 		self.relflg = relflg
+
+		self.observers = observers if observers else []
+
+	def drive(self):
+		for obs in self.observers:
+			obs(self.make_header())
+			obs(self.make_files())
+			obs(self.make_dependencies())
+			obs(self.make_builder())
 
 	def make_header(self) -> str:
 		""" Make CMakeLists.txt header
