@@ -49,17 +49,11 @@ def show_help(exe: str = ""):
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
 
-def prepare_folder(ppath: str):
-	if os.path.isdir(ppath):
-		new_path = str(pathlib.Path(ppath)) + "_pxx"
-		dir_util.copy_tree(ppath, new_path)
-		return new_path
-	else:
-		raise NotADirectoryError(ppath + " is not a directory")
-
 def check_arg(argparser: ArgParser):
-	""" Check if arguments contain help command or
+	""" Check if arguments contain help command
+	if project path is correct
 	if regex used for globing is valid
+	if output extensions are valid
 
 	:param argparser: argument parser object
 	:return: globing regex
@@ -68,25 +62,28 @@ def check_arg(argparser: ArgParser):
 		show_help()
 		exit()
 
+	# handles project path argument
 	project_path = argparser.get("path")
-
-	try:
-		project_path = prepare_folder(project_path)
-	except NotADirectoryError as e:
-		print("An exception occured: ", e)
-		print("Exiting program")
+	if os.path.isdir(project_path):
+		new_path = str(pathlib.Path(project_path)) + "_pxx"
+		dir_util.copy_tree(project_path, new_path)
+		project_path = new_path
+	else:
+		print("An error occured: {} is not a directory".format(project_path))
 		exit()
 
+	# handle input extension
 	regex_glob = argparser.get("glob")
-
 	if not regex_glob or type(regex_glob) != str:
-		print("Wrong argument : ", regex_glob)
-		show_help()
-		exit()
+		print("Wrong argument : ", regex_glob, " using default .cxx")
+		regex_glob = "*.cxx"
 
+	# handle output extensions
 	all_ext = ["cpp", "h", "impl", "py", "ctype"]
-	out_ext = all_ext if not argparser.get("ext") else argparser.get("ext").split(",")
+	out_ext = argparser.get("ext")
+	if not out_ext or type(out_ext) != str:
+		out_ext = all_ext
+	else:
+		out_ext = out_ext.split(",")
 
 	return project_path, regex_glob, out_ext
-
-

@@ -92,9 +92,9 @@ class FileNameProcessor:
 				fsplit = f.split("/")
 				fname = pref + fsplit[-1]
 				full_fname = "/".join(fsplit[:-1] + [fname])
-				files.append(full_fname)
+				files.append(full_fname[1:])
 		else:
-			files = self.files
+			files = [f[1:] for f in self.files]
 		ss = "\t" + "\n\t".join(["{}.{}".format(f, ext) for f in files])
 		return ss
 
@@ -159,9 +159,10 @@ class PyCppFactory:
 		return out
 
 	@staticmethod
-	def gen_fabric(out_ext: list = (), streams: list = ()):
+	def gen_fabric(filename: str, out_ext: list = (), streams: list = ()):
 		""" Generator Factory
 
+		:param filename: currently processed file name
 		:param out_ext: output extensions
 		:param streams: File or String streams to write into
 		:return: list of generators to use as observers parameters in PyCppEngine
@@ -169,7 +170,9 @@ class PyCppFactory:
 		out = []
 		for ext, stream in zip(out_ext, streams):
 			if ext in ["cpp"]:
-				out.append(CppGenerator(stream))
+				cpp_generator = CppGenerator(stream)
+				cpp_generator.set_header_filename(filename)
+				out.append(cpp_generator)
 			elif ext in ["h", "hpp"]:
 				out.append(HppGenerator(stream))
 			elif ext in ["py"]:

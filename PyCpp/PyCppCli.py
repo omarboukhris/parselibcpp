@@ -21,7 +21,6 @@ def main():
 	psess.load_grammar(grammarpath, False)
 
 	filelist = os.path.join(ppath, "**", regex_glob)
-	print (filelist)
 	processed_files = []
 	for jfile in glob.glob(filelist):
 
@@ -32,7 +31,7 @@ def main():
 		if parsed_json:
 			# prepare streams and observers
 			active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
-			observers = PyCppFactory.gen_fabric(output_ext, active_streams)
+			observers = PyCppFactory.gen_fabric(output_ext, active_streams, jfile)
 
 			# call main generator
 			gen = pycppeng.PyCppEngine(parsed_json, observers)
@@ -88,14 +87,12 @@ def main():
 		cmk_ver,
 		cpp_ver,
 		dbg,
-		rel
+		rel,
+		observers=[fstrm]
 	)
 
 	# print(cmake.files.get_files())
-	fstrm(cmake.make_header())
-	fstrm(cmake.make_files())
-	fstrm(cmake.make_dependencies())
-	fstrm(cmake.make_builder())
+	cmake.drive()
 
 	# write cmakelists file on disk
 	fstrm.write()

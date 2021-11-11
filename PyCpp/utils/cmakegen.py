@@ -32,7 +32,7 @@ set(CMAKE_CXX_FLAGS_DEBUG \"$dbgflags\")\n\
 set(CMAKE_CXX_FLAGS_RELEASE \"$relflags\")\n\n")
 
 	files_templ = Template("\
-file(GLOB $listname\n\
+set($listname\n\
 $filenames\n)\n")
 
 	builder_templ = "\
@@ -64,7 +64,8 @@ target_link_libraries(\n\
 		cmk_version: str = "3.5",
 		cpp_version: str = "17",
 		dbgflg: str = "-g",
-		relflg: str = "-O2"
+		relflg: str = "-O2",
+		observers: list = None
 	):
 		""" Class constructor
 
@@ -88,6 +89,15 @@ target_link_libraries(\n\
 
 		self.dbgflg = dbgflg
 		self.relflg = relflg
+
+		self.observers = observers if observers else []
+
+	def drive(self):
+		for obs in self.observers:
+			obs(self.make_header())
+			obs(self.make_files())
+			obs(self.make_dependencies())
+			obs(self.make_builder())
 
 	def make_header(self) -> str:
 		""" Make CMakeLists.txt header
@@ -113,7 +123,7 @@ target_link_libraries(\n\
 			listname="SOURCE_FILES",
 			filenames=files
 		)
-		files = self.files.make_cpp() + "\n" + self.files.make_gw()
+		files = self.files.make_h()
 		ss += CMakeGenerator.files_templ.substitute(
 			listname="HEADER_FILES",
 			filenames=files

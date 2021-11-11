@@ -38,7 +38,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		project_folder = QFileDialog.getExistingDirectory(
 			self, self._tr("pyCppGui", "Open project folder"),
 			"/", options=QFileDialog.Option.DontConfirmOverwrite)
-		if project_folder :
+		if project_folder:
 			self.rootfolder_lineEdit.setText(project_folder)
 
 	def generate_code(self):
@@ -125,7 +125,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		self.status_label.setText("pycpp > finished parsing sources, now generating CMakeLists")
 
 		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
-		print (cmakelists_path)
+		# print(cmakelists_path)
 		fstrm = FileStream(cmakelists_path)
 		fnproc = FileNameProcessor(processed_files, out_ext)
 		cmake = cmk.CMakeGenerator(
@@ -136,13 +136,11 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			cmk_ver,
 			cpp_ver,
 			dbg,
-			rel
+			rel,
+			observers=[fstrm]
 		)
 
-		fstrm(cmake.make_header())
-		fstrm(cmake.make_files())
-		fstrm(cmake.make_dependencies())
-		fstrm(cmake.make_builder())
+		cmake.drive()
 
 		# write cmakelists file on disk
 		fstrm.write()
