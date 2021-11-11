@@ -8,11 +8,31 @@ class CppGenerator(CppAbstractObs):
 	constructor_template = "$classname::${constr_type} ($args) {$content}\n\n"
 	meth_template = "$type $classname::$name ($args) {$content}\n\n"
 
+	accessor_template = "\
+void ${classname}::set_${attrname}(${type} t_${attrname}) {\n\
+\t${attrname} = t_${attrname};\n\
+}\n\
+${type} ${classname}::get_${attrname}() {\n\
+\treturn ${attrname} ;\n\
+}\n\n"
+
 	meth_temp = Template(meth_template)
 	constructor_temp = Template(constructor_template)
 
+	accessor_templ = Template(accessor_template)
+
 	def __init__(self, stream: callable):
 		super(CppGenerator, self).__init__(stream)
+		self.header_filename = ""
+
+	def set_header_filename(self, filename):
+		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
+		self.header_filename = "\"{}\"".format(processed_fn)
+
+	def process_import(self, filenames=[]):
+		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
+		ss = "\n".join(import_list) + "\n\n"
+		self.stream(ss)
 
 	def process_class(self, t_class=None):
 		# solves immutable object as default param
@@ -39,5 +59,12 @@ class CppGenerator(CppAbstractObs):
 					content=self.process_core(method.core, level=1)
 				)
 
-		self.stream(ss)
+			for attr in cl.attributes:
+				if attr.visibility != "public":
+					ss += CppGenerator.accessor_templ.substitute(
+						type=attr.type,
+						classname=cl.name.strip(),
+						attrname=attr.name
+					)
 
+		self.stream(ss)

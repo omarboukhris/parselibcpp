@@ -60,6 +60,16 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 
 	def __init__(self, stream: callable):
 		super(GatewayGenerator, self).__init__(stream)
+		self.header_filename = ""
+
+	def set_header_filename(self, filename):
+		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
+		self.header_filename = "\"{}\"".format(processed_fn)
+
+	def process_import(self, filenames=[]):
+		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
+		ss = "\n".join(import_list) + "\n\n"
+		self.stream(ss)
 
 	def process_class(self, t_class=[]):
 		# this is where processing goes
@@ -115,7 +125,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 	def process_accessors(cls, attrs: list, clname: str):
 		ss = ""
 		for attr in attrs:
-			if attr.visibility == "public":
+			if attr.visibility != "public":
 				ss += GatewayGenerator.accessor_templ.substitute(
 					type=attr.type,
 					classname=clname,

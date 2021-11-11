@@ -159,9 +159,10 @@ class PyCppFactory:
 		return out
 
 	@staticmethod
-	def gen_fabric(out_ext: list = (), streams: list = ()):
+	def gen_fabric(filename: str, out_ext: list = (), streams: list = ()):
 		""" Generator Factory
 
+		:param filename: currently processed file name
 		:param out_ext: output extensions
 		:param streams: File or String streams to write into
 		:return: list of generators to use as observers parameters in PyCppEngine
@@ -169,14 +170,17 @@ class PyCppFactory:
 		out = []
 		for ext, stream in zip(out_ext, streams):
 			if ext in ["cpp"]:
-				out.append(CppGenerator(stream))
+				cpp_generator = CppGenerator(stream)
+				cpp_generator.set_header_filename(filename)
+				out.append(cpp_generator)
 			elif ext in ["h", "hpp"]:
 				out.append(HppGenerator(stream))
 			elif ext in ["py"]:
 				out.append(PyGwGenerator(stream))
 			elif ext in ["ctype"]:
-				out.append(GatewayGenerator(stream))
+				gw_generator = GatewayGenerator(stream)
+				gw_generator.set_header_filename(filename)
+				out.append(gw_generator)
 			elif ext in ["impl"]:
 				out.append(TemplGenerator(stream))
 		return out
-

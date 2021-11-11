@@ -26,10 +26,10 @@ if __name__ == \"__main__\":\n\
 
 	method_fn_template = "\
 \tdef ${methname}(self${args}):\n\
-\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})\n\n"
+\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_${args})\n\n"
 	method_proc_template = "\
 \tdef ${methname}(self${args}):\n\
-\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_, ${args})${extend_fn}\n\n"
+\t\t${classname}.${modulename}._${classname}_${methname}__(self.this_${args})${extend_fn}\n\n"
 
 	destructor_template = "\
 \tdef __del__(self):\n\
@@ -134,7 +134,7 @@ if __name__ == \"__main__\":\n\
 	def process_accessors(cls, attrs: list, clname: str):
 		ss = ""
 		for attr in attrs:
-			if attr.visibility == "public":
+			if attr.visibility != "public":
 				ss += PyGwGenerator.accessor_templ.substitute(
 					type=attr.type,
 					classname=clname,

@@ -14,12 +14,17 @@ $inheritence {\n\
 \n\
 $constructors\
 $public_methods\
+$accessors\
 $public_attributes\
 $private_methods\
 $private_attributes\
 $protected_methods\
 $protected_attributes\
 } ;\n\n"
+
+	accessor_template = "\
+\tvoid set_${attrname} (${type} t_${attrname});\n\
+\t${type} get_${attrname}() ;\n\n"
 
 	construct_template = "$doc\n\t$classname($args);\n\n"
 
@@ -30,6 +35,8 @@ $protected_attributes\
 
 	construct_temp = Template(construct_template)
 	meth_temp = Template(meth_template)
+
+	accessor_templ = Template(accessor_template)
 
 	def __init__(self, stream: callable):
 		super(HppGenerator, self).__init__(stream)
@@ -44,6 +51,7 @@ $protected_attributes\
 				constructors=HppGenerator.process_constructors(cl.constructs, cl.name),
 				public_attributes=self.process_attributes("public", cl.attributes),
 				public_methods=HppGenerator.process_methods("public", cl.methods),
+				accessors=self.process_accessors(cl.attributes, cl.name),
 				private_attributes=self.process_attributes("private", cl.attributes),
 				private_methods=HppGenerator.process_methods("private", cl.methods),
 				protected_attributes=self.process_attributes("protected", cl.attributes),
@@ -80,3 +88,16 @@ $protected_attributes\
 		if ss != "":
 			ss = "{visibility}:\n".format(visibility=visibility) + ss + "\n"
 		return ss
+
+	@classmethod
+	def process_accessors(cls, attrs: list, clname: str):
+		ss = ""
+		for attr in attrs:
+			if attr.visibility != "public":
+				ss += HppGenerator.accessor_templ.substitute(
+					type=attr.type,
+					classname=clname,
+					attrname=attr.name
+				)
+		return ss
+
