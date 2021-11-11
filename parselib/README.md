@@ -146,7 +146,42 @@ Frame parse_file_into_frame (Grammar grammar, std::string filename) {
   return result;
 }
 ```
-The parser doesn't support error handling yet though. If `membership` fails, the returned frame is empty, otherwise it contains a list of accepted parse trees.
+The parser supports basic error handling. If `membership` fails, the returned frame contains a the token most suspected of breaking parsing, otherwise it contains a list of accepted parse trees.
+
+This is all handled transparently in the `ParseSession` object.
+
+## Full workflow :
+
+The full workflow for parselib parser generator can be something like this:
+```c++
+
+void full_work_flow (std::string t_grammar_filename, std::string t_source_filename) {
+
+  using namespace parselib
+  
+  //define preprocessor to use
+  utils::OnePassPreprocessor *preproc = new utils::OnePassPreprocessor() ;
+  parsers::GenericGrammarParser ggp (preproc) ; //define the grammar parser
+
+  auto grammar = ggp.parse (t_grammar_filename, verbose) ; //..and parse
+  delete preproc; // delete preprocessor, not needed anymore
+
+  parsers::CYK parser (grammar) ; //instantiate CYK parser
+  std::string source = utils::gettextfilecontent(t_source_filename) ; //load source from text file
+
+  //tokenize source code
+  lexer::Lexer tokenizer (grammar.tokens) ;
+  tokenizer.tokenize (source) ;
+
+  //result is in a Frame which is a polite term to say std::vector<parselib::parsetree::Node*>
+  //containing all accepted solutions/parse trees
+  //we generally use the first one
+  Frame result = parser.membership (tokenizer.tokens) ;
+
+}
+```
+
+A complete example with error handling and parsing to json can be found in *parselibinstance.h/cpp* file in `process_source_to_ptree`.
 
 ## References :
 
