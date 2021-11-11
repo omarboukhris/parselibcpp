@@ -1,33 +1,29 @@
 
-module mymodule.test_unders ;
+///@module mymodule.test_unders
 
 #include <iostream>
-#include "stdio.h"
-#include <boost/filesystem.hpp>
 
-class myclass :
-	public absclass<
-		abstracinexistanttype&,
-		someptrTemplate*
-	>,
-	private xbezglife
-{
+class Player {
 
-	constructor();
+	constructor() {{
+	    m_hp = 0;
+	    m_mana = 0;
+    }}
 
-    constructor(int a, const float b);
+    constructor(const int &a, const int &b) {{
+        m_hp = a;
+        m_mana = b;
+    }}
 
-	const string b (const int param3 , string param2) @{
-		code goes here01
-		lorem ipsum
-		if (cond) {
-			block;
-		}
-	@}
+	const bool alive () {{
+	    return (m_hp > 0);
+	}}
 
-	public void proc ();
+	public void make_mana () {{
+	    m_mana++;
+	}}
 
-	public @py int e (const int t);
+	int m_hp;
+	int m_mana;
 
-	vector<pair<int*, int**, vector<int>, int>> e;
 } ;

@@ -3,8 +3,7 @@
 %import "type.grm"
 
 classname ->
-	identifier. // |
-//	template_type |
+	identifier.
 
 inheritence ->
 	visibility. identifier. |

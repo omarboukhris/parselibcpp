@@ -49,7 +49,9 @@ class CppAbstractObs(Observer):
 	def __init__(self, stream: callable):
 		super(CppAbstractObs, self).__init__(stream)
 
-	def process_import(self, filenames=[]):
+	def process_import(self, filenames: list = None):
+		if not filenames:
+			filenames = []
 		import_list = ["#include " + fn for fn in filenames]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
@@ -73,7 +75,7 @@ class CppAbstractObs(Observer):
 		""" strips the @{ @} tokens from a function core """
 		if not strcore:
 			return ""
-		elif strcore.find("@{") == 0 and strcore.find("@}") == len(strcore)-2:
+		elif strcore.find("{{") == 0 and strcore.find("}}") == len(strcore)-2:
 			strcore = strcore[2:-2]
 			split_core = strcore.split("\n")
 

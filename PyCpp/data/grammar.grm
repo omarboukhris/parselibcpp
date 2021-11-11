@@ -13,7 +13,7 @@ file ->
 	!module_header !imports !classdef
 
 module_header ->
-	module. s:module_name semic.
+	module. s:module_name
 
 module_name ->
     identifier. |
