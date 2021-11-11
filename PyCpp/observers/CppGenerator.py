@@ -25,21 +25,16 @@ ${type} ${classname}::get_${attrname}() {\n\
 		super(CppGenerator, self).__init__(stream)
 		self.header_filename = ""
 
-	def set_header_filename(self, filename):
+	def set_header_filename(self, filename: list):
 		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
 		self.header_filename = "\"{}\"".format(processed_fn)
 
-	def process_import(self, filenames: list = None):
-		if not filenames:
-			filenames = []
+	def process_import(self, filenames: list):
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
 
-	def process_class(self, t_class=None):
-		# solves immutable object as default param
-		if not t_class:
-			t_class = []
+	def process_class(self, t_class: list):
 
 		ss = ""
 		for cl in t_class:

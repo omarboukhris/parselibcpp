@@ -41,9 +41,7 @@ $protected_attributes\
 	def __init__(self, stream: callable):
 		super(HppGenerator, self).__init__(stream)
 
-	def process_class(self, t_class: list = None):
-		if not t_class:
-			t_class = None
+	def process_class(self, t_class: list):
 		ss = ""
 		for cl in t_class:
 			ss += HppGenerator.class_temp.substitute(

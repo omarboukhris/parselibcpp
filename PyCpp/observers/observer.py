@@ -24,13 +24,13 @@ class Observer:
 	def end_process_namespace(self):
 		pass
 
-	def process_import(self, filenames=[]):
+	def process_import(self, filenames: list):
 		pass
 
-	def process_class(self, t_class=[]):
+	def process_class(self, t_class: list):
 		pass
 
-	def register_module(self, t_module=[]):
+	def register_module(self, t_module: list):
 		self.namespace = t_module
 
 
@@ -49,9 +49,7 @@ class CppAbstractObs(Observer):
 	def __init__(self, stream: callable):
 		super(CppAbstractObs, self).__init__(stream)
 
-	def process_import(self, filenames: list = None):
-		if not filenames:
-			filenames = []
+	def process_import(self, filenames: list):
 		import_list = ["#include " + fn for fn in filenames]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)

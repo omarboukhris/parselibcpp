@@ -60,7 +60,7 @@ target_link_libraries(\n\
 		p_name: str,
 		p_type: str,
 		p_files: FileNameProcessor,
-		p_libs: list = [],
+		p_libs: list = None,
 		cmk_version: str = "3.5",
 		cpp_version: str = "17",
 		dbgflg: str = "-g",
@@ -82,7 +82,7 @@ target_link_libraries(\n\
 		self.name = p_name
 		self.type_ = p_type
 		self.files = p_files
-		self.libs = p_libs
+		self.libs = p_libs if p_libs else []
 
 		self.cmk_ver = cmk_version
 		self.cpp_ver = cpp_version

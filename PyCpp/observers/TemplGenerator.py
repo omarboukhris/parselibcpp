@@ -33,7 +33,7 @@ $protected_attributes\
 	def __init__(self, stream: callable):
 		super(TemplGenerator, self).__init__(stream)
 
-	def process_class(self, t_class=[]):
+	def process_class(self, t_class: list):
 		ss = ""
 		for cl in t_class:
 			ss += TemplGenerator.class_temp.substitute(

@@ -55,7 +55,7 @@ if __name__ == \"__main__\":\n\
 	def __init__(self, stream: callable):
 		super(PyGwGenerator, self).__init__(stream)
 
-	def process_class(self, t_class=[]):
+	def process_class(self, t_class: list):
 		# this is where processing goes
 		ss = ""
 		ss += PyGwGenerator.import_templ.substitute()
@@ -147,7 +147,7 @@ if __name__ == \"__main__\":\n\
 	def process_destructor(cls, clname: str):
 		return PyGwGenerator.destructor_templ.substitute(classname=clname, modulename=clname.capitalize())
 
-	def process_import(self, filenames=[]):
+	def process_import(self, filenames: list):
 		pass
 
 	def process_namespace(self):

@@ -100,7 +100,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			if parsed_json:
 				# prepare streams and observers
 				active_streams = PyCppFactory.fs_fabric(jfile, out_ext)
-				observers = PyCppFactory.gen_fabric(out_ext, active_streams)
+				observers = PyCppFactory.gen_fabric(jfile, out_ext, active_streams)
 
 				# call main generator
 				gen = pycppeng.PyCppEngine(parsed_json, observers)
