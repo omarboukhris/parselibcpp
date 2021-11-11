@@ -6,7 +6,6 @@
 
 attribute ->
 	// undocumented attribute
-//	!visibility. s:type att_name=identifier. semic. |
 	!visibility. s:type att_name=identifier. semic. |
 	!visibility. !py. s:type att_name=identifier. semic. |
 
