@@ -32,7 +32,7 @@ set(CMAKE_CXX_FLAGS_DEBUG \"$dbgflags\")\n\
 set(CMAKE_CXX_FLAGS_RELEASE \"$relflags\")\n\n")
 
 	files_templ = Template("\
-file(GLOB $listname\n\
+set($listname\n\
 $filenames\n)\n")
 
 	builder_templ = "\
@@ -123,7 +123,7 @@ target_link_libraries(\n\
 			listname="SOURCE_FILES",
 			filenames=files
 		)
-		files = self.files.make_cpp() + "\n" + self.files.make_gw()
+		files = self.files.make_h()
 		ss += CMakeGenerator.files_templ.substitute(
 			listname="HEADER_FILES",
 			filenames=files
