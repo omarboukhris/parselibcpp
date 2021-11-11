@@ -22,4 +22,3 @@ class myclass {
 	public string &&blob;
 
 } ;
-

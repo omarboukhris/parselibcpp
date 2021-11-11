@@ -10,16 +10,18 @@ import glob
 import os.path
 import pathlib
 
+
 def main():
 	argp = ArgParser(sys.argv)
 
-	ppath, globex, output_ext = check_arg(argp)
+	ppath, regex_glob, output_ext = check_arg(argp)
 
 	grammarpath = str(pathlib.Path(__file__).parent / "data/grammar.grm")
 	psess = ParseSession()
 	psess.load_grammar(grammarpath, False)
 
-	filelist = os.path.join(ppath, "**", globex)
+	filelist = os.path.join(ppath, "**", regex_glob)
+	print (filelist)
 	processed_files = []
 	for jfile in glob.glob(filelist):
 
@@ -47,6 +49,7 @@ def main():
 				stream.write()
 
 			processed_files.append(jfile.replace(ppath, ""))
+			os.remove(jfile)
 		else:
 			# track error
 			if not psess:
