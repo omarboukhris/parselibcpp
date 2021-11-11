@@ -38,7 +38,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		project_folder = QFileDialog.getExistingDirectory(
 			self, self._tr("pyCppGui", "Open project folder"),
 			"/", options=QFileDialog.Option.DontConfirmOverwrite)
-		if project_folder :
+		if project_folder:
 			self.rootfolder_lineEdit.setText(project_folder)
 
 	def generate_code(self):

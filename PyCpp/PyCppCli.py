@@ -21,7 +21,6 @@ def main():
 	psess.load_grammar(grammarpath, False)
 
 	filelist = os.path.join(ppath, "**", regex_glob)
-	print (filelist)
 	processed_files = []
 	for jfile in glob.glob(filelist):
 
