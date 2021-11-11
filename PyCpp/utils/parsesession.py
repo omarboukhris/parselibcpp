@@ -53,10 +53,6 @@ class ParseSession:
 			output = json.loads(jsonstr.decode())
 		else:
 			self.unprocessed_file = filepath
-
-		if not output:
-			self.unprocessed_file = filepath
-
 		return output
 
 	def __del__(self):

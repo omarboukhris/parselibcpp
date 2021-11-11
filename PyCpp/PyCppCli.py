@@ -31,7 +31,7 @@ def main():
 		if parsed_json:
 			# prepare streams and observers
 			active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
-			observers = PyCppFactory.gen_fabric(output_ext, active_streams, jfile)
+			observers = PyCppFactory.gen_fabric(output_ext, active_streams)
 
 			# call main generator
 			gen = pycppeng.PyCppEngine(parsed_json, observers)

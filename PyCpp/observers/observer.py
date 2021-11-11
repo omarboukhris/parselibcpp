@@ -70,10 +70,10 @@ class CppAbstractObs(Observer):
 
 	@classmethod
 	def process_core(cls, strcore: str, level: int = 1, tabsz: int = 2):
-		""" strips the {{ }} tokens from a function core """
+		""" strips the @{ @} tokens from a function core """
 		if not strcore:
 			return ""
-		elif strcore.find("{{") == 0 and strcore.find("}}") == len(strcore)-2:
+		elif strcore.find("@{") == 0 and strcore.find("@}") == len(strcore)-2:
 			strcore = strcore[2:-2]
 			split_core = strcore.split("\n")
 

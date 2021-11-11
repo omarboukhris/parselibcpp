@@ -125,7 +125,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		self.status_label.setText("pycpp > finished parsing sources, now generating CMakeLists")
 
 		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
-		# print(cmakelists_path)
+		print (cmakelists_path)
 		fstrm = FileStream(cmakelists_path)
 		fnproc = FileNameProcessor(processed_files, out_ext)
 		cmake = cmk.CMakeGenerator(

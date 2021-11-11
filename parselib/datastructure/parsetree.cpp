@@ -80,7 +80,7 @@ std::string Tree::strUnfold() {
 	else { // NodeType::Branch
 
 		for (Tree::Token &tok : m_tokens) {
-			ss += tok.second.get()->strUnfold() + " ";
+			ss += tok.second.get()->strUnfold();
 		}
 	}
 

@@ -26,7 +26,8 @@ class PyCppEngine:
 		:return: None
 		"""
 		# ns stands for namespace
-		module_ns = [ns.strip() for ns in mod_headers["module_name"][0].split(".")]
+		module_ns = [ns.strip() for ns in mod_headers["module_name"][0].split()]
+		module_ns = list(filter(lambda ns: ns != ".", module_ns))
 
 		for obs in self.observers:
 			obs.register_module(module_ns)

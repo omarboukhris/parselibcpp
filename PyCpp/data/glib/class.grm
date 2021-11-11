@@ -2,7 +2,9 @@
 %import "tokens.grm"
 %import "type.grm"
 
-classname -> identifier.
+classname ->
+	identifier. // |
+//	template_type |
 
 inheritence ->
 	visibility. identifier. |
