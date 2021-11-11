@@ -15,7 +15,7 @@ namespace utils {
 using namespace std ;
 
 /// \brief read a whole file (path @ string filename) in a string
-string gettextfilecontent (string filename) {
+string get_text_file_content (string filename) {
 	ifstream filestream (filename) ;
 	if (!filestream.is_open()) {
 		utils::Printer::showerr("can't read file : " + filename);
@@ -43,8 +43,7 @@ ArgvLex::ArgvLex(ArgList argv) {
 				parsedargv[slist[0]] = slist[1] ;
 				break ;
 			default :
-				//error fuckedup every thing
-				//gets ignored... but shouldn't
+				// ignored
 				break ;
 		} ;
 	}
@@ -58,12 +57,12 @@ string ArgvLex::get(string key){
 }
 
 
-string cleanRegex (string regx) {
+string clean_regex (string regx) {
 	size_t newlen = regx.size()-4 ; //strip 2 caracters from the beginning + 2 from the end
 	return regx.substr(2, newlen) ;
 }
 
-string cleanIfTerminal (string strtoken) {
+string clean_if_terminal (string strtoken) {
 	size_t pos = strtoken.find (".") ;
 	
 	if (pos == string::npos)
@@ -72,7 +71,7 @@ string cleanIfTerminal (string strtoken) {
 	return strtoken.substr(0, pos) ;
 }
 
-string escapeRegex(string regx) {
+string escape_regex(string regx) {
 	boost::regex specialChars { R"([-[\]{}()*+?.,\^$|#\s])" };
 
 	string sanitized = boost::regex_replace( regx, specialChars, R"(\$&)" );
@@ -103,7 +102,7 @@ string join (StrList strlist, string delim) {
 	return out+strlist.back() ;
 }
 
-std::string transformtosource ( TokenList tokenizedgrammar )
+std::string transform_to_source ( TokenList tokenizedgrammar )
 {
 	string source = "" ;
 	for (Token token : tokenizedgrammar) {

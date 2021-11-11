@@ -1,8 +1,8 @@
 
 // keywords
 
-classdec.("class")
-import.("import")
+classdec.("class|struct")
+import.("import|#include")
 module.("module")
 construct_type.("constructor")
 visibility.("public|private|protected")

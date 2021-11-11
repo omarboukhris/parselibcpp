@@ -70,7 +70,7 @@ Frame CYK::membership (TokenList word) {
 		P[0][i] = P[0][i] + invUnitRelation (P[0][i]) ;
 	}
 // 	std::cout << getstrmat(P) ;
-	utils::ProgressBar pbar (60, n) ;
+	utils::ProgressBar pbar (n) ;
 	for (size_t l = 1 ; l < n ; l++) {
 
 		for (size_t i = 0 ; i < n-l ; i++) {

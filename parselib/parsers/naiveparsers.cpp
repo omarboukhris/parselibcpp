@@ -76,9 +76,9 @@ void SequentialParser::check_for_token () {
 	if (grammar[i].type() == "TOKEN") {
 		
 		//eliminate the dot @token value
-		std::string label = utils::cleanIfTerminal(parsedtokens[j].value()) ;
+		std::string label = utils::clean_if_terminal(parsedtokens[j].value()) ;
 		//eliminate the parentheses+quotes
-		std::string regex = utils::cleanRegex(parsedtokens[j+1].value()) ;
+		std::string regex = utils::clean_regex(parsedtokens[j+1].value()) ;
 
 		tokens.push_back({regex, label}) ;
 		i += 1 ;
@@ -152,7 +152,7 @@ void SequentialParser::check_right_side() {
 		grammar[i].type() == "RSIDE") {
 
 		if (parsedtokens[j].type() == "TERMINAL") {
-			parsedtokens[j].value() = utils::cleanIfTerminal(parsedtokens[j].value()) ;
+			parsedtokens[j].value() = utils::clean_if_terminal(parsedtokens[j].value()) ;
 		}
 		if (parsedtokens[j].type() == std::string("STR")) {
 			add_to_str_rules(j) ;
@@ -165,7 +165,7 @@ void SequentialParser::check_right_side() {
 			
 			// naming process
 			std::string label = parsedtokens[j+1].value() ;
-			label = utils::cleanIfTerminal (label) ;
+			label = utils::clean_if_terminal(label) ;
 			parsedtokens[j].value() = label ;
 
 			process_label (label, label) ;
@@ -255,7 +255,7 @@ ProductionRules SequentialParser::add_operand_to_current_rule(Token tok) {
 }
 
 void SequentialParser::add_to_keeper(int j) {
-	string entry = utils::cleanIfTerminal(parsedtokens[j + 1].value()) ;
+	string entry = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
 	if (keeper.find(current_rule) != keeper.end()) {
 		if (std::find (keeper[current_rule].begin(), keeper[current_rule].end(), entry) == keeper[current_rule].end()) {
 			keeper[current_rule].push_back(entry);
@@ -267,7 +267,7 @@ void SequentialParser::add_to_keeper(int j) {
 }
 
 void SequentialParser::add_to_str_rules(int j) {
-	std::string nodename = utils::cleanIfTerminal(parsedtokens[j + 1].value()) ;
+	std::string nodename = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
 	// add to strnodes
 	if (std::find(strnodes.begin(), strnodes.end(), nodename) == strnodes.end()) {
 		strnodes.push_back(nodename) ;

@@ -39,7 +39,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool sp
 //		utils::Printer::showinfo("now processing : " + filename);
 		logger->log_basic_info("now processing : " + filename);
 
-		std::string source = utils::gettextfilecontent (filename) ;
+		std::string source = utils::get_text_file_content (filename) ;
 		
 		//tokenize grammar source
 		lexer::Lexer lang (GenericGrammarTokenizer::grammartokens) ;
@@ -49,7 +49,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool sp
 		lang.tokens = preproc->preprocess (filename, lang.tokens) ;
 
 		// text tokens are needed for next step
-		std::string txtok = utils::transformtosource (lang.tokens) ; 
+		std::string txtok = utils::transform_to_source (lang.tokens) ;
 		
 		// tokenize in abstract grammar tokens
 		lexer::Lexer gram (GenericGrammarTokenizer::genericgrammarprodrules) ;

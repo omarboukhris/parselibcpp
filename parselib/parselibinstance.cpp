@@ -52,7 +52,7 @@ std::string ParseSession::process_to_json (std::string filename, bool verbose, s
 pt::ptree ParseSession::process_source_to_ptree(std::string filename, bool verbose, size_t index) {
 
 	parser = std::make_shared<parsers::CYK> (parsers::CYK(grammar)) ;
-	std::string source = utils::gettextfilecontent(filename) ;
+	std::string source = utils::get_text_file_content(filename) ;
 	
 	tokenizer = lexer::Lexer(grammar.tokens) ;
 	tokenizer.tokenize (source, verbose) ;
