@@ -32,27 +32,27 @@ set(CMAKE_CXX_FLAGS_DEBUG \"$dbgflags\")\n\
 set(CMAKE_CXX_FLAGS_RELEASE \"$relflags\")\n\n")
 
 	files_templ = Template("\
-file(GLOB $listname\n\
+set(\n\t$listname\n\
 $filenames\n)\n")
 
 	builder_templ = "\
-add_library(${PROJECT_NAME} [[ptype]]\n\
+add_library(\n\t${PROJECT_NAME} [[ptype]]\n\
 \t${SOURCE_FILES} \n\
 \t${HEADER_FILES}\n\
 )\n\n\
 target_link_libraries(\n\
 \t${PROJECT_NAME}\n\
-[[plibs]]\n\
-)"
+[[plibs]])"
+
 	x_templ = "\
-add_executable(${PROJECT_NAME} main.cpp\n\
+add_executable(\n\t${PROJECT_NAME} main.cpp\n\
 \t${SOURCE_FILES} \n\
 \t${HEADER_FILES}\n\
 )\n\n\
 target_link_libraries(\n\
 \t${PROJECT_NAME}\n\
-\t[[plibs]]\n\
-)"
+\t[[plibs]])"
+
 	find_pck_templ = Template("find_package(${package_name} ${kw} ${components} ${required_state})\n")
 
 	def __init__(
@@ -123,7 +123,7 @@ target_link_libraries(\n\
 			listname="SOURCE_FILES",
 			filenames=files
 		)
-		files = self.files.make_cpp() + "\n" + self.files.make_gw()
+		files = self.files.make_h()
 		ss += CMakeGenerator.files_templ.substitute(
 			listname="HEADER_FILES",
 			filenames=files

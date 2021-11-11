@@ -92,9 +92,9 @@ class FileNameProcessor:
 				fsplit = f.split("/")
 				fname = pref + fsplit[-1]
 				full_fname = "/".join(fsplit[:-1] + [fname])
-				files.append(full_fname)
+				files.append(full_fname[1:])
 		else:
-			files = self.files
+			files = [f[1:] for f in self.files]
 		ss = "\t" + "\n\t".join(["{}.{}".format(f, ext) for f in files])
 		return ss
 
