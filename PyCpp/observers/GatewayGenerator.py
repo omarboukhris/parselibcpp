@@ -66,12 +66,12 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
 		self.header_filename = "\"{}\"".format(processed_fn)
 
-	def process_import(self, filenames=[]):
+	def process_import(self, filenames: list):
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
 
-	def process_class(self, t_class=[]):
+	def process_class(self, t_class: list):
 		# this is where processing goes
 		ss = ""
 		for cl in t_class:

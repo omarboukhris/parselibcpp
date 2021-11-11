@@ -93,7 +93,7 @@ class CppAbstractObs(Observer):
 	def process_args(cls, args: list):
 		ss = ""
 		for arg in args:
-			ss += "{type} {name}, ".format(type=arg.type, name=arg.name)
+			ss += "{type} {name}, ".format(type=arg.type.strip(), name=arg.name.strip())
 		return ss[:-2]
 
 	@classmethod

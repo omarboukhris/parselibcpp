@@ -29,7 +29,9 @@ ${type} ${classname}::get_${attrname}() {\n\
 		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
 		self.header_filename = "\"{}\"".format(processed_fn)
 
-	def process_import(self, filenames=[]):
+	def process_import(self, filenames: list = None):
+		if not filenames:
+			filenames = []
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
