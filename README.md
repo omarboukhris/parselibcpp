@@ -110,7 +110,7 @@ b.("b")
 ```
 The string "aabb", accepted by this grammar, generates a data structure similar to this 
 ```json
-[
+{
   "S" : [
     {
       "tokena" : "a",
@@ -118,7 +118,7 @@ The string "aabb", accepted by this grammar, generates a data structure similar 
         {}
       ],
       "tokenb" : "b"
-    } 
+    }
   ]
 }
 ```
