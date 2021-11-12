@@ -25,7 +25,7 @@ Make sure when using PyCpp to link the shared object (\*.so file) appropriately 
 ### Main Generator & Test Case :
 
 Main executable parses source code files using specified grammar and stores results in json files (should be injected in a template engine or whatever).
-To test it, you can use the following shell command
+To test it, the following shell command can be used
 
 ```bash
 cd parselibcpp
@@ -160,9 +160,9 @@ The preprocessor is protected against nested imports.
 
 All nodes in imported modules can be scoped from any other module file, as long as the 2 modules are included in the grammar project.
 
-### Str :
+### String Nodes :
 
-If you want to convert a non terminal node's value to str instead of catching a strucutre, the `s:` operator can be used to convert the node to a string.
+To convert a non terminal node's value to str instead of catching a strucutre, the `s:` operator can be used to convert the node to a string.
 ```javascript
 //...
 someHeader -> s:complexNodeToConvert theRestofit | '' //...
