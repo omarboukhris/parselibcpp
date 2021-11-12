@@ -2,6 +2,8 @@
 from collections import namedtuple
 from string import Template
 
+from typing import List
+
 Args = namedtuple("Args", ["type", "name"])
 Attribute = namedtuple("Attribute", ["doxy", "visibility", "py", "type", "name"])
 Method = namedtuple("Method", ["doxy", "visibility", "py", "type", "name", "args", "core"])
@@ -18,19 +20,19 @@ class Observer:
 		self.stream = stream
 		self.namespace = []
 
-	def process_namespace(self):
+	def process_namespace(self) -> None:
 		pass
 
-	def end_process_namespace(self):
+	def end_process_namespace(self) -> None:
 		pass
 
-	def process_import(self, filenames: list):
+	def process_import(self, filenames: List[str]) -> None:
 		pass
 
-	def process_class(self, t_class: list):
+	def process_class(self, t_class: List[Class]) -> None:
 		pass
 
-	def register_module(self, t_module: list):
+	def register_module(self, t_module: List[str]) -> None:
 		self.namespace = t_module
 
 
@@ -49,19 +51,19 @@ class CppAbstractObs(Observer):
 	def __init__(self, stream: callable):
 		super(CppAbstractObs, self).__init__(stream)
 
-	def process_import(self, filenames: list):
+	def process_import(self, filenames: List[str]) -> None:
 		import_list = ["#include " + fn for fn in filenames]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
 
-	def process_namespace(self):
+	def process_namespace(self) -> None:
 		ss = ""
 		for ns in self.namespace:
 			ss += CppAbstractObs.ns_temp.substitute(ns_name=ns)
 
 		self.stream(ss)
 
-	def end_process_namespace(self):
+	def end_process_namespace(self) -> None:
 		ss = ""
 		for ns in self.namespace:
 			ss += "}} // namespace {}\n\n".format(ns)
@@ -69,7 +71,7 @@ class CppAbstractObs(Observer):
 		self.stream(ss)
 
 	@classmethod
-	def process_core(cls, strcore: str, level: int = 1, tabsz: int = 2):
+	def process_core(cls, strcore: str, level: int = 1, tabsz: int = 2) -> str:
 		""" strips the @{ @} tokens from a function core """
 		if not strcore:
 			return ""
@@ -88,14 +90,14 @@ class CppAbstractObs(Observer):
 			raise Exception("Ill formed function core <{}>".format(strcore))
 
 	@classmethod
-	def process_args(cls, args: list):
+	def process_args(cls, args: List[Args]) -> str:
 		ss = ""
 		for arg in args:
 			ss += "{type} {name}, ".format(type=arg.type.strip(), name=arg.name.strip())
 		return ss[:-2]
 
 	@classmethod
-	def process_doc(cls, doc: str, level: int = 1):
+	def process_doc(cls, doc: str, level: int = 1) -> str:
 		if not doc:
 			doc = "// No documentation specified"
 		doc_split = doc.split("\n")
@@ -108,7 +110,7 @@ class CppAbstractObs(Observer):
 		return doc
 
 	@classmethod
-	def process_attributes(cls, visibility, attrs: list):
+	def process_attributes(cls, visibility: str, attrs: List[Attribute]) -> str:
 		ss = ""
 		for attr in attrs:
 			if attr.visibility == visibility:

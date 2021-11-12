@@ -1,7 +1,10 @@
 
 from .GatewayGenerator import GatewayGenerator
+from .observer import Class, Construct, Method, Attribute
 
 from string import Template
+
+from typing import List
 
 class PyGwGenerator(GatewayGenerator):
 
@@ -55,7 +58,7 @@ if __name__ == \"__main__\":\n\
 	def __init__(self, stream: callable):
 		super(PyGwGenerator, self).__init__(stream)
 
-	def process_class(self, t_class: list):
+	def process_class(self, t_class: List[Class]) -> None:
 		# this is where processing goes
 		ss = ""
 		ss += PyGwGenerator.import_templ.substitute()
@@ -74,7 +77,7 @@ if __name__ == \"__main__\":\n\
 		self.stream(ss)
 
 	@classmethod
-	def process_special_type_def(cls, methods: list, clname: str):
+	def process_special_type_def(cls, methods: List[Method], clname: str) -> str:
 		ss = ""
 		for meth in methods:
 			if meth.visibility == "public" and meth.type == "string":
@@ -87,7 +90,7 @@ if __name__ == \"__main__\":\n\
 		return ss
 
 	@classmethod
-	def process_constructors(cls, constructors: list, classname: str):
+	def process_constructors(cls, constructors: List[Construct], classname: str) -> str:
 		ss = ""
 		num = 0
 		modulename = classname.capitalize()
@@ -106,7 +109,7 @@ if __name__ == \"__main__\":\n\
 		return ss
 
 	@classmethod
-	def process_methods(cls, meths: list, clname: str):
+	def process_methods(cls, meths: List[Method], clname: str) -> str:
 		ss = ""
 		for meth in meths:
 			if meth.visibility == "public":
@@ -131,7 +134,7 @@ if __name__ == \"__main__\":\n\
 		return ss
 
 	@classmethod
-	def process_accessors(cls, attrs: list, clname: str):
+	def process_accessors(cls, attrs: List[Attribute], clname: str) -> str:
 		ss = ""
 		for attr in attrs:
 			if attr.visibility != "public":
@@ -144,14 +147,5 @@ if __name__ == \"__main__\":\n\
 		return ss
 
 	@classmethod
-	def process_destructor(cls, clname: str):
+	def process_destructor(cls, clname: str) -> str:
 		return PyGwGenerator.destructor_templ.substitute(classname=clname, modulename=clname.capitalize())
-
-	def process_import(self, filenames: list):
-		pass
-
-	def process_namespace(self):
-		pass
-
-	def end_process_namespace(self):
-		pass

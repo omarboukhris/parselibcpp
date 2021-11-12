@@ -3,15 +3,18 @@ import distutils.dir_util as dir_util
 import os.path
 import pathlib
 
+from typing import List, Tuple
+
 class ArgParser:
 	""" For parsing cmd line arg
 	must be formatted like :
 	* param
 	* param=value
 	Value must not contain any space for Parser to work
+	or the white space should be escaped "\\ "
 	"""
 
-	def __init__(self, argv):
+	def __init__(self, argv: List[str]):
 		self.parsedargv = {}
 		for arg in argv:
 			s = arg.split("=")
@@ -20,14 +23,14 @@ class ArgParser:
 			elif len(s) == 2:
 				self.parsedargv[s[0]] = s[1]
 
-	def get(self, key):
+	def get(self, key: str):
 		key = ArgParser.decorate_key(key)
 		if key in self.parsedargv.keys():
 			return self.parsedargv[key]
 		return False
 
 	@staticmethod
-	def decorate_key(key):
+	def decorate_key(key: str):
 		if len(key) == 1:
 			return "-{}".format(key)
 		elif len(key) >= 2 and key[:2] != "--":
@@ -36,7 +39,7 @@ class ArgParser:
 			return key
 
 
-def show_help(exe: str = ""):
+def show_help(exe: str = "") -> None:
 	print("\nusage :\n\t{} \n\
 \t\t--pname=projectname \n\
 \t\t--ptype=(so|a|x) \n\
@@ -49,7 +52,7 @@ def show_help(exe: str = ""):
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
 
-def check_parser_input_args(argparser: ArgParser):
+def check_parser_input_args(argparser: ArgParser) -> Tuple:
 	""" Check if arguments contain help command
 	if project path is correct
 	if regex used for globing is valid

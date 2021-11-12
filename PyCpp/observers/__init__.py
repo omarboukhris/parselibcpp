@@ -1,5 +1,5 @@
 
-from .observer import Observer
+from .observer import Observer, Class, Construct, Method, Attribute, Args
 
 from .HppGenerator import HppGenerator
 from .CppGenerator import CppGenerator

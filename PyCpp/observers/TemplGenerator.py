@@ -1,7 +1,9 @@
 
-from .observer import CppAbstractObs, Construct
+from .observer import CppAbstractObs, Class, Construct, Method
 
 from string import Template
+
+from typing import List
 
 class TemplGenerator(CppAbstractObs):
 
@@ -33,7 +35,7 @@ $protected_attributes\
 	def __init__(self, stream: callable):
 		super(TemplGenerator, self).__init__(stream)
 
-	def process_class(self, t_class: list):
+	def process_class(self, t_class: List[Class]) -> None:
 		ss = ""
 		for cl in t_class:
 			ss += TemplGenerator.class_temp.substitute(
@@ -52,7 +54,7 @@ $protected_attributes\
 		self.stream(ss)
 
 	@classmethod
-	def process_constructors(cls, constructors: list, classname: str):
+	def process_constructors(cls, constructors: List[Construct], classname: str) -> str:
 		ss = ""
 		for construct in constructors:
 			cname_prefix = "" if construct.construct_type == "constructor" else "~"
@@ -67,7 +69,7 @@ $protected_attributes\
 		return ss
 
 	@classmethod
-	def process_methods(cls, visibility, meths: list):
+	def process_methods(cls, visibility, meths: List[Method]) -> str:
 		ss = ""
 		for meth in meths:
 			if meth.visibility == visibility:
@@ -81,4 +83,3 @@ $protected_attributes\
 		if ss != "":
 			ss = "{visibility}:\n".format(visibility=visibility) + ss + "\n"
 		return ss
-

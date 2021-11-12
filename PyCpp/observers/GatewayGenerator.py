@@ -1,7 +1,9 @@
 
-from .observer import CppAbstractObs
+from .observer import CppAbstractObs, Class, Construct, Method, Attribute
 
 from string import Template
+
+from typing import List
 
 class GatewayGenerator(CppAbstractObs):
 
@@ -62,16 +64,16 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		super(GatewayGenerator, self).__init__(stream)
 		self.header_filename = ""
 
-	def set_header_filename(self, filename):
+	def set_header_filename(self, filename: str) -> None:
 		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
 		self.header_filename = "\"{}\"".format(processed_fn)
 
-	def process_import(self, filenames: list):
+	def process_import(self, filenames: List[str]) -> None:
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
 
-	def process_class(self, t_class: list):
+	def process_class(self, t_class: List[Class]) -> None:
 		# this is where processing goes
 		ss = ""
 		for cl in t_class:
@@ -85,7 +87,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		self.stream(ss)
 
 	@classmethod
-	def process_constructors(cls, constructors: list, classname: str):
+	def process_constructors(cls, constructors: List[Construct], classname: str) -> str:
 		ss = ""
 		num = 0
 		for construct in constructors:
@@ -101,7 +103,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		return ss
 
 	@classmethod
-	def process_methods(cls, meths: list, clname: str):
+	def process_methods(cls, meths: List[Method], clname: str) -> str:
 		ss = ""
 		for meth in meths:
 			if meth.visibility == "public":
@@ -122,7 +124,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		return ss
 
 	@classmethod
-	def process_accessors(cls, attrs: list, clname: str):
+	def process_accessors(cls, attrs: List[Attribute], clname: str) -> str:
 		ss = ""
 		for attr in attrs:
 			if attr.visibility != "public":
@@ -138,7 +140,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		return GatewayGenerator.destructor_templ.substitute(classname=clname)
 
 	@classmethod
-	def process_t_args(cls, args: list):
+	def process_t_args(cls, args: list) -> str:
 		ss = ""
 		for arg in args:
 			ss += "{name}, ".format(name=arg.name)
