@@ -49,7 +49,7 @@ def show_help(exe: str = ""):
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
 
-def check_arg(argparser: ArgParser):
+def check_parser_input_args(argparser: ArgParser):
 	""" Check if arguments contain help command
 	if project path is correct
 	if regex used for globing is valid
@@ -75,7 +75,7 @@ def check_arg(argparser: ArgParser):
 	# handle input extension
 	regex_glob = argparser.get("glob")
 	if not regex_glob or type(regex_glob) != str:
-		print("Wrong argument : ", regex_glob, " using default .cxx")
+		print("Wrong regex glob argument  <{}> using default .cxx".format(regex_glob))
 		regex_glob = "*.cxx"
 
 	# handle output extensions

@@ -6,16 +6,7 @@ import os.path
 
 from string import Template
 
-"""
-Properties:
-- project name
-- project type (so, a, x)
-- project files
-- libs to link
-- min cmake version
-- C++ version
-- g++ flags
-"""
+
 class CMakeGenerator:
 
 	cmk_head_templ = Template("\n\
@@ -77,6 +68,7 @@ target_link_libraries(\n\
 		:param cpp_version: c++ minimum version
 		:param dbgflg: Debug flags
 		:param relflg: Release flags
+		:param observers: Generator's Observers
 		"""
 
 		self.name = p_name

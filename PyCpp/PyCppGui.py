@@ -17,6 +17,9 @@ import os.path
 import pathlib
 
 class PyCppGui(QWidget, Ui_pyCppGui):
+	"""
+	GUI equivalent to PyCppCli
+	"""
 
 	def __init__(self):
 		super(PyCppGui, self).__init__()
@@ -42,6 +45,33 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			self.rootfolder_lineEdit.setText(project_folder)
 
 	def generate_code(self):
+		"""
+		Main method:
+
+		1- Initializes arguments from forms (e.g. project path, regex glob pattern, output extensions
+		(py,cpp,h,ctypes), ...)
+
+		2- Initializes ParseSession object, loads grammar and loops through glob-ed files.
+
+		2.1.1- If a parse tree is generated (i.e. source file accepted/parsed),
+		fs_fabric (~FileSystem_Fabric) creates instances of streams.FileStream and uses them to initialize
+		the generators (i.e. obsersers.*) which act as observers in relation with utils.PyCppEngine
+
+		2.1.2- PyCppEngine is initialized with the json parse tree (result of ParseSession.parse_to_json)
+		and the generators. The json data are parsed into namedTuples (class, method, attribute ... at
+		observers.observer) which in turns are used to stream the parsed data into the templates used in the
+		generators (i.e. observers.*). The results are written to their appropriate files using the FileStream
+		object.
+
+		2.2.1- If a parse tree is not found, the error is processed and the loop continues.
+
+		3- Once code generation is done, an CMakeLists.txt FileStream is opened and used as an observer on
+		utils.CMakeGenerator object, which in turn behaves like PyCppEngine object, generates CMake
+		compilation script from template, taking into account the arguments passed in the widgets
+		(i.e. project name, type, libs ...)
+
+		:return: None
+		"""
 
 		# get project path and regex used for globing
 		ppath = self.rootfolder_lineEdit.text()
@@ -125,8 +155,9 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		self.status_label.setText("pycpp > finished parsing sources, now generating CMakeLists")
 
 		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
-		print (cmakelists_path)
 		fstrm = FileStream(cmakelists_path)
+		print(cmakelists_path)
+
 		fnproc = FileNameProcessor(processed_files, out_ext)
 		cmake = cmk.CMakeGenerator(
 			pname,
