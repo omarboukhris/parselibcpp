@@ -101,17 +101,26 @@ Example :
 let S=(a S b | eps) our grammar. We want to save each parsed `S` in a data structure containing the informations we need from S. 
 We write the grammar as follows :
 ```javascript
+AXIOM -> S
 S -> 
 	tokena=a. !S tokenb=b. | 
-	''
+	""
+a.("a")
+b.("b")
 ```
-This generates a data structure similar to this 
-```c++
-struct S {
-	string tokena ;
-	struct S S_branch ;
-	string tokenb ;
-} ;
+The string "aabb", accepted by this grammar, generates a data structure similar to this 
+```json
+[
+  "S" : [
+    {
+      "tokena" : "a",
+      "S" : [
+        {}
+      ],
+      "tokenb" : "b"
+    } 
+  ]
+}
 ```
 in which a correctly parsed source code will eventually be stored.
 
