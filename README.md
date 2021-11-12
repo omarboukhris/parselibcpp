@@ -115,7 +115,13 @@ The string `aabb`, accepted by this grammar, generates a data structure similar 
     {
       "tokena" : "a",
       "S" : [
-        {}
+        {
+	  "tokena" : "a",
+	  "S" : [
+	    {}
+	  ],
+	  "tokenb" : "b",
+	}
       ],
       "tokenb" : "b"
     }
