@@ -14,8 +14,9 @@ class FileStream(StringStream):
 		:return: None
 		"""
 		try:
+			print("pycpp info FileStream > writing {}".format(self.fname))
 			fstream = open(self.fname, "w")
 			fstream.write(self.content)
 			fstream.close()
 		except Exception as e:
-			print("(FileStream.write) An unexpected exception occured : ", e)
+			print("pycpp err FileStream > An unexpected exception occured : ", e)

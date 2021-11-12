@@ -1,5 +1,5 @@
 
-from observers import HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
+from observers import Observer, HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
 from streams import StringStream, FileStream
 
 from typing import List
@@ -114,7 +114,7 @@ class PyCppFactory:
 		:param pref: file prefix
 		:return: constructed file name
 		"""
-		fname = "".join(fname.split(".")[:-1])
+		fname = "".join(fname.split(".")[:-1])  # remove extension
 		if pref:
 			# add prefix to the last element in path (filename)
 			fsplit = fname.split("/")
@@ -146,6 +146,10 @@ class PyCppFactory:
 						pref=pref
 					)
 				))
+
+		# add __init__.py file
+		initfilepath = "/".join(fname.split("/")[:-1]) + "/__init__.py"
+		out.append(FileStream(fname=initfilepath))
 		return out
 
 	@staticmethod
@@ -163,7 +167,7 @@ class PyCppFactory:
 		return out
 
 	@staticmethod
-	def gen_fabric(filename: str, out_ext: List[str] = None, streams: List[str] = None) -> List:
+	def gen_fabric(filename: str, out_ext: List[str] = None, streams: List[str] = None) -> List[Observer]:
 		""" Generator Factory
 
 		:param filename: currently processed file name
@@ -187,4 +191,6 @@ class PyCppFactory:
 				out.append(gw_generator)
 			elif ext in ["impl"]:
 				out.append(TemplGenerator(stream))
+		# linking last Observer to __init__ stream
+		out.append(Observer(streams[-1]))
 		return out
