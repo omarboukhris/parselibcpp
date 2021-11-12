@@ -37,7 +37,6 @@ ${type} ${classname}::get_${attrname}() {\n\
 		self.stream(ss)
 
 	def process_class(self, t_class: List[Class]) -> None:
-
 		ss = ""
 		for cl in t_class:
 			for construct in cl.constructs:

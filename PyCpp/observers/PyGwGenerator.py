@@ -149,3 +149,12 @@ if __name__ == \"__main__\":\n\
 	@classmethod
 	def process_destructor(cls, clname: str) -> str:
 		return PyGwGenerator.destructor_templ.substitute(classname=clname, modulename=clname.capitalize())
+
+	def process_namespace(self) -> None:
+		pass
+
+	def end_process_namespace(self) -> None:
+		pass
+
+	def process_import(self, filenames: List[str]) -> None:
+		pass
