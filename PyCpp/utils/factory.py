@@ -167,8 +167,9 @@ class PyCppFactory:
 		return out
 
 	@staticmethod
-	def gen_fabric(filename: str, out_ext: List[str] = None, streams: List[str] = None) -> List[Observer]:
+	def gen_fabric(filename: str, out_ext: List[str] = None, streams: List[StringStream] = None) -> List[Observer]:
 		""" Generator Factory
+		Associates streams to generators
 
 		:param filename: currently processed file name
 		:param out_ext: output extensions
@@ -191,6 +192,4 @@ class PyCppFactory:
 				out.append(gw_generator)
 			elif ext in ["impl"]:
 				out.append(TemplGenerator(stream))
-		# linking last Observer to __init__ stream
-		out.append(Observer(streams[-1]))
 		return out
