@@ -108,7 +108,7 @@ S ->
 a.("a")
 b.("b")
 ```
-The string "aabb", accepted by this grammar, generates a data structure similar to this 
+The string `aabb`, accepted by this grammar, generates a data structure similar to this 
 ```json
 {
   "S" : [
