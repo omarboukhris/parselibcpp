@@ -20,7 +20,7 @@ module_name ->
     identifier. pt. module_name
 
 imports ->
-	import. s:importfile |
+	include. s:importfile |
 []
 
 classdef ->
