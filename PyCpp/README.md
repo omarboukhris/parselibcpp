@@ -76,15 +76,15 @@ $ python PyCppCli.py h
 
 usage :
 	 
-		pname=projectname 
-		ptype=(so|a|x) 
-		glob=regex_to_glob_files
-		ext=h,cpp,impl,py,ctype
-		plibs="list,of,libs,sep,by,comma" 
-		path="regex/to/glob"
-		v h
+		--pname=projectname 
+		--ptype=(so|a|x) 
+		--glob=regex_to_glob_files
+		--ext=h,cpp,impl,py,ctype
+		--plibs="list,of,libs,sep,by,comma" 
+		--path="regex/to/glob"
+		-v -h
 
-	v is for verbose and h is for help
+	-v is for verbose and -h is for help
 	If help is active, program shows this messages and exit.
 	Extensions (ext) separated by <,> should not contain spaces
 
