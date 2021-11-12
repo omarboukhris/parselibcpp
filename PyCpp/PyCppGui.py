@@ -11,7 +11,6 @@ from streams import FileStream
 import utils.pycppeng as pycppeng
 import utils.cmakegen as cmk
 
-import sys
 import glob
 import os.path
 import pathlib
@@ -180,6 +179,8 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 
 if __name__ == "__main__":
+	import sys
+
 	app = QApplication(sys.argv)
 	ui = PyCppGui()
 	ui.show()

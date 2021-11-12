@@ -1,6 +1,8 @@
 
-from observers import HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
+from observers import Observer, HppGenerator, TemplGenerator, CppGenerator, GatewayGenerator, PyGwGenerator
 from streams import StringStream, FileStream
+
+from typing import List
 
 class FileNameProcessor:
 	"""
@@ -9,9 +11,9 @@ class FileNameProcessor:
 	Supported extensions: cpp, h, py, ctype, impl
 	"""
 
-	def __init__(self, files: list = [], ext: list = []):
-		self.files = files
-		self.ext = ext
+	def __init__(self, files: List[str] = None, ext: List[str] = None):
+		self.files = files if files else []
+		self.ext = ext if ext else []
 		self._cleanup_ext()
 
 	def _cleanup_ext(self) -> None:
@@ -27,7 +29,7 @@ class FileNameProcessor:
 	# Helper methods
 	#
 
-	def get_files(self) -> list:
+	def get_files(self) -> List[str]:
 		"""	Accessor to list of cleaned up files
 		"""
 		return self.files
@@ -104,7 +106,7 @@ class PyCppFactory:
 	"""
 
 	@staticmethod
-	def single_fn_fabric(fname: str, ext: str, pref: str = ""):
+	def single_fn_fabric(fname: str, ext: str, pref: str = "") -> str:
 		""" Single File Name Factory
 
 		:param fname: file name
@@ -112,7 +114,7 @@ class PyCppFactory:
 		:param pref: file prefix
 		:return: constructed file name
 		"""
-		fname = "".join(fname.split(".")[:-1])
+		fname = "".join(fname.split(".")[:-1])  # remove extension
 		if pref:
 			# add prefix to the last element in path (filename)
 			fsplit = fname.split("/")
@@ -122,13 +124,14 @@ class PyCppFactory:
 		return ss
 
 	@staticmethod
-	def fs_fabric(fname: str, out_ext: list = []):
+	def fs_fabric(fname: str, out_ext: List[str] = None) -> List[FileStream]:
 		""" File Stream Factory
 
 		:param fname: file name
 		:param out_ext: output extension
 		:return: list of initialized file streams
 		"""
+		out_ext = out_ext if out_ext else []
 		out = []
 		for ext in out_ext:
 			pref = ""
@@ -143,15 +146,20 @@ class PyCppFactory:
 						pref=pref
 					)
 				))
+
+		# add __init__.py file
+		initfilepath = "/".join(fname.split("/")[:-1]) + "/__init__.py"
+		out.append(FileStream(fname=initfilepath))
 		return out
 
 	@staticmethod
-	def ss_fabric(out_ext: list = []):
+	def ss_fabric(out_ext: List[str] = None) -> List[StringStream]:
 		""" String Stream Factory
 
 		:param out_ext: output extension
 		:return: list of initialized String streams
 		"""
+		out_ext = out_ext if out_ext else []
 		out = []
 		for ext in out_ext:
 			if ext in ["cpp", "h", "hpp", "py", "ctype", "impl"]:
@@ -159,7 +167,7 @@ class PyCppFactory:
 		return out
 
 	@staticmethod
-	def gen_fabric(filename: str, out_ext: list = (), streams: list = ()):
+	def gen_fabric(filename: str, out_ext: List[str] = None, streams: List[str] = None) -> List[Observer]:
 		""" Generator Factory
 
 		:param filename: currently processed file name
@@ -183,4 +191,6 @@ class PyCppFactory:
 				out.append(gw_generator)
 			elif ext in ["impl"]:
 				out.append(TemplGenerator(stream))
+		# linking last Observer to __init__ stream
+		out.append(Observer(streams[-1]))
 		return out

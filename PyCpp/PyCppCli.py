@@ -4,13 +4,13 @@ from utils.factory import PyCppFactory, FileNameProcessor
 from utils.helpers import ArgParser, check_parser_input_args
 from streams import FileStream
 
-import sys
 import glob
 import os.path
 import pathlib
 
+from typing import List
 
-def main() -> None:
+def main(argv: List[str]) -> None:
 	"""
 	Main function:
 
@@ -39,7 +39,7 @@ def main() -> None:
 	:return: None
 	"""
 
-	argp = ArgParser(sys.argv)
+	argp = ArgParser(argv)
 
 	ppath, regex_glob, output_ext = check_parser_input_args(argp)
 
@@ -49,7 +49,7 @@ def main() -> None:
 	plibs = argp.get("plibs").split(":") if argp.get("plibs") else []
 	cpp_ver = argp.get("cpp") if argp.get("cpp") in ["11", "14", "17", "20"] else "17"
 	cmk_ver = argp.get("cmk") if argp.get("cmk") else "3.5"
-	dbg = argp.get("dbgflg") if argp.get("dbgflg") else "-g"
+	dbg = argp.get("dbgflg") if argp.get("dbgflg") else "-g -O0"
 	rel = argp.get("relflg") if argp.get("relflg") else "-O2"
 
 	# check for valid parameters
@@ -103,9 +103,6 @@ def main() -> None:
 
 	del psess
 
-	#
-	# cmake generator here
-	#
 	cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
 	fstrm = FileStream(cmakelists_path)
 	fnproc = FileNameProcessor(processed_files, output_ext)
@@ -133,4 +130,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-	main()
+	import sys
+
+	main(sys.argv)

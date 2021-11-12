@@ -1,7 +1,9 @@
 
-from .observer import CppAbstractObs
+from .observer import CppAbstractObs, Class
 
 from string import Template
+
+from typing import List
 
 class CppGenerator(CppAbstractObs):
 
@@ -25,16 +27,16 @@ ${type} ${classname}::get_${attrname}() {\n\
 		super(CppGenerator, self).__init__(stream)
 		self.header_filename = ""
 
-	def set_header_filename(self, filename: list):
+	def set_header_filename(self, filename: str) -> None:
 		processed_fn = filename.split("/")[-1].split(".")[0] + ".h"
 		self.header_filename = "\"{}\"".format(processed_fn)
 
-	def process_import(self, filenames: list):
+	def process_import(self, filenames: List[str]) -> None:
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
 		self.stream(ss)
 
-	def process_class(self, t_class: list):
+	def process_class(self, t_class: List[Class]) -> None:
 
 		ss = ""
 		for cl in t_class:

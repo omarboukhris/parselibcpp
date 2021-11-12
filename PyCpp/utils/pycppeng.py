@@ -1,5 +1,7 @@
 
-from observers.observer import *
+from observers import *
+
+from typing import List
 
 
 class PyCppEngine:
@@ -8,7 +10,7 @@ class PyCppEngine:
 		self.json_obj = json_obj
 		self.observers = observers
 
-	def drive(self):
+	def drive(self) -> None:
 		""" Launches json data structure parsing into named tuples
 		"""
 
@@ -84,7 +86,7 @@ class PyCppEngine:
 			obs.process_class(out)
 
 	@staticmethod
-	def write_construct(construct_list) -> list:
+	def write_construct(construct_list) -> List[Construct]:
 		""" Processes constructor json node
 
 		:param construct_list: list of constructor json nodes
@@ -103,7 +105,7 @@ class PyCppEngine:
 		return out
 
 	@staticmethod
-	def write_attr(attr_list) -> list:
+	def write_attr(attr_list) -> List[Attribute]:
 		""" Processes attributes json node
 
 		:param attr_list: list of attributes json nodes
@@ -122,7 +124,7 @@ class PyCppEngine:
 		return out
 
 	@staticmethod
-	def write_meth(meth_list) -> list:
+	def write_meth(meth_list) -> List[Method]:
 		""" Processes methods json node
 
 		:param meth_list: list of methods json nodes
@@ -158,7 +160,7 @@ class PyCppEngine:
 		return ty
 
 	@staticmethod
-	def process_args(meth) -> list:
+	def process_args(meth) -> List[Method]:
 		""" Processes method arguments json node
 
 		:param meth: method json node to process

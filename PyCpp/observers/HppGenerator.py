@@ -1,7 +1,10 @@
 
 from .CppGenerator import CppAbstractObs
+from .observer import Class, Construct, Method, Attribute
 
 from string import Template
+
+from typing import List
 
 class HppGenerator(CppAbstractObs):
 
@@ -41,7 +44,7 @@ $protected_attributes\
 	def __init__(self, stream: callable):
 		super(HppGenerator, self).__init__(stream)
 
-	def process_class(self, t_class: list):
+	def process_class(self, t_class: List[Class]) -> None:
 		ss = ""
 		for cl in t_class:
 			ss += HppGenerator.class_temp.substitute(
@@ -61,7 +64,7 @@ $protected_attributes\
 		self.stream(ss)
 
 	@classmethod
-	def process_constructors(cls, constructors: list, classname: str):
+	def process_constructors(cls, constructors: List[Construct], classname: str) -> str:
 		ss = ""
 		for construct in constructors:
 			cname_prefix = "" if construct.construct_type == "constructor" else "~"
@@ -75,7 +78,7 @@ $protected_attributes\
 		return ss
 
 	@classmethod
-	def process_methods(cls, visibility, meths: list):
+	def process_methods(cls, visibility: str, meths: List[Method]) -> str:
 		ss = ""
 		for meth in meths:
 			if meth.visibility == visibility:
@@ -90,7 +93,7 @@ $protected_attributes\
 		return ss
 
 	@classmethod
-	def process_accessors(cls, attrs: list, clname: str):
+	def process_accessors(cls, attrs: List[Attribute], clname: str) -> str:
 		ss = ""
 		for attr in attrs:
 			if attr.visibility != "public":
