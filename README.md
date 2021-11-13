@@ -43,11 +43,11 @@ python3 main.py
 
 #### C++ interface
 
-Check readme in parselib.
+Check [ParseLib](parselib/README.md).
 
 #### Python interface 
 
-Check readme in PyCpp.
+Check [PyCpp](PyCpp/README.md).
 
 ## Grammar's syntax
 
