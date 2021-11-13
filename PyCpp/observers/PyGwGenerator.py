@@ -30,7 +30,7 @@ if __name__ == \"__main__\":\n\
 
 	method_fn_template = "\
 \tdef ${methname}(self${args}):\n\
-\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_${args})\n\n"
+\t\treturn ${classname}.${modulename}._${classname}_${methname}__(self.this_${args})${extend_fn}\n\n"
 	method_proc_template = "\
 \tdef ${methname}(self${args}):\n\
 \t\t${classname}.${modulename}._${classname}_${methname}__(self.this_${args})${extend_fn}\n\n"
@@ -143,7 +143,7 @@ if __name__ == \"__main__\":\n\
 				args = cls.process_t_args(meth.args)
 				str_args = ", {}".format(args) if args.strip() else ""
 				templ = PyGwGenerator.method_fn_templ
-				extended = ".decode()" if meth.type == "string" else ""
+				extended = ".decode()" if meth.type in ["string", "std::string"] else ""
 				if meth.type == "void":
 					templ = PyGwGenerator.method_proc_templ
 
