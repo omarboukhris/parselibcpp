@@ -1,9 +1,17 @@
 
+# import engines
 from utils import PyCppEngine, CMakeGenerator, ParseSession
-from utils.factory import PyCppFactory, FileNameProcessor
-from utils.helpers import ArgParser, check_parser_input_args
+from utils.factory import FileNameProcessor
+from utils.helpers import ArgParser
+
+# import helper functions
+from utils.helpers import check_parser_input_args
+from utils.factory import file_stream_fabric, generator_fabric
+
+# get streams
 from streams import FileStream
 
+# stb lib
 import glob
 import os.path
 import pathlib
@@ -74,8 +82,8 @@ def main(argv: List[str]) -> None:
 		# print(parsed_json)
 		if parsed_json:
 			# prepare streams and observers
-			active_streams = PyCppFactory.fs_fabric(jfile, output_ext)
-			observers = PyCppFactory.gen_fabric(jfile, output_ext, active_streams)
+			active_streams = file_stream_fabric(jfile, output_ext)
+			observers = generator_fabric(jfile, output_ext, active_streams)
 
 			# call main generator
 			gen = PyCppEngine(parsed_json, observers)
@@ -107,14 +115,14 @@ def main(argv: List[str]) -> None:
 	fstrm = FileStream(cmakelists_path)
 	fnproc = FileNameProcessor(processed_files, output_ext)
 	cmake = CMakeGenerator(
-		pname,
-		ptype,
-		fnproc,
-		plibs,
-		cmk_ver,
-		cpp_ver,
-		dbg,
-		rel,
+		pname,    # project name
+		ptype,    # project type
+		fnproc,   # file name processor
+		plibs,    # project libraries
+		cmk_ver,  # CMake version
+		cpp_ver,  # C++ version
+		dbg,      # debug flags
+		rel,      # release flags
 		observers=[fstrm]
 	)
 
@@ -131,5 +139,4 @@ def main(argv: List[str]) -> None:
 
 if __name__ == "__main__":
 	import sys
-
 	main(sys.argv)

@@ -4,12 +4,11 @@ from gui.PyCppWidget import Ui_pyCppGui
 from PyQt6.QtWidgets import QApplication, QWidget, QFileDialog
 from PyQt6.QtCore import QCoreApplication, QMetaObject
 
-from utils.parsesession import ParseSession
-from utils.factory import PyCppFactory, FileNameProcessor
-from streams import FileStream
+from utils import PyCppEngine, CMakeGenerator, ParseSession
+from utils.factory import FileNameProcessor, file_stream_fabric, generator_fabric
 
-import utils.pycppeng as pycppeng
-import utils.cmakegen as cmk
+# get streams
+from streams import FileStream
 
 import glob
 import os.path
@@ -92,11 +91,9 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		elif self.x_radioButton.isChecked():
 			ptype = "x"
 
-		print("project type is : ", ptype)
+		# print("project type is : ", ptype)
 
-		#
 		# cmake generator params
-		#
 		pname = self.projectname_lineEdit.text()
 		plibs = self.libs_lineEdit.text().split(";")
 		cpp_ver = self.cppver_comboBox.currentText()
@@ -123,16 +120,16 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		for jfile in filelist:
 
 			# call parselib parser
-			print("parselib > processing file \"{}\"".format(jfile))
+			# print("parselib > processing file \"{}\"".format(jfile))
 			self.status_label.setText("parselib > processing file \"{}\"".format(jfile))
 			parsed_json = psess.parse_to_json(jfile, False)
 			if parsed_json:
 				# prepare streams and observers
-				active_streams = PyCppFactory.fs_fabric(jfile, out_ext)
-				observers = PyCppFactory.gen_fabric(jfile, out_ext, active_streams)
+				active_streams = file_stream_fabric(jfile, out_ext)
+				observers = generator_fabric(jfile, out_ext, active_streams)
 
 				# call main generator
-				gen = pycppeng.PyCppEngine(parsed_json, observers)
+				gen = PyCppEngine(parsed_json, observers)
 				gen.drive()
 
 				# activate to write output to file
@@ -142,10 +139,10 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 				processed_files.append(jfile.replace(ppath, ""))
 			else:
 				if not psess:
-					print("err > parse session not initialized")
+					self.status_label.setText("err > parse session not initialized")
 				if not psess.grammar_loaded:
-					print("err > grammar has not been loaded")
-				print("unprocessed file is : ", psess.unprocessed_file)
+					self.status_label.setText("err > grammar has not been loaded")
+				self.status_label.setText("unprocessed file is : ", psess.unprocessed_file)
 			i += 1
 			self.progressBar.setValue(int((i/numfiles)*100))
 
@@ -155,27 +152,27 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
 		fstrm = FileStream(cmakelists_path)
-		print(cmakelists_path)
+		# print(cmakelists_path)
 
 		fnproc = FileNameProcessor(processed_files, out_ext)
-		cmake = cmk.CMakeGenerator(
-			pname,
-			ptype,
-			fnproc,
-			plibs,
-			cmk_ver,
-			cpp_ver,
-			dbg,
-			rel,
+		cmake = CMakeGenerator(
+			pname,    # project name
+			ptype,    # project type
+			fnproc,   # file name processor
+			plibs,    # project libraries
+			cmk_ver,  # CMake version
+			cpp_ver,  # C++ version
+			dbg,      # debug flags
+			rel,      # release flags
 			observers=[fstrm]
 		)
 
 		cmake.drive()
 
 		# write cmakelists file on disk
-		fstrm.write()
-		print(fstrm)
 		self.status_label.setText("pycpp > finished generating CMakeLists")
+		fstrm.write()
+		# print(fstrm)
 
 
 if __name__ == "__main__":

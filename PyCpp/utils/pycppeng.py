@@ -5,16 +5,38 @@ from typing import List
 
 
 class PyCppEngine:
+	""" Main PyCpp Engine:
+	depending on the json parse tree, the engine constructs namedTuples
+	with the appropriate data, calls the observers at each step.
 
-	def __init__(self, json_obj, observers: list):
-		self.json_obj = json_obj
+	The Engine exposes :
+	- The constructor which initializes the engine with the json parse tree
+	and the observers/generators
+	- The drive() method which does the rest of the job, calls the appropriate
+	methods, in the right order and uses the generators appropriately
+	"""
+
+	def __init__(self, json_ptree, observers: list):
+		""" Contructor
+
+		:param json_ptree: Accepted Parse Tree from parselib
+		:param observers: Derived generators from observers.Observer,
+		Observers are generator instances and must implement :
+			- process_namespace(self) -> None
+			- end_process_namespace(self) -> None
+			- process_import(self, filenames: List[str]) -> None
+			- process_class(self, t_class: List[Class]) -> None
+			- register_module(self, t_module: List[str]) -> None
+		"""
+
+		self.json_ptree = json_ptree
 		self.observers = observers
 
 	def drive(self) -> None:
 		""" Launches json data structure parsing into named tuples
 		"""
 
-		for arr in self.json_obj["file"]:
+		for arr in self.json_ptree["file"]:
 			self.register_module(arr["module_header"][0])
 			self.write_import(arr["imports"][0])
 			self.write_ns()

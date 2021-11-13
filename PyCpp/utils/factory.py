@@ -9,9 +9,16 @@ class FileNameProcessor:
 	Processes filenames in a list appropriately depending on
 	the file to generate
 	Supported extensions: cpp, h, py, ctype, impl
+
+	Can be used in Factories or passed as a parameter to CMakeGenerator
 	"""
 
 	def __init__(self, files: List[str] = None, ext: List[str] = None):
+		""" Constructor
+
+		:param files: list of files
+		:param ext: list of extensions
+		"""
 		self.files = files if files else []
 		self.ext = ext if ext else []
 		self._cleanup_ext()
@@ -100,96 +107,87 @@ class FileNameProcessor:
 		ss = "\t" + "\n\t".join(["{}.{}".format(f, ext) for f in files])
 		return ss
 
-class PyCppFactory:
+def single_fn_fabric(fname: str, ext: str, pref: str = "") -> str:
+	""" Single File Name Factory
+
+	:param fname: file name
+	:param ext: file extension
+	:param pref: file prefix
+	:return: constructed file name
+	"""	
+	fname = "".join(fname.split(".")[:-1])  # remove extension
+	if pref:
+		# add prefix to the last element in path (filename)
+		fsplit = fname.split("/")
+		new_fname = pref + fsplit[-1]
+		fname = "/".join(fsplit[:-1] + [new_fname])
+	ss = "{}.{}".format(fname, ext)
+	return ss
+
+def file_stream_fabric(fname: str, out_ext: List[str] = None) -> List[FileStream]:
+	""" File Stream Factory
+
+	:param fname: file name
+	:param out_ext: output extension
+	:return: list of initialized file streams
 	"""
-	Helper factory to generate file streams, string streams and generator observers
+	out_ext = out_ext if out_ext else []
+	out = []
+	for ext in out_ext:
+		pref = ""
+		if ext in ["ctype"]:
+			pref = "pyGw_"
+			ext = "cpp"
+		if ext in ["cpp", "h", "hpp", "py", "impl", "ctype"]:
+			out.append(FileStream(
+				fname=single_fn_fabric(
+					fname=fname,
+					ext=ext,
+					pref=pref
+				)
+			))
+
+	# add __init__.py file
+	initfilepath = "/".join(fname.split("/")[:-1]) + "/__init__.py"
+	out.append(FileStream(fname=initfilepath))
+	return out
+
+def string_stream_fabric(out_ext: List[str] = None) -> List[StringStream]:
+	""" String Stream Factory
+
+	:param out_ext: output extension
+	:return: list of initialized String streams
 	"""
+	out_ext = out_ext if out_ext else []
+	out = []
+	for ext in out_ext:
+		if ext in ["cpp", "h", "hpp", "py", "ctype", "impl"]:
+			out.append(StringStream())
+	return out
 
-	@staticmethod
-	def single_fn_fabric(fname: str, ext: str, pref: str = "") -> str:
-		""" Single File Name Factory
+def generator_fabric(filename: str, out_ext: List[str] = None, streams: List[StringStream] = None) -> List[Observer]:
+	""" Generator Factory
+	Associates streams to generators
 
-		:param fname: file name
-		:param ext: file extension
-		:param pref: file prefix
-		:return: constructed file name
-		"""
-		fname = "".join(fname.split(".")[:-1])  # remove extension
-		if pref:
-			# add prefix to the last element in path (filename)
-			fsplit = fname.split("/")
-			new_fname = pref + fsplit[-1]
-			fname = "/".join(fsplit[:-1] + [new_fname])
-		ss = "{}.{}".format(fname, ext)
-		return ss
-
-	@staticmethod
-	def fs_fabric(fname: str, out_ext: List[str] = None) -> List[FileStream]:
-		""" File Stream Factory
-
-		:param fname: file name
-		:param out_ext: output extension
-		:return: list of initialized file streams
-		"""
-		out_ext = out_ext if out_ext else []
-		out = []
-		for ext in out_ext:
-			pref = ""
-			if ext in ["ctype"]:
-				pref = "pyGw_"
-				ext = "cpp"
-			if ext in ["cpp", "h", "hpp", "py", "impl", "ctype"]:
-				out.append(FileStream(
-					fname=PyCppFactory.single_fn_fabric(
-						fname=fname,
-						ext=ext,
-						pref=pref
-					)
-				))
-
-		# add __init__.py file
-		initfilepath = "/".join(fname.split("/")[:-1]) + "/__init__.py"
-		out.append(FileStream(fname=initfilepath))
-		return out
-
-	@staticmethod
-	def ss_fabric(out_ext: List[str] = None) -> List[StringStream]:
-		""" String Stream Factory
-
-		:param out_ext: output extension
-		:return: list of initialized String streams
-		"""
-		out_ext = out_ext if out_ext else []
-		out = []
-		for ext in out_ext:
-			if ext in ["cpp", "h", "hpp", "py", "ctype", "impl"]:
-				out.append(StringStream())
-		return out
-
-	@staticmethod
-	def gen_fabric(filename: str, out_ext: List[str] = None, streams: List[StringStream] = None) -> List[Observer]:
-		""" Generator Factory
-		Associates streams to generators
-
-		:param filename: currently processed file name
-		:param out_ext: output extensions
-		:param streams: File or String streams to write into
-		:return: list of generators to use as observers parameters in PyCppEngine
-		"""
-		out = []
-		for ext, stream in zip(out_ext, streams):
-			if ext in ["cpp"]:
-				cpp_generator = CppGenerator(stream)
-				cpp_generator.set_header_filename(filename)
-				out.append(cpp_generator)
-			elif ext in ["h", "hpp"]:
-				out.append(HppGenerator(stream))
-			elif ext in ["py"]:
-				out.append(PyGwGenerator(stream))
-			elif ext in ["ctype"]:
-				gw_generator = GatewayGenerator(stream)
-				gw_generator.set_header_filename(filename)
-				out.append(gw_generator)
-			elif ext in ["impl"]:
-				out.append(TemplGenerator(stream))
-		return out
+	:param filename: currently processed file name
+	:param out_ext: output extensions
+	:param streams: File or String streams to write into
+	:return: list of generators to use as observers parameters in PyCppEngine
+	"""
+	out = []
+	for ext, stream in zip(out_ext, streams):
+		if ext in ["cpp"]:
+			cpp_generator = CppGenerator(stream)
+			cpp_generator.set_header_filename(filename)
+			out.append(cpp_generator)
+		elif ext in ["h", "hpp"]:
+			out.append(HppGenerator(stream))
+		elif ext in ["py"]:
+			out.append(PyGwGenerator(stream))
+		elif ext in ["ctype"]:
+			gw_generator = GatewayGenerator(stream)
+			gw_generator.set_header_filename(filename)
+			out.append(gw_generator)
+		elif ext in ["impl"]:
+			out.append(TemplGenerator(stream))
+	return out

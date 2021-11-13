@@ -68,7 +68,7 @@ target_link_libraries(\n\
 		:param cpp_version: c++ minimum version
 		:param dbgflg: Debug flags
 		:param relflg: Release flags
-		:param observers: Generator's Observers
+		:param observers: Generator's Observers, needs to expose __call__(self, str)
 		"""
 
 		self.name = p_name
