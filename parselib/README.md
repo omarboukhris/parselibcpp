@@ -12,7 +12,7 @@ You can use doxygen's doxywizard or CLI to generate parselib's documentation.
 
 ## Sessions
 
-All functions mentioned later and more are wrapped in a utility class (`parselib.parselibinstance.ParselibInstance`).
+All functions mentioned later and more are wrapped in a utility class (`pl::ParseSession`).
 
 Reading a grammar and parsing a source code then becomes trivial :
 ```c++
