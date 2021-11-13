@@ -148,8 +148,9 @@ def file_stream_fabric(fname: str, out_ext: List[str] = None) -> List[FileStream
 			))
 
 	# add __init__.py file
-	initfilepath = "/".join(fname.split("/")[:-1]) + "/__init__.py"
-	out.append(FileStream(fname=initfilepath))
+	if "py" in out_ext:
+		initfilepath = "/".join(fname.split("/")[:-1]) + "/__init__.py"
+		out.append(FileStream(fname=initfilepath))
 	return out
 
 def string_stream_fabric(out_ext: List[str] = None) -> List[StringStream]:

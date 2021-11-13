@@ -13,6 +13,7 @@ from streams import FileStream
 import glob
 import os.path
 import pathlib
+import distutils.dir_util as dir_util
 
 class PyCppGui(QWidget, Ui_pyCppGui):
 	"""
@@ -41,6 +42,14 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			"/", options=QFileDialog.Option.DontConfirmOverwrite)
 		if project_folder:
 			self.rootfolder_lineEdit.setText(project_folder)
+
+	@classmethod
+	def get_copy_project_folder(cls, project_path):
+		if os.path.isdir(project_path):
+			new_path = str(pathlib.Path(project_path)) + "_pxx"
+			dir_util.copy_tree(project_path, new_path)
+			project_path = new_path
+		return project_path
 
 	def generate_code(self):
 		"""
@@ -72,7 +81,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		"""
 
 		# get project path and regex used for globing
-		ppath = self.rootfolder_lineEdit.text()
+		ppath = self.get_copy_project_folder(self.rootfolder_lineEdit.text())
 		globex = self.globex_lineEdit.text()
 		print("glob regex : {}/{}".format(ppath, globex))
 
@@ -83,9 +92,9 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		if self.so_radioButton.isChecked():
 			ptype = "so"
 			if self.cgw_checkBox.isChecked():
-				out_ext.append("py")
+				out_ext.append("ctype")
 				if self.pygw_checkBox.isChecked():
-					out_ext.append("ctype")
+					out_ext.append("py")
 		elif self.static_radioButton.isChecked():
 			ptype = "a"
 		elif self.x_radioButton.isChecked():
@@ -96,6 +105,8 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		# cmake generator params
 		pname = self.projectname_lineEdit.text()
 		plibs = self.libs_lineEdit.text().split(";")
+		plibs = [elmt.strip() for elmt in plibs]
+		plibs = plibs if plibs != [''] else []
 		cpp_ver = self.cppver_comboBox.currentText()
 		cmk_ver = self.cmkver_lineEdit.text()
 		rel = self.relflg_lineEdit.text()
