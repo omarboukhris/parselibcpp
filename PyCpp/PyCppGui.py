@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QFileDialog
 from PyQt6.QtCore import QCoreApplication, QMetaObject
 
 from utils import PyCppEngine, CMakeGenerator, ParseSession
+from utils.helpers import ArgParser
 from utils.factory import FileNameProcessor, file_stream_fabric, generator_fabric
 
 # get streams
@@ -15,18 +16,24 @@ import os.path
 import pathlib
 import distutils.dir_util as dir_util
 
+from typing import List
+
 class PyCppGui(QWidget, Ui_pyCppGui):
 	"""
 	GUI equivalent to PyCppCli
 	"""
 
-	def __init__(self):
+	def __init__(self, argv: List[str]):
 		super(PyCppGui, self).__init__()
 		self.setupUi(self)
 
+		self.argparser = ArgParser(argv)
+
 		self._tr = QCoreApplication.translate
 
+		self.print_cli_help()
 		self.get_project_folder()
+		self.set_project_name_if_set()
 
 		self.getfolder_pushButton.clicked.connect(self.get_project_folder)
 		self.gencode_pushButton.clicked.connect(self.generate_code)
@@ -36,10 +43,25 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 		self.setFixedSize(self.frameGeometry().width(), self.frameGeometry().height())
 
+	@classmethod
+	def print_cli_help(cls):
+		print("CLI parameters : --ppath=project/path --pname=project_name")
+
+	def set_project_name_if_set(self):
+		pname = self.argparser.get("pname")
+		if pname and type(pname) == str:
+			self.projectname_lineEdit.setText(pname)
+		else:
+			self.projectname_lineEdit.setText("untitled_project")
+
 	def get_project_folder(self):
-		project_folder = QFileDialog.getExistingDirectory(
-			self, self._tr("pyCppGui", "Open project folder"),
-			"/", options=QFileDialog.Option.DontConfirmOverwrite)
+		ppath = self.argparser.get("ppath")
+		if ppath and type(ppath) == str:
+			project_folder = ppath
+		else:
+			project_folder = QFileDialog.getExistingDirectory(
+				self, self._tr("pyCppGui", "Open project folder"),
+				"/", options=QFileDialog.Option.DontConfirmOverwrite)
 		if project_folder:
 			self.rootfolder_lineEdit.setText(project_folder)
 
@@ -190,6 +212,6 @@ if __name__ == "__main__":
 	import sys
 
 	app = QApplication(sys.argv)
-	ui = PyCppGui()
+	ui = PyCppGui(sys.argv)
 	ui.show()
 	sys.exit(app.exec())
