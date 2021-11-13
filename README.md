@@ -8,7 +8,9 @@ boost1.40 and cmake3.5 (at least) are required as a dependency to build the proj
 
 ## PyCpp 
 
-PyCpp is an extensible gateway language between Python and C++. It is designed to generate ctypes interfaces of C++ code automatically starting using a subset of C++ language. 
+PyCpp is an extensible gateway language between Python and C++. It is designed to generate ctypes interfaces of C++ code automatically using a subset of C++ language.
+
+Python 3.7< (for GUI & CLI) and PyQt6 (for GUI) are required
 
 ### Build the project :
 
