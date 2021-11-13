@@ -6,6 +6,10 @@ This is the C++ core of ParseLib framework
 
 The ParseLib interfaces expose a lot of functionalities, among them
 
+## Doxygen doc
+
+You can use doxygen's doxywizard or CLI to generate parselib's documentation.
+
 ## Sessions
 
 All functions mentioned later and more are wrapped in a utility class (`parselib.parselibinstance.ParselibInstance`).
