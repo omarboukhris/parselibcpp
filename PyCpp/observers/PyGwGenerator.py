@@ -80,7 +80,6 @@ if __name__ == \"__main__\":\n\
 		for elmnt in out:
 			self.parents += ".parent"
 		self.pname = pname
-		print(self.parents, " ", self.pname)
 
 	def process_class(self, t_class: List[Class]) -> None:
 		# this is where processing goes
