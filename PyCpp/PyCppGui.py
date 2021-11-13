@@ -6,7 +6,7 @@ from PyQt6.QtCore import QCoreApplication, QMetaObject
 
 from utils import PyCppEngine, CMakeGenerator, ParseSession
 from utils.helpers import ArgParser
-from utils.factory import FileNameProcessor, file_stream_fabric, generator_fabric
+from utils.factory import FileNameProcessor, HelperFactory
 
 # get streams
 from streams import FileStream
@@ -150,6 +150,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		filelist = glob.glob(os.path.join(ppath, "**", globex))
 		i, numfiles = 0, len(filelist)
 		processed_files = []
+		helper_factory = HelperFactory(pname, ppath)
 		for jfile in filelist:
 
 			# call parselib parser
@@ -158,8 +159,8 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			parsed_json = psess.parse_to_json(jfile, False)
 			if parsed_json:
 				# prepare streams and observers
-				active_streams = file_stream_fabric(jfile, out_ext)
-				observers = generator_fabric(jfile, out_ext, active_streams)
+				active_streams = helper_factory.file_stream_fabric(jfile, out_ext)
+				observers = helper_factory.generator_fabric(jfile, out_ext, active_streams)
 
 				# call main generator
 				gen = PyCppEngine(parsed_json, observers)

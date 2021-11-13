@@ -9,6 +9,9 @@ class FileStream(StringStream):
 		super(FileStream, self).__init__()
 		self.fname = fname
 
+	def get_file_path(self):
+		return self.fname.split("/")
+
 	def write(self) -> None:
 		""" Write String Stream content into a file
 		:return: None

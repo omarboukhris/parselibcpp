@@ -1,12 +1,11 @@
 
 # import engines
 from utils import PyCppEngine, CMakeGenerator, ParseSession
-from utils.factory import FileNameProcessor
+from utils.factory import FileNameProcessor, HelperFactory
 from utils.helpers import ArgParser
 
 # import helper functions
 from utils.helpers import check_parser_input_args
-from utils.factory import file_stream_fabric, generator_fabric
 
 # get streams
 from streams import FileStream
@@ -74,6 +73,7 @@ def main(argv: List[str]) -> None:
 
 	filelist = os.path.join(ppath, "**", regex_glob)
 	processed_files = []
+	helper_factory = HelperFactory(pname, ppath)
 	for jfile in glob.glob(filelist):
 
 		# call parselib parser
@@ -82,8 +82,8 @@ def main(argv: List[str]) -> None:
 		# print(parsed_json)
 		if parsed_json:
 			# prepare streams and observers
-			active_streams = file_stream_fabric(jfile, output_ext)
-			observers = generator_fabric(jfile, output_ext, active_streams)
+			active_streams = helper_factory.file_stream_fabric(jfile, output_ext)
+			observers = helper_factory.generator_fabric(jfile, output_ext, active_streams)
 
 			# call main generator
 			gen = PyCppEngine(parsed_json, observers)
