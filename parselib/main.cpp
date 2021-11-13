@@ -1,7 +1,7 @@
 
 #include <parselib/utils/io.hpp>
 #include <parselib/datastructure/operations/normop.hpp>
-#include <parselib/parselibinstance.hpp>
+#include <parselib/parsesession.hpp>
 
 namespace pt = boost::property_tree ;
 namespace pl = parselib ;

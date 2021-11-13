@@ -6,7 +6,7 @@
 
 #include <parselib/utils/logger.h>
 
-#include "parselibinstance.hpp"
+#include "parsesession.hpp"
 
 
 namespace parselib {

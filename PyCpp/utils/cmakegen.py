@@ -44,7 +44,7 @@ target_link_libraries(\n\
 \t${PROJECT_NAME}\n\
 \t[[plibs]])"
 
-	find_pck_templ = Template("find_package(${package_name} ${kw} ${components} ${required_state})\n")
+	find_pckg_templ = Template("find_package(${package_name} ${kw} ${components} ${required_state})\n")
 
 	def __init__(
 		self,
@@ -179,7 +179,7 @@ target_link_libraries(\n\
 					components = lib_params["find_kw"][0]["default_components"]
 
 				# substitute in template
-				out += CMakeGenerator.find_pck_templ.substitute(
+				out += CMakeGenerator.find_pckg_templ.substitute(
 					package_name=lib_params["package_name"],
 					kw=lib_params["find_kw"][0]["kw"],
 					components=components,
