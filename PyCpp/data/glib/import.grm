@@ -6,7 +6,8 @@ importfile ->
 	dqu. path dqu.
 
 path ->
-    pt. pt. antisl. |
+    pt. antisl. |
+    dblpt. antisl. |
 	identifier. antisl. |
 	identifier. headext. |
 	identifier. |
