@@ -7,7 +7,7 @@ importfile ->
 
 path ->
     pt. antisl. |
-    dblpt. antisl. |
+    parentdir. antisl. |
 	identifier. antisl. |
 	identifier. headext. |
 	identifier. |

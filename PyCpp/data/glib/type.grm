@@ -3,6 +3,10 @@
 
 // type syntax definition
 
+nstype ->
+    identifier. nsop. nstype |
+    identifier. nsop. type
+
 type ->
 // type rules
 	template_type |
@@ -11,13 +15,17 @@ type ->
 	base_type. refptr |
 	identifier. |
 	identifier. refptr |
+
 // const type
 	const. template_type |
 	const. base_type. |
 	const. template_type refptr |
 	const. base_type. refptr |
 	const. identifier. |
-	const. identifier. refptr
+	const. identifier. refptr |
+
+// ns
+    nstype | const. nstype
 
 refptr ->
 	ref. | ptr. |

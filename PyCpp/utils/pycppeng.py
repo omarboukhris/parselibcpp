@@ -97,7 +97,7 @@ class PyCppEngine:
 			classobj = Class(
 				name=classname,
 				doxy=classdef["doxy"] if "doxy" in classdef.keys() else "",
-				inherit=classdef["inheritence"] if "inheritence" in classdef.keys() else "",
+				inherit= PyCppEngine.process_inheritence(classdef["inheritence"]) if "inheritence" in classdef.keys() else "",
 				constructs=PyCppEngine.write_construct(classbody["constructor"]) if "constructor" in classbody.keys() else [],
 				attributes=PyCppEngine.write_attr(classbody["attribute"]) if "attribute" in classbody.keys() else [],
 				methods=PyCppEngine.write_meth(classbody["method"]) if "method" in classbody.keys() else []
@@ -106,6 +106,17 @@ class PyCppEngine:
 
 		for obs in self.observers:
 			obs.process_class(out)
+
+	@staticmethod
+	def process_inheritence(inheritence: List[str]) -> List[str]:
+		strout = "::".join(([element.strip() for element in inheritence[0].split("::")]))
+		strout = strout.replace(" ", "")
+		strout = strout.replace("public", "public ")
+		strout = strout.replace("private", "private ")
+		strout = strout.replace("protected", "protected ")
+		strout = strout.replace(",", ", ")
+		inheritence[0] = strout
+		return inheritence
 
 	@staticmethod
 	def write_construct(construct_list) -> List[Construct]:

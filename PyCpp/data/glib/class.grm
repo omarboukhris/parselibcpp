@@ -5,9 +5,19 @@
 classname ->
 	identifier.
 
+namespace ->
+    identifier.
+
+nsclass ->
+    namespace nsop. nsclass |
+    namespace nsop. classname |
+    namespace nsop. template_type
+
 inheritence ->
-	visibility. identifier. |
+	visibility. nsclass |
+	visibility. classname |
 	visibility. template_type |
-	visibility. identifier. comma. |
-	visibility. template_type comma. |
-[]
+	visibility. nsclass comma. inheritence |
+	visibility. classname comma. inheritence |
+	visibility. template_type comma. inheritence
+

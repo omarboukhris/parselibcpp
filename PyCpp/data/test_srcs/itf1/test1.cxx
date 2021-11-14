@@ -5,27 +5,27 @@
 
 #include "../itf2/test2.h"
 
-class Player : public Myclass2, private X1<Templtype> {
+class Player : public Myclass2 {
 
 	constructor() {{
-	    m_hp = 0;
+	    life_points = 0;
 	    m_mana = 0;
     }}
 
     constructor(const int &a, const int &b) {{
-        m_hp = a;
+        life_points = a;
         m_mana = b;
     }}
 
 	const bool alive () {{
-	    return (m_hp > 0);
+	    return (life_points > 0);
 	}}
 
 	void make_mana () {{
 	    m_mana++;
 	}}
 
-	int m_hp;
-	int m_mana;
+	int life_points;
+	int mana;
 
 } ;
