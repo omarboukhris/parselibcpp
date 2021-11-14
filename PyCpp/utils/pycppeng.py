@@ -184,11 +184,11 @@ class PyCppEngine:
 		:param attr: attribute
 		:return: attribute types processed in a list of named tuples
 		"""
-		attr_spl = attr["type"][0].split()
-		if attr_spl[0] == "const":
-			ty = "const " + "".join(attr_spl[1:])
-		else:
-			ty = "".join(attr_spl)
+		ty = attr["type"][0]
+		ty = "::".join([s.strip() for s in ty.split("::")])
+		ty = ty.replace(" ", "")
+		if ty[:5] == "const":
+			ty = "const " + ty[5:]
 		ty = ty.replace(",", ", ")
 		return ty
 
@@ -203,7 +203,9 @@ class PyCppEngine:
 		if "args" in meth.keys():
 			_args = meth["args"][0]
 			for argname, argtype in zip(_args["args_name"], _args["type"]):
-				out.append(Args(type=argtype, name=argname))
+				out.append(Args(
+					type=PyCppEngine.process_type({"type":[argtype]}),
+					name=argname))
 
 		return out
 

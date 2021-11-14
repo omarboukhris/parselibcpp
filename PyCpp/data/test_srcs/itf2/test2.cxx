@@ -5,17 +5,17 @@
 
 #include "../itf1/test1.h"
 
-class Myclass2 : public mymodule::Player<T1, T2<V1, v2, V3> >, private otherClasdb, public XAz<T> {
+class Myclass2 : public mymodulconste::Player<T1, T2<V1, int&** , V3<std::string, int, temp<int> > > >, private otherClasdb, public XAz<T> {
 
     /*!
     doc goes here
     */
     constructor();
 
-    constructor(int a, const float b);
+    constructor(const int a, const mymodulconste::Player<T1, T2<V1, int&** , V3<std::string, int, temp<int> > > > b);
 
     /*! \brief attr doxy doc */
-	ns::int a2;
+	ns::int *&**&*a2;
 	float c3;
 
 } ;

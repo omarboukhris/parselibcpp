@@ -3,18 +3,16 @@
 
 #include <iostream>
 
-#include "../itf2/test2.h"
-
-class Player : public Myclass2 {
+class Player  {
 
 	constructor() {{
 	    life_points = 0;
-	    m_mana = 0;
+	    mana = 0;
     }}
 
     constructor(const int &a, const int &b) {{
         life_points = a;
-        m_mana = b;
+        mana = b;
     }}
 
 	const bool alive () {{
@@ -22,7 +20,7 @@ class Player : public Myclass2 {
 	}}
 
 	void make_mana () {{
-	    m_mana++;
+	    mana++;
 	}}
 
 	int life_points;

@@ -72,6 +72,7 @@ def main(argv: List[str]) -> None:
 	psess.load_grammar(grammarpath, False)
 
 	filelist = os.path.join(ppath, "**", regex_glob)
+	filelist += glob.glob(os.path.join(ppath, globex))
 	processed_files = []
 	helper_factory = HelperFactory(pname, ppath)
 	for jfile in glob.glob(filelist):

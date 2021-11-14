@@ -148,6 +148,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		psess.load_grammar(grammarpath, False)
 
 		filelist = glob.glob(os.path.join(ppath, "**", globex))
+		filelist += glob.glob(os.path.join(ppath, globex))
 		i, numfiles = 0, len(filelist)
 		processed_files = []
 		helper_factory = HelperFactory(pname, ppath)
