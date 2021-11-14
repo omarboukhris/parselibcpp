@@ -3,7 +3,9 @@
 
 #include <iostream>
 
-class Player {
+#include "../itf2/test2.h"
+
+class Player : public Myclass2, private X1<Templtype> {
 
 	constructor() {{
 	    m_hp = 0;
@@ -19,7 +21,7 @@ class Player {
 	    return (m_hp > 0);
 	}}
 
-	public void make_mana () {{
+	void make_mana () {{
 	    m_mana++;
 	}}
 

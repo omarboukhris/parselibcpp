@@ -176,7 +176,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 					self.status_label.setText("err > parse session not initialized")
 				if not psess.grammar_loaded:
 					self.status_label.setText("err > grammar has not been loaded")
-				self.status_label.setText("unprocessed file is : ", psess.unprocessed_file)
+				self.status_label.setText("unprocessed file is : {}".format(psess.unprocessed_file))
 			i += 1
 			self.progressBar.setValue(int((i/numfiles)*100))
 

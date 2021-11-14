@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-class myclass2 {
+class Myclass2 {
 
     /*!
     doc goes here
