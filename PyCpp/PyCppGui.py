@@ -172,6 +172,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 					stream.write()
 
 				processed_files.append(jfile.replace(ppath, ""))
+				os.remove(jfile)
 			else:
 				if not psess:
 					self.status_label.setText("err > parse session not initialized")
