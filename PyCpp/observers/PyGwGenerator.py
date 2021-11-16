@@ -61,7 +61,7 @@ if __name__ == \"__main__\":\n\
 		self.pname = ""
 		self.parents = ""
 
-	def set_lib_path(self, pname: str, ppath: str):
+	def set_lib_path(self, pname: str, ppath: str) -> None:
 		""" Sets built library path in ctypes lib loading.
 		Supposes that build/ directory is located at the root of the project.
 

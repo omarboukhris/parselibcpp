@@ -30,7 +30,7 @@ class ArgParser:
 		return False
 
 	@staticmethod
-	def decorate_key(key: str):
+	def decorate_key(key: str) -> str:
 		if len(key) == 1:
 			return "-{}".format(key)
 		elif len(key) >= 2 and key[:2] != "--":
@@ -52,13 +52,13 @@ def show_help(exe: str = "") -> None:
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
 
-def find_directory(atom, root):
+def find_directory(atom, root) -> str:
 	for path, dirs, files in os.walk(root):
 		if atom in dirs:
 			return os.path.join(path, atom)
 	return ""
 
-def get_project_folder(ppath: str, get_dir_func: callable):
+def get_project_folder(ppath: str, get_dir_func: callable) -> str:
 	""" Checks if project folder is valid otherwise tries to look for it
 
 	:param ppath: project folder
@@ -108,14 +108,14 @@ def check_parser_input_args(argparser: ArgParser) -> Tuple:
 
 	# handle input extension
 	regex_glob = argparser.get("glob")
-	if not regex_glob or type(regex_glob) != str:
+	if not regex_glob or not isinstance(regex_glob, str):
 		print("Wrong regex glob argument  <{}> using default .cxx".format(regex_glob))
 		regex_glob = "*.cxx"
 
 	# handle output extensions
 	all_ext = ["cpp", "h", "impl", "py", "ctype"]
 	out_ext = argparser.get("ext")
-	if not out_ext or type(out_ext) != str:
+	if not out_ext or not isinstance(out_ext, str):
 		out_ext = all_ext
 	else:
 		out_ext = out_ext.split(",")
