@@ -64,8 +64,5 @@ class ParseSession:
 
 if __name__ == "__main__":
 	psess = ParseSession()
-	psess.load_grammar("data/grammar.grm")
-	ss = psess.parse_to_json("data/test2.java")
-	print(ss)
-
+	psess.load_grammar("../data/grammar.grm")
 	del psess
