@@ -92,7 +92,7 @@ Frame CYK::membership (TokenList word) {
 		}
 		pbar.update(l);
 	}
-	std::cout << std::endl ;
+	std::cout << "\r" << std::flush ;
 //	std::cout << getstrmat(P) ;
 
 	if (P[n-1][0].size() == 0) {

@@ -99,7 +99,7 @@ if __name__ == \"__main__\":\n\
 				accessors=self.process_accessors(cl.attributes, clname),
 				destructor=self.process_destructor(clname)
 			)
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	@classmethod
 	def process_special_type_def(cls, methods: List[Method], clname: str) -> str:

@@ -71,7 +71,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 	def process_import(self, filenames: List[str]) -> None:
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	def process_class(self, t_class: List[Class]) -> None:
 		# this is where processing goes
@@ -84,7 +84,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 				accessors=self.process_accessors(cl.attributes, clname),
 				destructor=self.process_destructor(clname)
 			)
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	@classmethod
 	def process_constructors(cls, constructors: List[Construct], classname: str) -> str:

@@ -2,7 +2,7 @@
 # import engines
 from utils import PyCppEngine, CMakeGenerator, ParseSession
 from utils.factory import FileNameProcessor, HelperFactory
-from utils.helpers import ArgParser
+from utils.helpers import ArgParser, TerminalLog
 
 # import helper functions
 from utils.helpers import check_parser_input_args
@@ -64,7 +64,7 @@ def main(argv: List[str]) -> None:
 		"Specify project name -> pname=the_name, pname value is <{}>".format(pname)
 
 	if ptype not in ["so", "a", "x"]:
-		print("Project type incorrect <{}>. Using default <so>.".format(ptype))
+		TerminalLog.print("Project type incorrect <{}>. Using default <so>.".format(ptype))
 		ptype = "so"
 
 	grammarpath = str(pathlib.Path(__file__).parent / "data/grammar.grm")
@@ -78,10 +78,13 @@ def main(argv: List[str]) -> None:
 	for jfile in glob.glob(filelist):
 
 		# call parselib parser
-		print("parselib > processing file \"{}\"".format(jfile))
+		TerminalLog.print_separator()
+		TerminalLog.print("parselib > processing file \"{}\"".format(jfile))
+
 		parsed_json = psess.parse_to_json(jfile, False)
-		# print(parsed_json)
+
 		if parsed_json:
+
 			# prepare streams and observers
 			active_streams = helper_factory.file_stream_fabric(jfile, output_ext)
 			observers = helper_factory.generator_fabric(jfile, output_ext, active_streams)
@@ -93,8 +96,10 @@ def main(argv: List[str]) -> None:
 			# output results
 			if argp.get("v"):
 				for ext, output in zip(output_ext, active_streams):
-					print(ext, "------------------------------\n")
-					print(output)
+					TerminalLog.print_separator()
+					TerminalLog.print(ext)
+					TerminalLog.print("{}".format(output))
+				TerminalLog.print_separator()
 
 			# write output to file
 			for stream in active_streams:
@@ -102,17 +107,19 @@ def main(argv: List[str]) -> None:
 
 			processed_files.append(jfile.replace(ppath, ""))
 			os.remove(jfile)
+
 		else:
 			# track error
 			if not psess:
-				print("err > parse session not initialized")
+				TerminalLog.print("err > parse session not initialized")
 			if not psess.grammar_loaded:
-				print("err > grammar has not been loaded")
-			print("unprocessed file is : ", psess.unprocessed_file)
+				TerminalLog.print("err > grammar has not been loaded")
+			TerminalLog.print("unprocessed file is : {}".format(psess.unprocessed_file))
 
 	del psess
 
-	if not processed_files:
+	if processed_files:
+		TerminalLog.print_separator()
 		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
 		fstrm = FileStream(cmakelists_path)
 		fnproc = FileNameProcessor(processed_files, output_ext)
@@ -128,7 +135,7 @@ def main(argv: List[str]) -> None:
 			observers=[fstrm]
 		)
 
-		# print(cmake.files.get_files())
+		# TerminalLog.print(cmake.files.get_files())
 		cmake.drive()
 
 		# write cmakelists file on disk
@@ -136,7 +143,8 @@ def main(argv: List[str]) -> None:
 
 		# output in terminal if verbose
 		if argp.get("v"):
-			print(fstrm)
+			TerminalLog.print("{}".format(fstrm))
+		TerminalLog.print_separator()
 
 
 if __name__ == "__main__":

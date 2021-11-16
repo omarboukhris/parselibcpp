@@ -2,6 +2,7 @@
 import distutils.dir_util as dir_util
 import os.path
 import pathlib
+import shutil
 
 from typing import List, Tuple
 
@@ -51,6 +52,34 @@ def show_help(exe: str = "") -> None:
 \t-v is for verbose and -h is for help\n\
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
+
+class TerminalLog:
+
+	dims = shutil.get_terminal_size((80, 20))
+
+	@staticmethod
+	def print_separator():
+		print("+{}+".format("-" * (TerminalLog.dims.columns-2)))
+
+	@staticmethod
+	def print(lines: str):
+		if TerminalLog.dims.columns < 20:
+			print(lines)
+		else:
+			lines_list = lines.split("\n")
+			for line in lines_list:
+				if len(line) < TerminalLog.dims.columns-4:
+					line = line.ljust(TerminalLog.dims.columns-4, " ")
+					print("| {} |".format(line))
+				else:
+					while len(line) > TerminalLog.dims.columns-4:
+						restricted_line = line[:TerminalLog.dims.columns-4]
+						print("| {} |".format(restricted_line))
+						line = line[TerminalLog.dims.columns-4:]
+					line = line.ljust(TerminalLog.dims.columns-4, " ")
+					print("| {} |".format(line))
+
+
 
 def find_directory(atom, root) -> str:
 	for path, dirs, files in os.walk(root):

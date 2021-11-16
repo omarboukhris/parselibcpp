@@ -86,10 +86,10 @@ target_link_libraries(\n\
 
 	def drive(self):
 		for obs in self.observers:
-			obs(self.make_header())
-			obs(self.make_files())
-			obs(self.make_dependencies())
-			obs(self.make_builder())
+			obs(self.make_header().replace("\t", "  "))
+			obs(self.make_files().replace("\t", "  "))
+			obs(self.make_dependencies().replace("\t", "  "))
+			obs(self.make_builder().replace("\t", "  "))
 
 	def make_header(self) -> str:
 		""" Make CMakeLists.txt header

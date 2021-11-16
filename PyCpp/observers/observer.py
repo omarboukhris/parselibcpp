@@ -54,21 +54,21 @@ class CppAbstractObs(Observer):
 	def process_import(self, filenames: List[str]) -> None:
 		import_list = ["#include " + fn for fn in filenames]
 		ss = "\n".join(import_list) + "\n\n"
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	def process_namespace(self) -> None:
 		ss = ""
 		for ns in self.namespace:
 			ss += CppAbstractObs.ns_temp.substitute(ns_name=ns)
 
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	def end_process_namespace(self) -> None:
 		ss = ""
 		for ns in self.namespace:
 			ss += "}} // namespace {}\n\n".format(ns)
 
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	@classmethod
 	def process_core(cls, strcore: str, level: int = 1, tabsz: int = 2) -> str:

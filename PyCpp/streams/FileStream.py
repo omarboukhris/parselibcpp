@@ -1,6 +1,8 @@
 
 from .StringStream import StringStream
 
+from utils.helpers import TerminalLog
+
 from typing import List
 
 class FileStream(StringStream):
@@ -19,7 +21,7 @@ class FileStream(StringStream):
 		:return: None
 		"""
 		try:
-			print("pycpp info FileStream > writing {}".format(self.fname))
+			TerminalLog.print("pycpp info FileStream > writing {}".format(self.fname))
 			with open(self.fname, "w") as fstream:
 				fstream.write(self.content)
 		except Exception as e:

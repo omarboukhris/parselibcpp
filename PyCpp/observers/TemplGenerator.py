@@ -51,7 +51,7 @@ $protected_attributes\
 				protected_methods=TemplGenerator.process_methods("protected", cl.methods),
 			)
 
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	@classmethod
 	def process_constructors(cls, constructors: List[Construct], classname: str) -> str:

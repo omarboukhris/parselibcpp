@@ -34,7 +34,7 @@ ${type} ${classname}::get_${attrname}() {\n\
 	def process_import(self, filenames: List[str]) -> None:
 		import_list = ["#include " + fn for fn in filenames + [self.header_filename]]
 		ss = "\n".join(import_list) + "\n\n"
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))
 
 	def process_class(self, t_class: List[Class]) -> None:
 		ss = ""
@@ -65,4 +65,4 @@ ${type} ${classname}::get_${attrname}() {\n\
 						attrname=attr.name
 					)
 
-		self.stream(ss)
+		self.stream(ss.replace("\t", "  "))

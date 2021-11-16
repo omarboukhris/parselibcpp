@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QFileDialog
 from PyQt6.QtCore import QCoreApplication, QMetaObject
 
 from utils import PyCppEngine, CMakeGenerator, ParseSession
-from utils.helpers import ArgParser, get_project_folder
+from utils.helpers import ArgParser, get_project_folder, TerminalLog
 from utils.factory import FileNameProcessor, HelperFactory
 
 # get streams
@@ -18,6 +18,7 @@ import distutils.dir_util as dir_util
 
 from typing import List
 
+
 class PyCppGui(QWidget, Ui_pyCppGui):
 	"""
 	GUI equivalent to PyCppCli
@@ -27,7 +28,13 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		super(PyCppGui, self).__init__()
 		self.setupUi(self)
 
+		# cli argument parser
 		self.argparser = ArgParser(argv)
+
+		# init parse session with grammar
+		grammarpath = str(pathlib.Path(__file__).parent / "data/grammar.grm")
+		self.psess = ParseSession()
+		self.psess.load_grammar(grammarpath, False)
 
 		self._tr = QCoreApplication.translate
 
@@ -45,9 +52,11 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 	@classmethod
 	def print_cli_help(cls) -> None:
-		print("CLI parameters : --ppath=project/path --pname=project_name")
-		print("\tUse '**/' in --path to activate search project folder in directory.")
-		print("\tSyntax : path/to/search/folder/**/project name")
+		TerminalLog.print_separator()
+		TerminalLog.print("CLI parameters : --ppath=project/path --pname=project_name")
+		TerminalLog.print("  Use '**/' in --path to activate search project folder in directory.")
+		TerminalLog.print("  Syntax : path/to/search/folder/**/project name")
+		TerminalLog.print_separator()
 
 	def set_project_name_if_set(self) -> None:
 		pname = self.argparser.get("pname")
@@ -104,10 +113,12 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		:return: None
 		"""
 
+		TerminalLog.print_separator()
+
 		# get project path and regex used for globing
 		ppath = self.get_copy_project_folder(self.rootfolder_lineEdit.text())
 		globex = self.globex_lineEdit.text()
-		print("glob regex : {}/{}".format(ppath, globex))
+		TerminalLog.print("glob regex : {}/{}".format(ppath, globex))
 
 		# get extensions to pass to factory and project type to cmake generator
 		out_ext = ["cpp", "h"]
@@ -142,23 +153,23 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			self.status_label.setText("Select project type, ptype value is <{}>".format(ptype))
 			return
 
-		# init parse session with grammar
-		grammarpath = str(pathlib.Path(__file__).parent / "data/grammar.grm")
-		psess = ParseSession()
-		psess.load_grammar(grammarpath, False)
-
 		filelist = glob.glob(os.path.join(ppath, "**", globex))
 		filelist += glob.glob(os.path.join(ppath, globex))
-		i, numfiles = 0, len(filelist)
+
 		processed_files = []
 		helper_factory = HelperFactory(pname, ppath)
-		for jfile in filelist:
+		for i, jfile in enumerate(filelist):
+
+			TerminalLog.print_separator()
+			TerminalLog.print("parselib > processing file \"{}\"".format(jfile))
+			self.status_label.setText("parselib > processing file \"{}\"".format(jfile))
 
 			# call parselib parser
-			# print("parselib > processing file \"{}\"".format(jfile))
-			self.status_label.setText("parselib > processing file \"{}\"".format(jfile))
-			parsed_json = psess.parse_to_json(jfile, False)
+			parsed_json = self.psess.parse_to_json(jfile, False)
+
 			if parsed_json:
+				# if parse tree found, setup generators
+
 				# prepare streams and observers
 				active_streams = helper_factory.file_stream_fabric(jfile, out_ext)
 				observers = helper_factory.generator_fabric(jfile, out_ext, active_streams)
@@ -173,16 +184,18 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 				processed_files.append(jfile.replace(ppath, ""))
 				os.remove(jfile)
-			else:
-				if not psess:
-					self.status_label.setText("err > parse session not initialized")
-				if not psess.grammar_loaded:
-					self.status_label.setText("err > grammar has not been loaded")
-				self.status_label.setText("unprocessed file is : {}".format(psess.unprocessed_file))
-			i += 1
-			self.progressBar.setValue(int((i/numfiles)*100))
 
-		del psess
+			else:
+				# handle error
+				if not self.psess:
+					self.status_label.setText("err > parse session not initialized")
+				if not self.psess.grammar_loaded:
+					self.status_label.setText("err > grammar has not been loaded")
+				self.status_label.setText("unprocessed file is : {}".format(self.psess.unprocessed_file))
+
+			self.progressBar.setValue(int(((i+1)/len(filelist))*100))
+
+		TerminalLog.print_separator()
 
 		if processed_files:
 
@@ -190,7 +203,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 			cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
 			fstrm = FileStream(cmakelists_path)
-			# print(cmakelists_path)
+			# TerminalLog.printcmakelists_path)
 
 			fnproc = FileNameProcessor(processed_files, out_ext)
 			cmake = CMakeGenerator(
@@ -210,9 +223,11 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			# write cmakelists file on disk
 			self.status_label.setText("pycpp > finished generating CMakeLists")
 			fstrm.write()
-			# print(fstrm)
+			# TerminalLog.printfstrm)
 		else:
 			self.status_label.setText("pycpp > no file have been processed.")
+
+		TerminalLog.print_separator()
 
 
 if __name__ == "__main__":
