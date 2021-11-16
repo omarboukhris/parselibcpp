@@ -44,6 +44,10 @@ $protected_attributes\
 	def __init__(self, stream: callable):
 		super(HppGenerator, self).__init__(stream)
 
+	def process_import(self, filenames: List[str]) -> None:
+		self.stream("#pragma once\n\n")
+		super(HppGenerator, self).process_import(filenames)
+
 	def process_class(self, t_class: List[Class]) -> None:
 		ss = ""
 		for cl in t_class:

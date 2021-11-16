@@ -136,7 +136,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		return ss
 
 	@classmethod
-	def process_destructor(cls, clname: str):
+	def process_destructor(cls, clname: str) -> str:
 		return GatewayGenerator.destructor_templ.substitute(classname=clname)
 
 	@classmethod

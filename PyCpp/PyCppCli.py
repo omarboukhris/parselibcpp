@@ -60,7 +60,7 @@ def main(argv: List[str]) -> None:
 	rel = argp.get("relflg") if argp.get("relflg") else "-O2"
 
 	# check for valid parameters
-	assert type(pname) == str, \
+	assert isinstance(pname, str), \
 		"Specify project name -> pname=the_name, pname value is <{}>".format(pname)
 
 	if ptype not in ["so", "a", "x"]:

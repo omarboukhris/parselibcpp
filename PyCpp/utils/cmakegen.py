@@ -169,9 +169,8 @@ target_link_libraries(\n\
 			try:
 				# load parameters from json
 				filepath = os.path.join(current_path, lib_name + ".json")
-				fstr = open(filepath, "r")
-				content = "\n".join(fstr.readlines())
-				fstr.close()
+				with open(filepath, "r") as fstr:
+					content = "\n".join(fstr.readlines())
 				lib_params = json.loads(content)
 
 				# check components
@@ -208,9 +207,8 @@ target_link_libraries(\n\
 
 			try:
 				filepath = os.path.join(current_path, lib_name + ".json")
-				fstr = open(filepath, "r")
-				content = "\n".join(fstr.readlines())
-				fstr.close()
+				with open(filepath, "r") as fstr:
+					content = "\n".join(fstr.readlines())
 
 				lib_params = json.loads(content)
 				if "link_library" in lib_params.keys():

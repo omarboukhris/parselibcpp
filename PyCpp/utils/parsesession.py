@@ -41,7 +41,7 @@ class ParseSession:
 		else:
 			self.unprocessed_file = filepath
 
-	def parse_to_json(self, filepath: str, verbose: bool = False):
+	def parse_to_json(self, filepath: str, verbose: bool = False) -> dict:
 		""" Parse source file into json data structure. Must be called after loading grammar
 
 		:param filepath: str file path to source code
@@ -55,7 +55,7 @@ class ParseSession:
 			self.unprocessed_file = filepath
 		return output
 
-	def __del__(self):
+	def __del__(self) -> None:
 		""" Calls destroyer from C/ctype interface
 		"""
 		ParseSession.parselib.del_session(self.sess)

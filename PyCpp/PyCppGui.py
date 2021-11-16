@@ -44,38 +44,38 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		self.setFixedSize(self.frameGeometry().width(), self.frameGeometry().height())
 
 	@classmethod
-	def print_cli_help(cls):
+	def print_cli_help(cls) -> None:
 		print("CLI parameters : --ppath=project/path --pname=project_name")
 		print("\tUse '**/' in --path to activate search project folder in directory.")
 		print("\tSyntax : path/to/search/folder/**/project name")
 
-	def set_project_name_if_set(self):
+	def set_project_name_if_set(self) -> None:
 		pname = self.argparser.get("pname")
-		if pname and type(pname) == str:
+		if pname and isinstance(pname, str):
 			self.projectname_lineEdit.setText(pname)
 		else:
 			self.projectname_lineEdit.setText("untitled_project")
 
-	def get_folder(self):
+	def get_folder(self) -> None:
 		ppath = self.argparser.get("ppath")
 		project_folder = get_project_folder(ppath, self.get_existing_directory)
 		if project_folder:
 			self.rootfolder_lineEdit.setText(project_folder)
 
-	def get_existing_directory(self):
+	def get_existing_directory(self) -> str:
 		return QFileDialog.getExistingDirectory(
 			self, self._tr("pyCppGui", "Open project folder"),
 			"/", options=QFileDialog.Option.DontConfirmOverwrite)
 
 	@classmethod
-	def get_copy_project_folder(cls, project_path):
+	def get_copy_project_folder(cls, project_path: str) -> str:
 		if os.path.isdir(project_path):
 			new_path = str(pathlib.Path(project_path)) + "_pxx"
 			dir_util.copy_tree(project_path, new_path)
 			project_path = new_path
 		return project_path
 
-	def generate_code(self):
+	def generate_code(self) -> None:
 		"""
 		Main method:
 
@@ -135,7 +135,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		dbg = self.dbgflg_lineEdit.text()
 
 		# check for valid parameters
-		if type(pname) != str or len(pname) == 0:
+		if not isinstance(pname, str) or len(pname) == 0:
 			self.status_label.setText("Specify project name, current value is <{}>".format(pname))
 			return
 		if ptype not in ["so", "a", "x"]:
@@ -172,6 +172,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 					stream.write()
 
 				processed_files.append(jfile.replace(ppath, ""))
+				os.remove(jfile)
 			else:
 				if not psess:
 					self.status_label.setText("err > parse session not initialized")
