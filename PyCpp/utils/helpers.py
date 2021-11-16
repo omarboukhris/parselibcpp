@@ -52,6 +52,34 @@ def show_help(exe: str = "") -> None:
 \tIf help is active, program shows this messages and exit.\n\
 \tExtensions (ext) separated by <,> should not contain spaces\n".format(exe))
 
+def find_directory(atom, root):
+	for path, dirs, files in os.walk(root):
+		if atom in dirs:
+			return os.path.join(path, atom)
+	return ""
+
+def get_project_folder(ppath: str, get_dir_func: callable):
+	""" Checks if project folder is valid otherwise tries to look for it
+
+	:param ppath: project folder
+	:param get_dir_func: get_directory function to use folder prompt with GUI
+	:return: path to project folder, empty string if nothing found
+	"""
+	if ppath and type(ppath) == str:
+		if os.path.isdir(ppath):
+			project_folder = ppath
+		else:
+			ppath_list = ppath.split("**/")
+			if len(ppath_list) == 2:
+				dir_name, root_dir = ppath_list[1], ppath_list[0]
+				directory = find_directory(dir_name, root_dir)
+				project_folder = directory if directory else get_dir_func()
+			else:
+				project_folder = get_dir_func()
+	else:
+		project_folder = get_dir_func()
+	return project_folder
+
 def check_parser_input_args(argparser: ArgParser) -> Tuple:
 	""" Check if arguments contain help command
 	if project path is correct
@@ -66,14 +94,17 @@ def check_parser_input_args(argparser: ArgParser) -> Tuple:
 		exit()
 
 	# handles project path argument
-	project_path = argparser.get("path")
+	project_path, new_path = argparser.get("ppath"), ""
 	if os.path.isdir(project_path):
 		new_path = str(pathlib.Path(project_path)) + "_pxx"
-		dir_util.copy_tree(project_path, new_path)
-		project_path = new_path
 	else:
-		print("An error occured: {} is not a directory".format(project_path))
-		exit()
+		project_path = get_project_folder(project_path, get_dir_func=lambda: "")
+		new_path = str(pathlib.Path(project_path)) + "_pxx"
+		if not new_path:
+			print("An error occured: {} is not a directory".format(argparser.get("ppath")))
+			exit()
+	dir_util.copy_tree(project_path, new_path)
+	project_path = new_path
 
 	# handle input extension
 	regex_glob = argparser.get("glob")

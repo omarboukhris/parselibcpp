@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QFileDialog
 from PyQt6.QtCore import QCoreApplication, QMetaObject
 
 from utils import PyCppEngine, CMakeGenerator, ParseSession
-from utils.helpers import ArgParser
+from utils.helpers import ArgParser, get_project_folder
 from utils.factory import FileNameProcessor, HelperFactory
 
 # get streams
@@ -32,10 +32,10 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		self._tr = QCoreApplication.translate
 
 		self.print_cli_help()
-		self.get_project_folder()
+		self.get_folder()
 		self.set_project_name_if_set()
 
-		self.getfolder_pushButton.clicked.connect(self.get_project_folder)
+		self.getfolder_pushButton.clicked.connect(self.get_folder)
 		self.gencode_pushButton.clicked.connect(self.generate_code)
 
 		# necessary to connect signals and slots
@@ -46,6 +46,8 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 	@classmethod
 	def print_cli_help(cls):
 		print("CLI parameters : --ppath=project/path --pname=project_name")
+		print("\tUse '**/' in --path to activate search project folder in directory.")
+		print("\tSyntax : path/to/search/folder/**/project name")
 
 	def set_project_name_if_set(self):
 		pname = self.argparser.get("pname")
@@ -54,16 +56,16 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		else:
 			self.projectname_lineEdit.setText("untitled_project")
 
-	def get_project_folder(self):
+	def get_folder(self):
 		ppath = self.argparser.get("ppath")
-		if ppath and type(ppath) == str:
-			project_folder = ppath
-		else:
-			project_folder = QFileDialog.getExistingDirectory(
-				self, self._tr("pyCppGui", "Open project folder"),
-				"/", options=QFileDialog.Option.DontConfirmOverwrite)
+		project_folder = get_project_folder(ppath, self.get_existing_directory)
 		if project_folder:
 			self.rootfolder_lineEdit.setText(project_folder)
+
+	def get_existing_directory(self):
+		return QFileDialog.getExistingDirectory(
+			self, self._tr("pyCppGui", "Open project folder"),
+			"/", options=QFileDialog.Option.DontConfirmOverwrite)
 
 	@classmethod
 	def get_copy_project_folder(cls, project_path):
@@ -107,8 +109,7 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 		globex = self.globex_lineEdit.text()
 		print("glob regex : {}/{}".format(ppath, globex))
 
-		# get extensions to pass to factory and project type
-		# for cmake generator
+		# get extensions to pass to factory and project type to cmake generator
 		out_ext = ["cpp", "h"]
 		ptype = ""
 		if self.so_radioButton.isChecked():
@@ -121,7 +122,6 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 			ptype = "a"
 		elif self.x_radioButton.isChecked():
 			ptype = "x"
-
 		# print("project type is : ", ptype)
 
 		# cmake generator params
@@ -183,31 +183,35 @@ class PyCppGui(QWidget, Ui_pyCppGui):
 
 		del psess
 
-		self.status_label.setText("pycpp > finished parsing sources, now generating CMakeLists")
+		if processed_files:
 
-		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
-		fstrm = FileStream(cmakelists_path)
-		# print(cmakelists_path)
+			self.status_label.setText("pycpp > finished parsing sources, now generating CMakeLists")
 
-		fnproc = FileNameProcessor(processed_files, out_ext)
-		cmake = CMakeGenerator(
-			pname,    # project name
-			ptype,    # project type
-			fnproc,   # file name processor
-			plibs,    # project libraries
-			cmk_ver,  # CMake version
-			cpp_ver,  # C++ version
-			dbg,      # debug flags
-			rel,      # release flags
-			observers=[fstrm]
-		)
+			cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
+			fstrm = FileStream(cmakelists_path)
+			# print(cmakelists_path)
 
-		cmake.drive()
+			fnproc = FileNameProcessor(processed_files, out_ext)
+			cmake = CMakeGenerator(
+				pname,    # project name
+				ptype,    # project type
+				fnproc,   # file name processor
+				plibs,    # project libraries
+				cmk_ver,  # CMake version
+				cpp_ver,  # C++ version
+				dbg,      # debug flags
+				rel,      # release flags
+				observers=[fstrm]
+			)
 
-		# write cmakelists file on disk
-		self.status_label.setText("pycpp > finished generating CMakeLists")
-		fstrm.write()
-		# print(fstrm)
+			cmake.drive()
+
+			# write cmakelists file on disk
+			self.status_label.setText("pycpp > finished generating CMakeLists")
+			fstrm.write()
+			# print(fstrm)
+		else:
+			self.status_label.setText("pycpp > no file have been processed.")
 
 
 if __name__ == "__main__":

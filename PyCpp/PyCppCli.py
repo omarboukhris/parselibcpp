@@ -72,7 +72,7 @@ def main(argv: List[str]) -> None:
 	psess.load_grammar(grammarpath, False)
 
 	filelist = os.path.join(ppath, "**", regex_glob)
-	filelist += glob.glob(os.path.join(ppath, globex))
+	# filelist += os.path.join(ppath, regex_glob)
 	processed_files = []
 	helper_factory = HelperFactory(pname, ppath)
 	for jfile in glob.glob(filelist):
@@ -112,30 +112,31 @@ def main(argv: List[str]) -> None:
 
 	del psess
 
-	cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
-	fstrm = FileStream(cmakelists_path)
-	fnproc = FileNameProcessor(processed_files, output_ext)
-	cmake = CMakeGenerator(
-		pname,    # project name
-		ptype,    # project type
-		fnproc,   # file name processor
-		plibs,    # project libraries
-		cmk_ver,  # CMake version
-		cpp_ver,  # C++ version
-		dbg,      # debug flags
-		rel,      # release flags
-		observers=[fstrm]
-	)
+	if not processed_files:
+		cmakelists_path = os.path.join(ppath, "CMakeLists.txt")
+		fstrm = FileStream(cmakelists_path)
+		fnproc = FileNameProcessor(processed_files, output_ext)
+		cmake = CMakeGenerator(
+			pname,    # project name
+			ptype,    # project type
+			fnproc,   # file name processor
+			plibs,    # project libraries
+			cmk_ver,  # CMake version
+			cpp_ver,  # C++ version
+			dbg,      # debug flags
+			rel,      # release flags
+			observers=[fstrm]
+		)
 
-	# print(cmake.files.get_files())
-	cmake.drive()
+		# print(cmake.files.get_files())
+		cmake.drive()
 
-	# write cmakelists file on disk
-	fstrm.write()
+		# write cmakelists file on disk
+		fstrm.write()
 
-	# output in terminal if verbose
-	if argp.get("v"):
-		print(fstrm)
+		# output in terminal if verbose
+		if argp.get("v"):
+			print(fstrm)
 
 
 if __name__ == "__main__":
