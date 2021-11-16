@@ -1,5 +1,5 @@
 
-from .observer import CppAbstractObs, Class, Construct, Method, Attribute
+from .observer import CppAbstractObs, Class, Construct, Method, Attribute, Args
 
 from string import Template
 
@@ -140,7 +140,7 @@ ${type} _${classname}_get_${attrname}__(${classname} *self) {\n\
 		return GatewayGenerator.destructor_templ.substitute(classname=clname)
 
 	@classmethod
-	def process_t_args(cls, args: list) -> str:
+	def process_t_args(cls, args: List[Args]) -> str:
 		ss = ""
 		for arg in args:
 			ss += "{name}, ".format(name=arg.name)

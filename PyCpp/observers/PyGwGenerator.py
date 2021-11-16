@@ -1,6 +1,6 @@
 
 from .GatewayGenerator import GatewayGenerator
-from .observer import Class, Construct, Method, Attribute
+from .observer import Class, Construct, Method, Attribute, Args
 
 from string import Template
 
@@ -157,6 +157,16 @@ if __name__ == \"__main__\":\n\
 					extend_fn=extended
 				)
 		return ss
+
+	@classmethod
+	def process_t_args(cls, args: List[Args]) -> str:
+		ss = ""
+		for arg in args:
+			if arg.type in ["string", "std::string"]:
+				ss += "{name}.encode(), ".format(name=arg.name)
+			else:
+				ss += "{name}, ".format(name=arg.name)
+		return ss[:-2]
 
 	@classmethod
 	def process_accessors(cls, attrs: List[Attribute], clname: str) -> str:
