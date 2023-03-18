@@ -7,9 +7,7 @@
 #include <parselib/utils/logger.h>
 
 
-namespace parselib {
-
-namespace parsers {
+namespace parselib::parsers {
 
 /*!
  * \brief The GenericGrammarParser class parses a tokenized grammar
@@ -27,7 +25,7 @@ public:
 	 * \brief GenericGrammarParser constructor
 	 * \param preproc shared pointer of preprocessor object
 	 */
-	GenericGrammarParser (utils::PreprocPtr preproc, utils::LoggerPtr logger) ;
+	GenericGrammarParser (utils::PreprocPtr &preproc, utils::LoggerPtr &logger) ;
 
 	/*!
 	 * \brief lex a grammar from textual form to tokenized
@@ -37,7 +35,5 @@ public:
 	Grammar parse (std::string filename, bool verbose=false, bool splits=false) ;
 } ;
 
-
-} // parsers namespace 
 
 } // parselib namespace

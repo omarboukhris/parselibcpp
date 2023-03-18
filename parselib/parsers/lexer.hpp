@@ -2,9 +2,9 @@
 
 #include <parselib/datastructure/common_types.h>
 
-namespace parselib {
+#include <utility>
 
-namespace lexer {
+namespace parselib::lexer {
 
 class Lexer {
 public :
@@ -12,14 +12,14 @@ public :
 	TokenList tokens ; ///< output tokenlist
 	PatternsMap patterns ; ///< input patterns
 
-	Lexer () {}
+	Lexer () = default;
 
 	/*!
 	 * \brief Lexer constructor
 	 * \param pmap  Patterns Map to use for lexing
 	 */
-	Lexer (PatternsMap pmap) :
-		patterns (pmap) {
+	explicit Lexer (PatternsMap pmap) :
+		patterns (std::move(pmap)) {
 		tokens = TokenList() ;
 	}
 
@@ -30,7 +30,7 @@ public :
 	 * \param splits  set to true to tokenize by line, otherwise, tokenizes
 	 * the whole file
 	 */
-	void tokenize (std::string str, bool verbose=false, bool splits=false) ;
+	void tokenize (const std::string& str, bool verbose=false, bool splits=false) ;
 
 private :
 
@@ -40,8 +40,6 @@ private :
 	 */
 	void tokenizeline (std::string str) ;
 } ;// class Lexer
-
-} // namespace lexer
 
 } //namespace parselib
 

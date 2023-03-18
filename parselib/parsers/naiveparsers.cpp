@@ -5,14 +5,12 @@
 
 using namespace std ;
 
-namespace parselib {
-
-namespace parsers {
+namespace parselib::parsers {
 
 SequentialParser::SequentialParser (
-	TokenList grammar, 
-	TokenList parsedtokens) 
-: i(0), j(0), current_rule(std::string("")) {
+        const TokenList &grammar,
+        const TokenList &parsedtokens)
+: op_count(0), tok_count(0), current_rule(std::string("")) {
 
 	axiomflag = true ;
 
@@ -43,8 +41,8 @@ void SequentialParser::parse () {
 
 void SequentialParser::check_axiom () {
 	size_t
-		i = this->i, 
-		j = this->j ;
+		i = this->op_count,
+		j = this->tok_count ;
 	
 	if (i >= grammar.size()) {
 		return ;
@@ -60,14 +58,14 @@ void SequentialParser::check_axiom () {
 		i += 1 ;
 		j += 3 ;
 	}
-	this->i = i ;
-	this->j = j ;
+	this->op_count = i ;
+	this->tok_count = j ;
 }
 
 void SequentialParser::check_for_token () {
 	size_t
-		i = this->i, 
-		j = this->j ;
+		i = this->op_count,
+		j = this->tok_count ;
 	
 	if (i >= grammar.size()) {
 		return ;
@@ -80,18 +78,18 @@ void SequentialParser::check_for_token () {
 		//eliminate the parentheses+quotes
 		std::string regex = utils::clean_regex(parsedtokens[j+1].value()) ;
 
-		tokens.push_back({regex, label}) ;
+		tokens.emplace_back(regex, label) ;
 		i += 1 ;
 		j += 2 ;
 	}
-	this->i = i ;
-	this->j = j ;
+	this->op_count = i ;
+	this->tok_count = j ;
 }
 
 void SequentialParser::check_left_side () {
 	size_t
-		i = this->i, 
-		j = this->j ;
+		i = this->op_count,
+		j = this->tok_count ;
 	
 	if (i >= grammar.size()) {
 		return ;
@@ -107,14 +105,14 @@ void SequentialParser::check_left_side () {
 		i += 1 ;
 		j += 2 ;
 	}
-	this->i = i ;
-	this->j = j ;
+	this->op_count = i ;
+	this->tok_count = j ;
 }
 
 void SequentialParser::check_operators () {
 	size_t
-		i = this->i, 
-		j = this->j ;
+		i = this->op_count,
+		j = this->tok_count ;
 	
 	if (i >= grammar.size()) {
 		return ;
@@ -124,9 +122,7 @@ void SequentialParser::check_operators () {
 		parsedtokens[j].type() == "OR") {
 
 		//add a new rule (list of tokens)
-		production_rules[current_rule].push_back(
-			Rule ()
-		) ;
+		production_rules[current_rule].emplace_back() ;
 		j += 1 ;
 		i += 1 ;
 	}
@@ -135,14 +131,14 @@ void SequentialParser::check_operators () {
 		j += 1 ;
 		i += 1 ;
 	}
-	this->i = i ;
-	this->j = j ;
+	this->op_count = i ;
+	this->tok_count = j ;
 }
 
 void SequentialParser::check_right_side() {
 	size_t
-		i = this->i, 
-		j = this->j ;
+		i = this->op_count,
+		j = this->tok_count ;
 	
 	if (i >= grammar.size()) {
 		return ;
@@ -195,11 +191,11 @@ void SequentialParser::check_right_side() {
 		j += 1 ;
 	}
 
-	this->i = i ;
-	this->j = j ;
+	this->op_count = i ;
+	this->tok_count = j ;
 }
 
-void SequentialParser::process_label(std::string label, std::string operand){
+void SequentialParser::process_label(const std::string& label, const std::string& operand){
 	//currentrule in labels.keys()
 	if (labels.find (current_rule) != labels.end()) {
 		labels[current_rule][operand] = label ;
@@ -236,17 +232,15 @@ void SequentialParser::make_regex(int j) {
 		std::string("__") + current_rule +
 		std::string("[") + regex + std::string("]__") ;
 
-	tokens.push_back(
-		Token(regex, label)
-	) ; 
+	tokens.emplace_back(regex, label) ;
 
 	Token thisnode (label, "TERMINAL") ;
 	production_rules = add_operand_to_current_rule(thisnode) ;
 }
 
-ProductionRules SequentialParser::add_operand_to_current_rule(Token tok) {
+ProductionRules SequentialParser::add_operand_to_current_rule(const Token& tok) {
 	// adding an operand to the current running rule
-	if (production_rules[current_rule].size() != 0) {
+	if (!production_rules[current_rule].empty()) {
 		production_rules[current_rule].back().push_back(tok) ;
 	} else {
 		production_rules[current_rule].push_back({tok}) ;
@@ -276,9 +270,9 @@ void SequentialParser::add_to_str_rules(int j) {
 
 /// \brief Screaming results for debug resons or verbose
 string SequentialParser::getstr () {
-	string text_rule = "" ;
+	string text_rule ;
 
-	for (auto item : production_rules) {
+	for (const auto& item : production_rules) {
 		string key = item.first ;
 		Rules rules = item.second ;
 		
@@ -286,7 +280,7 @@ string SequentialParser::getstr () {
 		
 		StrList rule_in_a_line = StrList () ;
 		
-		for (Rule rule : rules) {
+		for (const Rule& rule : rules) {
 			StrList ruletxt = StrList () ;
 			for (Token opr : rule) {
 				ruletxt.push_back(opr.type()+"("+opr.value()+")");
@@ -300,11 +294,11 @@ string SequentialParser::getstr () {
 	text_rule += "\n\n" ;
 	
 	text_rule += "LABELS = [\n" ;
-	for (auto item : labels) {
+	for (const auto& item : labels) {
 		string key = item.first ;
 		LabelReplacement labmap = item.second ;
 		text_rule += key + " {\n" ;
-		for (auto lab : labmap) {
+		for (const auto& lab : labmap) {
 			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
 		}
 		text_rule += "}\n" ;
@@ -312,7 +306,7 @@ string SequentialParser::getstr () {
 	text_rule += "]\n" ;
 
 	text_rule += "STRUCT = [\n" ;
-	for (auto item : keeper) {
+	for (const auto& item : keeper) {
 		string key = item.first ;
 		StrList listkeep = item.second ;
 		text_rule += "" + key + " {\n\t" ;
@@ -323,19 +317,19 @@ string SequentialParser::getstr () {
 	
 	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
 
+    std::stringstream ss;
 	for (Token tok : tokens) {
 		string label = tok.type() ;
 		string regx = tok.value() ;
-		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;
+        ss << "TOKEN " << label << " = regex('" << regx << "')" << std::endl ;
+		text_rule += ss.str();
+        ss.clear();
 	}
 
 	return text_rule ;
 }
 
-} //namespace operations
-
-
-} //namespace parselib 
+} //namespace parselib
 
 
 

@@ -19,7 +19,7 @@ public :
 	
 	TokenList tokens ;
 
-	SequentialParser (TokenList grammar, TokenList parsedtokens) ;
+	SequentialParser (const TokenList &grammar, const TokenList &parsedtokens) ;
 
 	void parse () ;
 
@@ -32,20 +32,20 @@ public :
 private :
 
 	size_t
-		i,  // operations' operators counter
-		j ; // token counter
+		op_count,  // operations' operators counter
+		tok_count ; // token counter
 	bool axiomflag ; // whether axiom got read or not
 	std::string current_rule ; // name of production rule currently being processed
 	
 	TokenList grammar ; // grammar's tokens
 	TokenList parsedtokens ;
 	
-	ProductionRules add_operand_to_current_rule (Token tok) ;
+	ProductionRules add_operand_to_current_rule (const Token& tok) ;
 
 	std::string getstr () ;
 
 	inline bool stillparsing () {
-		return i < grammar.size() ;
+		return op_count < grammar.size() ;
 	}
 
 	void check_axiom () ;
@@ -62,7 +62,7 @@ private :
 	void check_right_side () ;
 
 	/// operators on grammar datastructure
-	void process_label(std::string label, std::string operand) ;
+	void process_label(const std::string& label, const std::string& operand) ;
 
 	void make_list() ;
 

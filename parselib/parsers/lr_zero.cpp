@@ -3,11 +3,9 @@
 
 #include "lr_zero.hpp"
 
-namespace parselib {
+namespace parselib::parsers {
 
-namespace parsers {
-
-LR_zero::LR_zero (Grammar grammar) {
+LR_zero::LR_zero (const Grammar& grammar) {
 	production_rules = grammar.production_rules ;
 	unitrelation = grammar.unitrelation ;
 	build_table();
@@ -15,7 +13,7 @@ LR_zero::LR_zero (Grammar grammar) {
 
 void LR_zero::build_table(){
 
-	if (production_rules.size() < 1) {
+	if (production_rules.empty()) {
 		return ;
 	}
 
@@ -76,7 +74,7 @@ Closure LR_zero::make_closure(Item &current_item){
 
 	// this is where the magic happens
 	Token token = current_item.readNext();
-	if (not token.key().size()) {
+	if (token.key().empty()) {
 		return output;
 	}
 
@@ -99,7 +97,7 @@ Closure LR_zero::make_closure(Item &current_item){
 			q.push_back(rulename);
 		}
 
-		while (q.size()) {
+		while (not q.empty()) {
 
 			// get token name to process
 			rulename = q.back();
@@ -115,7 +113,7 @@ Closure LR_zero::make_closure(Item &current_item){
 				// std::cout << rulename << ":" << production_rules[rulename].size() << std::endl ;
 
 				// put rule tokens in queue for processing
-				for (Rule rule: production_rules[rulename]) {
+				for (const Rule& rule: production_rules[rulename]) {
 
 					Item new_item (rule);
 					output.add_item(new_item);
@@ -138,6 +136,8 @@ Closure LR_zero::make_closure(Item &current_item){
 
 	return output;
 }
+
+void LR_zero::shift_reduce() {
 
 }
 

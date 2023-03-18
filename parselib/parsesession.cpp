@@ -18,9 +18,6 @@ ParseSession::ParseSession(utils::LogLevel logLevel) {
 	logger    = std::make_shared<utils::Logger>(logLevel) ;
 }
 
-ParseSession::~ParseSession()
-{}
-
 std::string processnodename(std::string name) {
 	if (name.back() == '.') {
 		name.pop_back() ;
@@ -28,28 +25,28 @@ std::string processnodename(std::string name) {
 	return name ;
 }
 
-void ParseSession::load_grammar(std::string filename, bool verbose) {
+void ParseSession::load_grammar(const std::string &filename, bool verbose) {
 	utils::PreprocPtr preproc (new utils::OnePassPreprocessor()) ;
 	parsers::GenericGrammarParser ggp (preproc, logger) ;
 
-	Grammar grammar = ggp.parse (filename, verbose, true) ;
-	// grammar.exportToFile(filename);
-	this->grammar = normoperators::get2nf(grammar) ;
+	Grammar grm = ggp.parse (filename, verbose, true) ;
+	// grm.exportToFile(filename);
+	this->grammar = normoperators::get2nf(grm) ;
 }
 
-void ParseSession::store_json(std::string filename, std::string output_filename, bool verbose, size_t index) {
+void ParseSession::store_json(const std::string &filename, const std::string& output_filename, bool verbose, size_t index) {
 	pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
 	pt::write_json(output_filename+".json", out) ;
 }
 
-std::string ParseSession::process_to_json (std::string filename, bool verbose, size_t index) {
+std::string ParseSession::process_to_json (const std::string &filename, bool verbose, size_t index) {
 	pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
 	std::stringstream ss;
 	pt::write_json(ss, out);
 	return ss.str();
 }
 
-pt::ptree ParseSession::process_source_to_ptree(std::string filename, bool verbose, size_t index) {
+pt::ptree ParseSession::process_source_to_ptree(const std::string& filename, bool verbose, size_t index) {
 
 	parser = std::make_shared<parsers::CYK> (parsers::CYK(grammar)) ;
 	std::string source = utils::get_text_file_content(filename) ;
@@ -59,12 +56,12 @@ pt::ptree ParseSession::process_source_to_ptree(std::string filename, bool verbo
 
 	Frame result = parser->membership (tokenizer.tokens) ;
 
-	if (result.size() == 0) {
+	if (result.empty()) {
 		if (verbose) {
 			// x should point errors out if parsing failed
 			utils::Printer::showerr ("Empty result : no parse tree found, no error tracking possible") ;
 		}
-		return pt::ptree() ;
+		return {} ;
 	} else {
 		index = (index > 0 && index < result.size()) ? index : 0 ;
 
@@ -96,16 +93,15 @@ pt::ptree ParseSession::process_source_to_ptree(std::string filename, bool verbo
 			else {
 				utils::Printer::showerr("Could not open log file stream.");
 			}
-			return pt::ptree();
+			return {};
 		}
 	}
-	return pt::ptree();
 }
 
-pt::ptree ParseSession::parse(parsetree::TreePtr code, std::string parent) {
+pt::ptree ParseSession::parse(const parsetree::TreePtr& code, std::string parent) {
 	using Map = std::map<std::string, pt::ptree> ;
 	if (code->size() == 0) {
-		return pt::ptree() ;
+		return {} ;
 	}
 
 	Map map = Map() ;
@@ -177,10 +173,10 @@ pt::ptree ParseSession::parse(parsetree::TreePtr code, std::string parent) {
 	return out ;
 }
 
-pt::ptree ParseSession::to_ptree(parsetree::TreePtr tree) {
+pt::ptree ParseSession::to_ptree(const parsetree::TreePtr& tree) {
 	using Map = std::map<std::string, pt::ptree> ;
 	if (tree == nullptr) {
-		return pt::ptree() ;
+		return {} ;
 	}
 
 	// use map to correctly parse into ptree
@@ -198,14 +194,12 @@ pt::ptree ParseSession::to_ptree(parsetree::TreePtr tree) {
 	}
 
 	pt::ptree out = pt::ptree() ;
-	for (auto item : map) {
+	for (const auto& item : map) {
 		std::string key = item.first ;
 		pt::ptree tmp = item.second ;
 		out.add_child(key, tmp) ;
 	}
 	return out ;
 }
-
-
 
 } //namespace parselib

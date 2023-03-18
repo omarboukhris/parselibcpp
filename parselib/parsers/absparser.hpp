@@ -22,14 +22,14 @@ protected:
 	Grammar::UnitRelation unitrelation ;
 
 public:
-	AbstractParser () {} 
-	virtual ~AbstractParser () {} 
-	AbstractParser (Grammar grammar) {
+	AbstractParser () = default;
+	virtual ~AbstractParser () = default;
+	explicit AbstractParser (const Grammar& grammar) {
 		production_rules = grammar.production_rules ;
 		unitrelation = grammar.unitrelation ;
 	}
 
-	virtual Frame membership (TokenList word) = 0;
+	virtual Frame membership (const TokenList &word) = 0;
 
 };
 

@@ -23,15 +23,15 @@ std::string processnodename (std::string name) ;
 class ParseSession {
 public :
 
-	ParseSession (utils::LogLevel logLevel=utils::LogLevel::LogBasic) ;
-	~ParseSession() ;
+	explicit ParseSession (utils::LogLevel logLevel=utils::LogLevel::LogBasic) ;
+	~ParseSession() = default;
 
 	/*!
 	 * \brief builds the instance by loading 
 	 * the grammar from a text file
 	 * \param filename : string path to file containing text to load
 	 */
-	void load_grammar (std::string filename, bool verbose=false) ;
+	void load_grammar (const std::string &filename, bool verbose=false) ;
 
 	/*!
 	 * \brief store_json processes input file into json output
@@ -40,7 +40,7 @@ public :
 	 * \param verbose         self explanatory
 	 * \param index           frame index to use as a solution
 	 */
-	void store_json (std::string filename, std::string output_filename, bool verbose=false, size_t index=0);
+	void store_json (const std::string &filename, const std::string& output_filename, bool verbose=false, size_t index=0);
 
 	/*!
 	 * \brief process_to_json processes input file into json string output
@@ -48,7 +48,7 @@ public :
 	 * \param verbose         self explanatory
 	 * \param index           frame index to use as a solution
 	 */
-	std::string process_to_json (std::string filename, bool verbose=false, size_t index=0);
+	std::string process_to_json (const std::string &filename, bool verbose=false, size_t index=0);
 
 	/*!
 	 * \brief parses source code in filename,
@@ -58,7 +58,7 @@ public :
 	 * True (by default) to print results, otherwise False
 	 * \return boost ptree containing the parsed savable data or empty result if an error occured
 	 */
-	pt::ptree process_source_to_ptree (std::string filename, bool verbose=false, size_t index=0) ;
+	pt::ptree process_source_to_ptree (const std::string& filename, bool verbose=false, size_t index=0) ;
 	
 private :
 
@@ -69,9 +69,9 @@ private :
 	 * \param verbose : bool true to talk
 	 * \return boost ptree containing the parsed savable data
 	 */
-	pt::ptree parse (parsetree::TreePtr code, std::string parent="") ;
+	pt::ptree parse (const parsetree::TreePtr& code, std::string parent="") ;
 
-	pt::ptree to_ptree (parsetree::TreePtr tree) ;
+	pt::ptree to_ptree (const parsetree::TreePtr& tree) ;
 
 protected :
 

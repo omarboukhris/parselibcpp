@@ -7,20 +7,18 @@
 
 #include "absparser.hpp"
 
-namespace parselib {
-
-namespace parsers {
+namespace parselib::parsers {
 
 class LR_zero : public AbstractParser {
 public :	
 
-	LR_zero () {}
-	LR_zero (Grammar grammar) ;
+	LR_zero () = default;
+	explicit LR_zero (const Grammar& grammar) ;
 
-	virtual ~LR_zero () {}
+	~LR_zero () override {}
 
-	virtual Frame membership (TokenList /*word*/) {
-		return Frame();
+	Frame membership (const TokenList /*word*/&) override {
+		return {};
 	}
 
 protected:
@@ -36,7 +34,5 @@ protected:
 	std::vector<Closure> m_graph;
 
 };
-
-}
 
 }

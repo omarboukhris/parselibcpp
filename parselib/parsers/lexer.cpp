@@ -9,11 +9,11 @@ namespace lexer {
 
 using namespace std ;
 
-void Lexer::tokenize(string str, bool verbose, bool splits) {
+void Lexer::tokenize(const string& str, bool verbose, bool splits) {
 	tokens.clear () ;
 	// split lines otherwise boost regex parser makes weird tokens
 	if (splits) {
-		for (std::string line : utils::split(str, "\n")) {
+		for (const std::string& line : utils::split(str, "\n")) {
 			tokenizeline(line);
 		}
 	} else {
@@ -30,7 +30,7 @@ void Lexer::tokenize(string str, bool verbose, bool splits) {
 void Lexer::tokenizeline (string str) {
 	
 	// mix all patterns for group matching
-	string regstr = "" ;
+	string regstr ;
 	for (Pattern pattern : patterns) { 
 		regstr += "(?'" + pattern.type() + "'" + pattern.value() + ")|" ;
 	}
@@ -42,7 +42,7 @@ void Lexer::tokenizeline (string str) {
 	MatchesMap matches ;
 
 	for ( auto it = words_begin; it != words_end; ++it ) { //loop through matches
-		boost::smatch match = *it ;
+		const boost::smatch& match = *it ;
 		for (auto pattern : patterns) {
 			if (match[pattern.type()].matched) { //find matched group
 				matches[ it->position() ] = Token( it->str(), pattern.type());

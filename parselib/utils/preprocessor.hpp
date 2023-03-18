@@ -12,6 +12,9 @@ public :
 	typedef std::vector<std::string> ImportQueue ;
 	ImportQueue queue ;
 
+    Preprocessor() = default;
+    virtual ~Preprocessor() = default;
+
 	virtual TokenList preprocess (std::string filename, TokenList tokenlist) = 0 ;
 	void addToQueue (const std::string& filename) {
 		queue.push_back(filename) ;
@@ -41,16 +44,11 @@ class OnePassPreprocessor : public Preprocessor {
 public :
 	typedef std::vector<std::string> ProcessedFiles ;
 
-	
-	OnePassPreprocessor () {
-		pwd = "" ;
-		queue = ImportQueue () ;
-		processed = ProcessedFiles () ; // to avoid nested imports
-	}
-	
+    OnePassPreprocessor() = default;
+    ~OnePassPreprocessor() override = default;
+
 	inline bool isProcessed (const std::string& filename) {
-		auto itr = std::find(processed.begin(), processed.end(), filename) ;
-		return itr != processed.end() ;
+		return std::find(processed.begin(), processed.end(), filename) != processed.end() ;
 	}
 
 	TokenList preprocess (std::string filename, TokenList tokenlist) override {
