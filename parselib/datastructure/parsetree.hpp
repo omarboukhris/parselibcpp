@@ -19,12 +19,11 @@ public :
 	};
 
 	Tree () ;
-	Tree (std::string) ;
-	Tree(Tree::TreePtr node) ;
-	Tree(Tree* node) ;
+	explicit Tree (std::string) ;
+	explicit Tree(const TreePtr &node) ;
+	explicit Tree(Tree* node) ;
 
-
-	virtual ~Tree () ;
+	virtual ~Tree () = default;
 
 	/*!
 	 * \brief tokens : accessor to list of tokens
@@ -50,7 +49,7 @@ public :
 	 * \param key to look for
 	 * \return position if found, -1 otherwise
 	 */
-	int keyInTree (std::string key) ;
+	int keyInTree (const std::string& key) ;
 
 	/*!
 	 * \brief strUnfold unfolds Node into string
@@ -62,7 +61,7 @@ public :
 	 * \brief push_back add token to tokens lsit
 	 * \param tok token
 	 */
-	void push_back (Token tok) ;
+	void push_back (const Token& tok) ;
 
 	/*!
 	 * \brief clear tokens list
@@ -93,9 +92,9 @@ public :
 	 * \param tree tree to merge with *this
 	 * \return current tree
 	 */
-	TreePtr merge (TreePtr tree) ;
+	TreePtr merge (const TreePtr& tree) ;
 
-	friend std::ostream & operator<< (std::ostream& out, TreePtr tree) ;
+	friend std::ostream & operator<< (std::ostream& out, const TreePtr& tree) ;
 	friend std::ostream & operator<< (std::ostream& out, Tree tree) ;
 
 protected:
@@ -106,7 +105,7 @@ protected:
 	 * \param tab used for recursive tab stack tracking
 	 * \return tree recursive dump of *tree parameter
 	 */
-	std::string dump (TreePtr tree, std::string tab="") ;
+	std::string dump (const TreePtr& tree, const std::string& tab="") ;
 
 	NodeType m_type ; ///< Node type : leaf or branch
 	std::string m_val ; ///< value if leaf
@@ -136,7 +135,7 @@ public :
 	 * check if there are / in token name
 	 * \return boolean
 	 */
-	bool iscompacted () ;
+	bool iscompacted () const ;
 
 	/*!
 	 * \brief abstract, pure virtual
@@ -144,7 +143,9 @@ public :
 	 * \param parent  parent node
 	 * \return Tree pointer
 	 */
-	virtual TreePtr unfold (std::string parent="") = 0 ;
+	virtual TreePtr unfold (const std::string &parent) = 0 ;
+
+    TreePtr unfold () { return unfold(""); }
 
 	/// \brief node type (terminal or non terminal)
 	std::string nodetype ;
@@ -159,8 +160,8 @@ typedef std::shared_ptr<Node> NodePtr ;
 class UnitNode : public Node {
 public :
 
-	UnitNode (UnitNode *other) ;
-	UnitNode (std::string nodetype, NodePtr unit) ;
+	explicit UnitNode (UnitNode *other) ;
+	UnitNode (const std::string &nodetype, const NodePtr &unit) ;
 
 	/*!
 	 * \brief applies lazy node unfolding of unit node U1 -> U2 into
@@ -168,7 +169,7 @@ public :
 	 * \param parent node name
 	 * \return unfolded TreePtr (parsable into pt::ptree/json)
 	 */
-	virtual TreePtr unfold (std::string parent="") ;
+	TreePtr unfold (const std::string &parent) override ;
 private :
 	NodePtr unit ;
 } ;
@@ -180,14 +181,14 @@ private :
 class TokenNode : public Node {
 public :
 
-	TokenNode(TokenNode *other);
-	TokenNode(std::string nodetype, std::string val) ;
+	explicit TokenNode(TokenNode *other);
+	TokenNode(const std::string &nodetype, const std::string &val) ;
 
 	/*!
 	 * \brief unfolds the terminal graph node into a terminal Tree node
 	 * \return Terminal Tree node
 	 */
-	virtual TreePtr unfold (std::string /*parent=""*/) ;
+	TreePtr unfold (const std::string & parent) override;
 
 	std::string val ;
 } ;
@@ -199,15 +200,15 @@ public :
 class BinNode : public Node {
 public :
 
-	BinNode(BinNode *other);
-	BinNode(std::string nodetype, NodePtr left, NodePtr right) ;
+	explicit BinNode(BinNode *other);
+	BinNode(const std::string &nodetype, const NodePtr &left, const NodePtr &right) ;
 
 	/*!
 	 * \brief unfolds binary production rule into a parse Tree
 	 * \param parent node name
 	 * \return TreePtr parsable into boost ptree or json
 	 */
-	virtual TreePtr unfold (std::string parent="") ;
+	TreePtr unfold (const std::string &parent) override;
 
  private:
 

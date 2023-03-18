@@ -22,7 +22,7 @@ public:
 		, m_position(it.m_position)
 	{}
 
-	Item(Rule r)
+	Item(const Rule &r)
 		: m_rule(r)
 		, m_position(0)
 	{
@@ -30,7 +30,7 @@ public:
 
 	~Item(){}
 
-	size_t getPosition() {
+	size_t getPosition() const {
 		return m_position;
 	}
 
@@ -45,11 +45,11 @@ public:
 		m_position = 0 ;
 	}
 
-	bool done() {
+	bool done() const {
 		return m_position > m_rule.size() ;
 	}
 
-	Rule &getRule(){
+	Rule &getRule() {
 		return m_rule;
 	}
 
@@ -203,7 +203,7 @@ public:
 				char *transtxt = new char[transSize];
 				t_fstream.write(transtxt, transSize);
 				m_transitions.emplace(transtxt);
-				delete transtxt;
+				delete[] transtxt;
 			}
 
 		} catch (std::exception &e) {

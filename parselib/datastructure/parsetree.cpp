@@ -1,5 +1,6 @@
 
 #include <parselib/utils/io.hpp>
+#include <utility>
 
 #include "parsetree.hpp"
 
@@ -14,10 +15,10 @@ Tree::Tree ()
 
 Tree::Tree(std::string s)
 	: m_type (NodeType::Leaf)
-	, m_val (s)
+	, m_val (std::move(s))
 {}
 
-Tree::Tree (TreePtr node)
+Tree::Tree (const TreePtr &node)
 	: m_type(node->m_type)
 	, m_tokens(node->m_tokens)
 {}
@@ -28,10 +29,7 @@ Tree::Tree (Tree* node)
 {
 }
 
-Tree::~Tree()
-{}
-
-void Tree::push_back(Tree::Token tok) {
+void Tree::push_back(const Tree::Token& tok) {
 	m_tokens.push_back(tok) ;
 }
 
@@ -51,14 +49,14 @@ size_t Tree::size() {
 	return m_tokens.size() ;
 }
 
-TreePtr Tree::merge(TreePtr tree) {
+TreePtr Tree::merge(const TreePtr& tree) {
 	for (auto& leaf : *tree) {
 		m_tokens.push_back(leaf);
 	}
 	return std::make_shared<Tree>(this) ;
 }
 
-int Tree::keyInTree(std::string key) {
+int Tree::keyInTree(const std::string& key) {
 	int i = 0 ;
 	for (auto& item : m_tokens) {
 		std::string tokentype = item.first ;
@@ -80,7 +78,7 @@ std::string Tree::strUnfold() {
 	else { // NodeType::Branch
 
 		for (Tree::Token &tok : m_tokens) {
-			ss += tok.second.get()->strUnfold() + " ";
+			ss += tok.second->strUnfold() + " ";
 		}
 	}
 
@@ -109,7 +107,7 @@ std::string Tree::val() {
 }
 
 
-std::ostream& operator<<(std::ostream& out, TreePtr tree) {
+std::ostream& operator<<(std::ostream& out, const TreePtr& tree) {
 	out << tree->dump(tree) ;
 	return out ;
 }
@@ -121,24 +119,27 @@ std::ostream& operator<<(std::ostream& out, Tree tree) {
 /*!
  * \brief Tree::dump dumps the content of a tree into a std::string
  */
-std::string Tree::dump(TreePtr tree, std::string tab) {
-	std::string ss = "" ;
+std::string Tree::dump(const TreePtr& tree, const std::string& tab) {
+	std::string strval ;
 	// count how many terminals displayed
 	int count = 0;
 	// count if we dump non terminals
 	bool dump_nonterminal = false;
 
+    std::stringstream ss;
 	for (Tree::Token &tok : tree->m_tokens) {
 
 		if (tok.second->m_type == NodeType::Leaf) {
-			ss += tab + "(" + tok.first + ":" + tok.second->val() + ")\n";
+            strval += tab + "(" + tok.first + ":" + tok.second->val() + ")\n";
 			count++ ;
 		}
 		else {
 			dump_nonterminal = true;
-			ss += tab + tok.first + " = {\n"
-				+ dump(tok.second, tab+"\t")
-				+ tab + "}\n" ;
+            ss << tab << tok.first << " = {" << std::endl
+                << dump(tok.second, tab+"\t")
+                << tab << "}" << std::endl;
+            strval += ss.str() ;
+            strval.clear();
 		}
 	}
 
@@ -146,17 +147,17 @@ std::string Tree::dump(TreePtr tree, std::string tab) {
 	// must be highest non recursive call
 	// must not dump any non terminal token
 	// must dump only one unique terminal token
-	if (not dump_nonterminal and count == 1 and tab.size() == 0)
-		ss.pop_back();
-	return ss ;
+	if (not dump_nonterminal and count == 1 and tab.empty())
+		strval.pop_back();
+	return strval ;
 }
 
 
 Node::Node() {
 	nodetype = "" ;
 }
-bool Node::iscompacted() {
-	return (nodetype.find("/") != std::string::npos) ;
+bool Node::iscompacted() const {
+	return (nodetype.find('/') != std::string::npos) ;
 }
 
 
@@ -165,12 +166,12 @@ UnitNode::UnitNode(UnitNode *other) {
 	this->unit = other->unit ;
 }
 
-UnitNode::UnitNode(std::string nodetype, NodePtr unit) {
+UnitNode::UnitNode(const std::string &nodetype, const NodePtr &unit) {
 	this->nodetype = nodetype ;
 	this->unit = unit ;
 }
 
-TreePtr UnitNode::unfold(std::string parent){
+TreePtr UnitNode::unfold(const std::string &parent){
 	if (iscompacted() || parent == nodetype) {
 		return unit->unfold(nodetype) ;
 	} else { //if parent != None :
@@ -189,12 +190,12 @@ TokenNode::TokenNode(TokenNode *other) {
 	this->nodetype = other->nodetype ;
 }
 
-TokenNode::TokenNode(std::string nodetype, std::string val) {
+TokenNode::TokenNode(const std::string &nodetype, const std::string &val) {
 	this->val = val ;
 	this->nodetype = nodetype ;
 }
 
-TreePtr TokenNode::unfold(std::string) {
+TreePtr TokenNode::unfold(const std::string & parent) {
 
 	Tree::Token token (
 		nodetype,
@@ -214,13 +215,13 @@ BinNode::BinNode(BinNode *other) {
 	this->nodetype = other->nodetype ;
 }
 
-BinNode::BinNode(std::string nodetype, NodePtr left, NodePtr right) {
+BinNode::BinNode(const std::string &nodetype, const NodePtr &left, const NodePtr &right) {
 	this->left = left ;
 	this->right = right ;
 	this->nodetype = nodetype ;
 }
 
-TreePtr BinNode::unfold(std::string parent) {
+TreePtr BinNode::unfold(const std::string &parent) {
 	TreePtr tree = left->unfold(nodetype) ;
 	tree->merge(right->unfold(nodetype)) ;
 

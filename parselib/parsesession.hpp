@@ -69,7 +69,7 @@ private :
 	 * \param verbose : bool true to talk
 	 * \return boost ptree containing the parsed savable data
 	 */
-	pt::ptree parse (parsetree::Tree code, std::string parent="") ;
+	pt::ptree parse (parsetree::TreePtr code, std::string parent="") ;
 
 	pt::ptree to_ptree (parsetree::TreePtr tree) ;
 

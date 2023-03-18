@@ -71,7 +71,7 @@ pt::ptree ParseSession::process_source_to_ptree(std::string filename, bool verbo
 		if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
 
 			// std::cout << "got axiom" << *result[index]->unfold().get() << std::endl ;
-			pt::ptree output = parse (*result[index]->unfold().get(), "");
+			pt::ptree output = parse (result[index]->unfold(), "");
 
 			// show result if verbose
 			if (verbose) {
@@ -102,15 +102,15 @@ pt::ptree ParseSession::process_source_to_ptree(std::string filename, bool verbo
 	return pt::ptree();
 }
 
-pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
+pt::ptree ParseSession::parse(parsetree::TreePtr code, std::string parent) {
 	using Map = std::map<std::string, pt::ptree> ;
-	if (code.size() == 0) {
+	if (code->size() == 0) {
 		return pt::ptree() ;
 	}
 
 	Map map = Map() ;
 
-	for (parsetree::Tree::Token& element : code.tokens()) {
+	for (parsetree::Tree::Token& element : code->tokens()) {
 
 		if (element.first == "AXIOM") {
 
@@ -123,7 +123,7 @@ pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
 		// part that handles labels replacement (aliases)
 		if (grammar.inLabelsKeys(parent)) {
 
-			for (auto subitem : grammar.labels[parent]) {
+			for (const auto &subitem : grammar.labels[parent]) {
 
 				std::string subkey = subitem.first ;
 
@@ -153,7 +153,7 @@ pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
 			else if (grammar.isTokenSavable(parent, element.first)) {
 
 				if (element.second->type() == parsetree::Tree::NodeType::Branch) {
-					parsetree::Tree &param = *element.second.get();
+					parsetree::TreePtr &param = element.second;
 					pt::ptree tmp = parse(param, element.first) ;
 					map[element.first].push_back(std::make_pair("", tmp)) ;
 				}
@@ -169,7 +169,7 @@ pt::ptree ParseSession::parse(parsetree::Tree code, std::string parent) {
 	//-------------------------------------------------
 	// save map in pt::ptree
 	pt::ptree out = pt::ptree() ;
-	for (auto item : map) {
+	for (const auto &item : map) {
 		std::string key = item.first ;
 		pt::ptree tmp = item.second ;
 		out.add_child(key, tmp) ;

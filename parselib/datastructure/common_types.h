@@ -126,8 +126,7 @@ namespace parselib {
 	typedef std::vector<Pattern> PatternsMap ;
 
 	typedef std::map<size_t, Token> MatchesMap ;
-
-
+    
 	typedef TokenList Rule ;
 	typedef std::vector<Rule> Rules ;
 	typedef std::map <std::string, Rules> ProductionRules ;
