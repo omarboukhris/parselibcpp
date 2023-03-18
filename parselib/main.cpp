@@ -31,29 +31,27 @@ int main(int argc, char** argv){
 
 	ArgvLex argvlex (arglist) ;
 
-	bool verbose = (argvlex.get("-v") == "True") ? true : false ;
+	bool verbose = (argvlex.get("-v") == "True") ;
 	Printer::showinfo("verbose : " + argvlex.get("-v"));
 	Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
 
 	// change LogNone to LogBasic if needed
 	pl::ParseSession parsesession (LogLevel::LogNone) ;
 
-	if (argvlex.get("-h") == "True") {
-		showhelp () ;
-	} else if (argvlex.get("--gsrc") != "False") {
+	if (argvlex.get("--gsrc") != "False") {
 	//parse argument
 		std::string grammarfilename = argvlex.get("--gsrc") ;
 		parsesession.load_grammar(grammarfilename, verbose);
 
 		// this part is mainly used for testing single files
-		if (argvlex.get("--src") != "False") { 
+		if (argvlex.get("--src") != "False") {
 
 			// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
 			Printer::showinfo("now processing source code : " + sourcefilename);
 
 			pt::ptree out = parsesession.process_source_to_ptree(sourcefilename, verbose);
-			
+
 			Printer::showinfo("written json to : " + sourcefilename + ".json") ;
 			pt::write_json(sourcefilename+".json", out) ;
 
@@ -62,8 +60,8 @@ int main(int argc, char** argv){
 			// glob recursively files with specified extention from directory
 			// then parse
 			FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
-			
-			for (std::string sourcefilename : fileglober.glob()) {
+
+			for (const std::string &sourcefilename : fileglober.glob()) {
 				Printer::showinfo("now processing source code : " + sourcefilename);
 				parsesession.store_json(sourcefilename, sourcefilename+".json", verbose);
 				Printer::showinfo("written json to : " + sourcefilename + ".json") ;

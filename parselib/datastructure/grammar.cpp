@@ -20,14 +20,14 @@ Grammar::Grammar () {
 	tokens = TokenList () ;
 }
 
-void Grammar::merge (Grammar grammar) {
+void Grammar::merge (const Grammar &grammar) {
 	// unitrelation is computed later
-	for (Token token : grammar.tokens) {
+	for (const Token &token : grammar.tokens) {
 		tokens.push_back (token) ;
 	}
 
 	// loop through production_rules and merge
-	for (auto item : grammar.production_rules) {
+	for (const auto &item : grammar.production_rules) {
 
 		//get key and rules
 		std::string key = item.first ;
@@ -35,7 +35,7 @@ void Grammar::merge (Grammar grammar) {
 
 		// if key if map then merge vectors
 		if (production_rules.find(key) != production_rules.end() ) {
-			for (Rule rule : rules) {
+			for (const Rule &rule : rules) {
 				production_rules[key].push_back(rule);
 			}
 		} else { //add new map entry
@@ -44,7 +44,7 @@ void Grammar::merge (Grammar grammar) {
 	}
 
 	//labels merge
-	for (auto item : grammar.labels) {
+	for (const auto &item : grammar.labels) {
 		std::string key = item.first ;
 		LabelReplacement mylabels = item.second ;
 
@@ -59,12 +59,12 @@ void Grammar::merge (Grammar grammar) {
 	}
 
 	//keeper merge
-	for (auto item : grammar.keeper) {
+	for (const auto &item : grammar.keeper) {
 		std::string key = item.first ;
 		StrList kept = item.second ;
 
 		if (keeper.find(key) != keeper.end()) {
-			for (std::string str : kept) {
+			for (const std::string &str : kept) {
 				if (std::find(keeper[key].begin(), keeper[key].end(), str) == keeper[key].end()) {
 					keeper[key].push_back(str);
 				}
@@ -74,7 +74,7 @@ void Grammar::merge (Grammar grammar) {
 		}
 
 		// merge "all" entries
-		for (std::string entry : kept) {
+		for (const std::string & entry : kept) {
 			//if entry not in keeper(all) add it, otherwise ignore it, already added
 			if (std::find (keeper["all"].begin(), keeper["all"].end(), entry) == keeper["all"].end()) {
 				keeper["all"].push_back(entry);
@@ -82,7 +82,7 @@ void Grammar::merge (Grammar grammar) {
 		}
 	}
 
-	for (std::string s : grammar.strnodes) {
+	for (const std::string &s : grammar.strnodes) {
 		strnodes.push_back(s) ;
 	}
 }
@@ -107,11 +107,10 @@ void Grammar::makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) 
 	*this = grammaroperators::eliminatedoubles (*this) ;
 	//gramtest = checkproductionrules(self.production_rules) #is fuckedup
 	//return gramtest
-	return ;
 }
 
-bool Grammar::inKeeperKeys(string toktype) {
-	for (auto item : keeper) {
+bool Grammar::inKeeperKeys(const string &toktype) {
+	for (const auto &item : keeper) {
 		if (item.first == toktype) {
 			return true ;
 		}
@@ -119,29 +118,20 @@ bool Grammar::inKeeperKeys(string toktype) {
 	return std::find(keeper["all"].begin(), keeper["all"].end(), toktype) != keeper["all"].end() ;
 }
 
-bool Grammar::inLabelsKeys(string toktype) {
-	for (auto item : labels) {
-		string key = item.first ;
-		if (toktype == key) { //element type in keeper.keys()
-			return true ;
-		}
-	}
-	return false ;
+bool Grammar::inLabelsKeys(const string &toktype) {
+    return std::any_of(labels.begin(), labels.end(), [&](const auto &x) {
+        return x.first == toktype;
+    });
 }
 
-bool Grammar::keyIsStr(string toktype) {
-	for (string token : strnodes) {
-		if (token == toktype) {
-			return true ;
-		}
-	}
-	return false ;
+bool Grammar::keyIsStr(const string &toktype) {
+    return std::any_of(strnodes.begin(), strnodes.end(), [&](const std::string &x) {
+        return x == toktype;
+    });
 }
 
-bool Grammar::isTokenSavable(string parent, string child) {
-	if (parent == "AXIOM" ||
-		child == production_rules["AXIOM"][0][0].value()
-	) {
+bool Grammar::isTokenSavable(const string &parent, const string &child) {
+	if (parent == "AXIOM" || child == production_rules["AXIOM"][0][0].value()) {
 		return true ;
 	}
 	if (!inKeeperKeys(parent)) {
@@ -154,9 +144,9 @@ bool Grammar::isTokenSavable(string parent, string child) {
 /*!
  * \brief generates dot graph from a grammar and stores it in filename.png
  */
-void Grammar::exportToFile(std::string filename) {
+void Grammar::exportToFile(const string &filename) {
 	std::string ss = "digraph {\n" ;
-	for (auto item : production_rules) {
+	for (const auto &item : production_rules) {
 		std::string key = item.first ;
 		boost::replace_all (key, "-", "");
 		boost::replace_all (key, "/", "_");
@@ -164,7 +154,7 @@ void Grammar::exportToFile(std::string filename) {
 		boost::replace_all (key, "]", "");
 		boost::replace_all (key, ".", "_tok");
 		Rules rules = item.second ;
-		for (Rule rule : rules) {
+		for (const Rule &rule : rules) {
 			StrList r ;
 			for (Token op : rule) {
 				std::string val = op.value() ;
@@ -198,9 +188,9 @@ void Grammar::exportToFile(std::string filename) {
 
 /// \brief Screaming results for debug resons or verbose
 string Grammar::getstr () {
-	string text_rule = "" ;
+	string text_rule;
 
-	for (auto item : production_rules) {
+	for (const auto &item : production_rules) {
 		string key = item.first ;
 		Rules rules = item.second ;
 
@@ -208,7 +198,7 @@ string Grammar::getstr () {
 
 		StrList rule_in_a_line = StrList () ;
 
-		for (Rule rule : rules) {
+		for (const Rule &rule : rules) {
 			StrList ruletxt = StrList () ;
 			for (Token opr : rule) {
 				ruletxt.push_back(opr.type()+"("+opr.value()+")");
@@ -222,11 +212,11 @@ string Grammar::getstr () {
 	text_rule += "\n\n" ;
 
 	text_rule += "LABELS = [\n" ;
-	for (auto item : labels) {
+	for (const auto &item : labels) {
 		string key = item.first ;
 		LabelReplacement labmap = item.second ;
 		text_rule += key + " {\n" ;
-		for (auto lab : labmap) {
+		for (const auto &lab : labmap) {
 			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
 		}
 		text_rule += "}\n" ;
@@ -234,7 +224,7 @@ string Grammar::getstr () {
 	text_rule += "]\n" ;
 
 	text_rule += "STRUCT = [\n" ;
-	for (auto item : keeper) {
+	for (const auto &item : keeper) {
 		string key = item.first ;
 		StrList listkeep = item.second ;
 		text_rule += "" + key + " {\n\t" ;
@@ -252,7 +242,7 @@ string Grammar::getstr () {
 	}
 
 	text_rule += "UNIT = [\n" ;
-	for (auto item : unitrelation) {
+	for (const auto &item : unitrelation) {
 		string key = item.first ;
 		StrList listkeep = item.second ;
 		text_rule += "" + key + " {\n\t" ;

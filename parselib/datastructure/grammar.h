@@ -33,13 +33,13 @@ public :
 	 * \brief merge input grammar with this (union)
 	 * \param grammar input grammar to merge
 	 */
-	void merge (Grammar grammar) ;
+	void merge (const Grammar &grammar) ;
 
 	/*!
 	 * \brief exportToFile exports grammar to dot file for graph generation
 	 * \param filename path to exportation file
 	 */
-	void exportToFile (std::string filename) ;
+	void exportToFile (const std::string &filename) ;
 
 	/*!
 	 * \brief parses a list of tokens in a grammar
@@ -50,10 +50,10 @@ public :
 
 public:
 
-	bool inKeeperKeys (std::string toktype) ;
-	bool inLabelsKeys(std::string toktype) ;
-	bool keyIsStr (std::string toktype) ;
-	bool isTokenSavable(std::string parent, std::string child) ;
+	bool inKeeperKeys (const std::string &toktype) ;
+	bool inLabelsKeys(const std::string &toktype) ;
+	bool keyIsStr (const std::string &toktype) ;
+	bool isTokenSavable(const std::string &parent, const std::string &child) ;
 
 	friend std::ostream & operator<< (std::ostream & out, Grammar str) {
 		out << str.getstr() ;

@@ -71,16 +71,16 @@ if(Boost_FOUND)
 endif()
 
 
-#if(NOT BUILD_EX)
-#    set(BUILD_EX true)
-#endif()
+if(NOT BUILD_EX)
+    set(BUILD_EX true)
+endif()
 
-## build test exemple if needed
-#if(BUILD_EX)
-#	set(APP parcexlib)
-#	add_executable(${APP} parselib/main.cpp)
-#	target_link_libraries(${APP}
-#		${PROJECT_NAME}
-#		${Boost_LIBRARIES}
-#	)
-#endif()
+# build test exemple if needed
+if(BUILD_EX)
+	set(APP parcexlib)
+	add_executable(${APP} parselib/main.cpp)
+	target_link_libraries(${APP}
+		${PROJECT_NAME}
+		${Boost_LIBRARIES}
+	)
+endif()
