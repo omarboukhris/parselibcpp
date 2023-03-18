@@ -8,14 +8,12 @@
 #include <streambuf>
 #include <string>
 
-namespace parselib {
-
-namespace utils {
+namespace parselib::utils {
 
 using namespace std ;
 
 /// \brief read a whole file (path @ string filename) in a string
-string get_text_file_content (string filename) {
+string get_text_file_content (const string &filename) {
 	ifstream filestream (filename) ;
 	if (!filestream.is_open()) {
 		utils::Printer::showerr("can't read file : " + filename);
@@ -30,9 +28,9 @@ string get_text_file_content (string filename) {
 	return out ;
 }
 
-ArgvLex::ArgvLex(ArgList argv) {
+ArgvLex::ArgvLex(const ArgList& argv) {
 	parsedargv = {} ;
-	for (string arg : argv) {
+	for (const string& arg : argv) {
 		StrList slist = split(arg, "=") ;
 
 		switch (slist.size()) {
@@ -49,7 +47,7 @@ ArgvLex::ArgvLex(ArgList argv) {
 	}
 }
 
-string ArgvLex::get(string key){
+string ArgvLex::get(const string& key){
 	if (parsedargv.find(key) != parsedargv.end()) {
 		return parsedargv[key] ;
 	}
@@ -57,13 +55,13 @@ string ArgvLex::get(string key){
 }
 
 
-string clean_regex (string regx) {
+string clean_regex (const string& regx) {
 	size_t newlen = regx.size()-4 ; //strip 2 caracters from the beginning + 2 from the end
 	return regx.substr(2, newlen) ;
 }
 
 string clean_if_terminal (string strtoken) {
-	size_t pos = strtoken.find (".") ;
+	size_t pos = strtoken.find ('.') ;
 	
 	if (pos == string::npos)
 		return strtoken ;
@@ -71,7 +69,7 @@ string clean_if_terminal (string strtoken) {
 	return strtoken.substr(0, pos) ;
 }
 
-string escape_regex(string regx) {
+string escape_regex(const string& regx) {
 	boost::regex specialChars { R"([-[\]{}()*+?.,\^$|#\s])" };
 
 	string sanitized = boost::regex_replace( regx, specialChars, R"(\$&)" );
@@ -79,10 +77,10 @@ string escape_regex(string regx) {
 }
 
 
-StrList split (string target, string delim) {
+StrList split (string target, const string& delim) {
     if (target.empty()) {
 		//maybe show err : target is empty
-		return StrList() ;
+		return {} ;
 	}
 
     StrList v = StrList() ;
@@ -90,11 +88,11 @@ StrList split (string target, string delim) {
 	return v;
 }
 
-string join (StrList strlist, string delim) {
-	if (strlist.size() == 0) {
+string join (StrList strlist, const string& delim) {
+	if (strlist.empty()) {
 		return "" ;
 	}
-	string out = "" ;
+	string out ;
 	for (size_t i = 0 ; i < strlist.size()-1 ; i++) {
 		std::string s = strlist[i] ;
 		out += s + delim ;
@@ -102,17 +100,15 @@ string join (StrList strlist, string delim) {
 	return out+strlist.back() ;
 }
 
-std::string transform_to_source ( TokenList tokenizedgrammar )
+std::string transform_to_source ( const TokenList& tokenizedgrammar )
 {
-	string source = "" ;
+	string source ;
 	for (Token token : tokenizedgrammar) {
 		source += token.type() + " " ;
 	}
 	return source ;
 }
 
-
-} //namespace utils
 
 } //namespace parselib
 

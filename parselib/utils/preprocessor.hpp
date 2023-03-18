@@ -5,9 +5,7 @@
 
 #include <unistd.h>
 
-namespace parselib {
-
-namespace utils {
+namespace parselib::utils {
 
 class Preprocessor {
 public :
@@ -15,15 +13,15 @@ public :
 	ImportQueue queue ;
 
 	virtual TokenList preprocess (std::string filename, TokenList tokenlist) = 0 ;
-	void addToQueue (std::string filename) {
+	void addToQueue (const std::string& filename) {
 		queue.push_back(filename) ;
 	}
 
-	void removeFromQueue (std::string filename) {
+	void removeFromQueue (const std::string& filename) {
 		// remove filename from queue
 		ImportQueue newqueue = ImportQueue () ;
 		
-		for (std::string itr : queue) {
+		for (const std::string& itr : queue) {
 			if (itr != filename) {
 				newqueue.push_back (itr);
 			} 
@@ -31,8 +29,8 @@ public :
 		queue = newqueue ;
 	}
 	
-	bool queueIsEmpty () {
-		return queue.size() == 0 ;
+	[[nodiscard]] bool queueIsEmpty () const {
+		return queue.empty() ;
 	}
 } ;
 
@@ -50,15 +48,15 @@ public :
 		processed = ProcessedFiles () ; // to avoid nested imports
 	}
 	
-	inline bool isProcessed (std::string filename) {
-		ProcessedFiles::iterator itr = std::find(processed.begin(), processed.end(), filename) ;
+	inline bool isProcessed (const std::string& filename) {
+		auto itr = std::find(processed.begin(), processed.end(), filename) ;
 		return itr != processed.end() ;
 	}
 
-	TokenList preprocess (std::string filename, TokenList tokenlist) {
+	TokenList preprocess (std::string filename, TokenList tokenlist) override {
 		removeFromQueue (filename) ;
 		if (isProcessed(filename)) {
-			return TokenList() ;
+			return {} ;
 		}
 
 		// get grammar directory 
@@ -78,11 +76,11 @@ protected :
 	
 	ProcessedFiles processed ;
 
-	TokenList processimports (TokenList tokenlist) {
+	TokenList processimports (const TokenList& tokenlist) {
 		TokenList outtok = TokenList () ;
 		for (Token token : tokenlist) {
 			if (token.type() == "IMPORT") {
-				std::size_t quotepos = token.value().find("\"") ;
+				std::size_t quotepos = token.value().find('\"') ;
 				std::string path = token.value().substr(quotepos+1) ;
 				path.pop_back() ; //eliminate the last "
 				std::string filename = pwd + "/" + path ;
@@ -95,7 +93,5 @@ protected :
 		return outtok ;
 	}
 } ;
-
-} // namespace preprocessor
 
 } // namespace parselib

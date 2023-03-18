@@ -20,17 +20,17 @@ public:
 
 	Logger(LogLevel logLevel=LogLevel::LogNone);
 
-	void log_basic_info(std::string content) ;
-	void log_all_info (std::string content) ;
+	void log_basic_info(const std::string &content) ;
+	void log_all_info (const std::string &content) ;
 
-	void log_basic_err (std::string content) ;
-	void log_all_err  (std::string content) ;
+	void log_basic_err (const std::string &content) ;
+	void log_all_err  (const std::string &content) ;
 
 private:
 
-	inline void log_mile(std::string content, LogLevel level);
+	inline void log_mile(const std::string &content, const LogLevel &level);
 
-	inline void log_error(std::string content, LogLevel level);
+	inline void log_error(const std::string& content, const LogLevel &level);
 
 private:
 	LogLevel m_log_level;

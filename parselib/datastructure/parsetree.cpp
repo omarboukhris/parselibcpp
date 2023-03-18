@@ -4,9 +4,7 @@
 
 #include "parsetree.hpp"
 
-namespace parselib {
-
-namespace parsetree {
+namespace parselib::parsetree {
 
 Tree::Tree ()
 	: m_type(NodeType::Branch)
@@ -195,7 +193,7 @@ TokenNode::TokenNode(const std::string &nodetype, const std::string &val) {
 	this->nodetype = nodetype ;
 }
 
-TreePtr TokenNode::unfold(const std::string & parent) {
+TreePtr TokenNode::unfold(const std::string &) {
 
 	Tree::Token token (
 		nodetype,
@@ -235,5 +233,4 @@ TreePtr BinNode::unfold(const std::string &parent) {
 	}
 }
 
-}
 }

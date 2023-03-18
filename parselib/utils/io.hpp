@@ -3,9 +3,7 @@
 #include <parselib/datastructure/common_types.h>
 #include <boost/filesystem.hpp>
 
-namespace parselib {
-
-namespace utils {
+namespace parselib::utils {
 
 /*!
  * \brief transform_to_source transforms tokenized grammar back to
@@ -13,25 +11,25 @@ namespace utils {
  * \param tokenizedgrammar
  * \return std::string containing the source
  */
-std::string transform_to_source (TokenList tokenizedgrammar) ;
+std::string transform_to_source (const TokenList& tokenizedgrammar) ;
 /*!
  * \brief get_text_file_content read text content from filename
  * \param filename
  * \return content of the file
  */
-std::string get_text_file_content (std::string filename) ;
+std::string get_text_file_content (const std::string &filename) ;
 
 /*!
  * \brief clean_if_terminal, cleans up token before processing
  * \param token
  */
 std::string clean_if_terminal (std::string token) ;
-std::string clean_regex (std::string regx) ;
-std::string escape_regex (std::string regx) ;
+std::string clean_regex (const std::string& regx) ;
+std::string escape_regex (const std::string& regx) ;
 
 typedef std::vector<std::string> StrList ; 
-StrList split (std::string target, std::string delim) ;
-std::string join (StrList strlist, std::string delim) ;
+StrList split (std::string target, const std::string& delim) ;
+std::string join (StrList strlist, const std::string& delim) ;
 
 typedef std::vector<std::string> FilesList ;
 
@@ -104,15 +102,13 @@ public :
 		return all_args ;
 	}
 	
-	ArgvLex (ArgList argv) ;
+	ArgvLex (const ArgList& argv) ;
 	
-	std::string get (std::string key) ;
+	std::string get (const std::string& key) ;
 
 private :
 	std::map <std::string, std::string> parsedargv ;
 } ;
-
-} //namespace utils
 
 } //namespace parselib
 

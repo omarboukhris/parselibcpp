@@ -2,9 +2,7 @@
 
 #include <parselib/datastructure/common_types.h>
 
-namespace parselib {
-
-namespace parsetree {
+namespace parselib::parsetree {
 
 // Tree class for composite pattern
 class Tree {
@@ -215,8 +213,6 @@ public :
 	NodePtr left ; ///< left node lhs
 	NodePtr right ; ///< right node lrs
 } ;
-
-} //namespace parsetree
 
 } //namespace parselib
 
