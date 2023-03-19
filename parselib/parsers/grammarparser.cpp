@@ -12,9 +12,7 @@
 #include "grammarparser.hpp"
 
 
-namespace parselib {
-
-namespace parsers {
+namespace parselib::parsers {
 
 
 using namespace std ;
@@ -68,8 +66,6 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool sp
 	}
 	return out_grammar ;
 }
-
-} // parsers namespace 
 
 } // parselib namespace
 

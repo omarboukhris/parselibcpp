@@ -7,19 +7,19 @@ namespace grammaroperators {
 
 PatternsMap GenericGrammarTokenizer::grammartokens = {
 	//PREPROCESSOR
-	{"\\%(import|include) \"(.+)(/([^/]+))?\\.grm\"",	"IMPORT"},
+	{R"(\%(import|include) "(.+)(/([^/]+))?\.grm")",	"IMPORT"},
 
 	//KEYWORDS
 	{"(//|\\;).*",                      "LINECOMMENT"},
-	{"\'\'|\"\"",                       "EMPTY"},
+	{R"(''|"")",                       "EMPTY"},
 	{"AXIOM",                           "AXIOM"},
 
 	// SPECIAL OPERATORS
-	{"(\\_\\_list\\_\\_|\\[\\])",       "LIST"},
+	{R"((\_\_list\_\_|\[\]))",       "LIST"},
 	{"\\!",                             "EXCL"},
 	{"s\\:",                            "STR"},
-	{"\\(\".*\"\\)|\\(\'.*\'\\)",       "REGEX"},
-	{"\".*\"|\'.*\'",                   "AREGEX"}, //a for anonymous
+	{R"(\(".*"\)|\('.*'\))",       "REGEX"},
+	{R"(".*"|'.*')",                   "AREGEX"}, //a for anonymous
 	{"(\\->|\\=)",                      "EQUAL"},
 	{"\\,",                             "COMMA"},
 	{"\\|",                             "OR"},
@@ -27,7 +27,7 @@ PatternsMap GenericGrammarTokenizer::grammartokens = {
 	{"\\)",                             "RPAR"},
 
 	//OPERANDS
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*\\.",    "TERMINAL"},
+	{R"(([a-zA-Z_]\w*=)?[a-zA-Z0-9_]\w*\.)",    "TERMINAL"},
 	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",       "NONTERMINAL"}
 } ;
 
@@ -48,12 +48,12 @@ PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 Grammar eliminatedoubles (Grammar grammar) {
 
 	ProductionRules production_rules = ProductionRules () ;
-	for (auto item : grammar.production_rules) {
+	for (const auto& item : grammar.production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 		
 		Rules uniquerules = Rules() ;
-		for (Rule rule : rules) {
+		for (const Rule& rule : rules) {
 			bool exist = checkunique (uniquerules, rule) ;
 			if (!exist) {
 				uniquerules.push_back(rule);
@@ -74,8 +74,8 @@ Grammar eliminatedoubles (Grammar grammar) {
  * \param rule : rule to check
  * \returns true or false (bool)
  */
-bool checkunique (Rules uniquerules, Rule rule) {
-	for (Rule r : uniquerules) {
+bool checkunique (const Rules& uniquerules, const Rule& rule) {
+	for (const Rule& r : uniquerules) {
 		if (samerule (r, rule)) {
 			return true ;
 		}
@@ -91,8 +91,8 @@ bool checkunique (Rules uniquerules, Rule rule) {
  */
 bool samerule (Rule rulea, Rule ruleb) {
 	if (rulea.size() == ruleb.size()) {
-		Rule::iterator opa = rulea.begin() ;
-		Rule::iterator opb = ruleb.begin() ; 
+		auto opa = rulea.begin() ;
+		auto opb = ruleb.begin() ;
 		
 		while (opa != rulea.end() && opb != ruleb.end()) {
 			if (!(opa->value() == opb->value() &&

@@ -16,29 +16,25 @@ void LR_zero::build_table(){
 	if (production_rules.empty()) {
 		return ;
 	}
-
+    int j = 0;
 	Rule axiom_rule = production_rules["AXIOM"].at(0);
 	Item axiom (axiom_rule);
-	Closure i0 = make_closure(axiom);
+	Closure i0 = make_closure(j++, axiom);
 
-//	std::cout << "-----------------" << std::endl;
-
-	std::vector<Closure> queue;
+	std::vector<Closure> stack;
 
 	m_graph.push_back(i0);
-	queue.push_back(i0);
+	stack.push_back(i0);
 
-	while(not queue.empty()) {
-
-		Closure clos(queue.back());
+	while(not stack.empty()) {
+		Closure clos(stack.back());
 
 		for (Item current_item : clos) {
 
 			while(not current_item.done()) {
-
-//				std::cout << "-----------------" << current_item.getPosition() << ":" << current_item.getRule().size() << std::endl;
-				// add transition here
-				Closure newest_clos = make_closure(current_item);
+                // add transition here
+                current_item.next();
+				Closure newest_clos = make_closure(j++, current_item);
 
 				if (newest_clos.empty()) {
 					break ;
@@ -46,93 +42,82 @@ void LR_zero::build_table(){
 
 				auto it = std::find(m_graph.begin(), m_graph.end(), newest_clos);
 				if (it == m_graph.end()) {
-					// std::cout << "nexist" << std::endl ;
 					// add the new item to closures
 					newest_clos.add_transition(clos.label());
 					m_graph.push_back(newest_clos);
 
-					// add newest_clos to processing queue
-					queue.push_back(newest_clos);
+					// add newest_clos to processing stack
+					stack.push_back(newest_clos);
 
 				} else {
-					// std::cout << "exis" << std::endl ;
 					it->add_transition(clos.label());
 					// make transition from clos to existing node (*it)
 					// <clos.label, current_item.read()>
 				}
 			}
+
+            // once rule is fully read, make final state, add transitions
+            Closure final_state = Closure::last_state(j++, current_item);
+            auto it = std::find(m_graph.begin(), m_graph.end(), final_state);
+            if (it == m_graph.end()) {
+                // add the new item to closures
+                final_state.add_transition(clos.label());
+                m_graph.push_back(final_state);
+            } else {
+                it->add_transition(clos.label());
+            }
 		}
-
-		queue.pop_back();
-
+		stack.pop_back();
 	}
 }
 
-Closure LR_zero::make_closure(Item &current_item){
+Closure LR_zero::make_closure(int id, Item &current_item) {
 
-	Closure output;
+	Closure output(id);
 
 	// this is where the magic happens
-	Token token = current_item.readNext();
+	Token token = current_item.read();
 	if (token.key().empty()) {
 		return output;
 	}
 
 	output.add_item(current_item);
 
-	// std::cout << token.key() << token.value() << "$$" << current_item.done() << std::endl ;
+    // second is term/non-term
+    std::string rulename = token.value();
 
-	if (not current_item.done()) {
+    // queue & processed list to avoid endless looping
+    std::vector<std::string> q, processed;
 
-		// second is term/non-term
-		std::string rulename = token.value();
-		// std::cout << "rulename :" << rulename << std::endl ;
+    if (token.type() != "TERMINAL") {
+        // process it only if non terminal
+        q.push_back(rulename);
+    }
 
-		// queue & processed list to avoid endless looping
-		std::vector<std::string> q;
-		std::vector<std::string> processed;
+    while (not q.empty()) {
+        // get token name to process
+        rulename = q.back();
+        q.pop_back();
 
-		if (token.type() != "TERMINAL") {
-			// process it only if non terminal
-			q.push_back(rulename);
-		}
+        // if rule unprocessed
+        auto itRule = std::find(processed.begin(), processed.end(), rulename) ;
+        if (itRule == processed.end()) {
+            // put rule tokens in queue for processing
+            for (const Rule& rule: production_rules[rulename]) {
+                Item new_item (rule);
+                output.add_item(new_item);
 
-		while (not q.empty()) {
-
-			// get token name to process
-			rulename = q.back();
-			// std::cout << "q:" << q.size() << ":" << rulename << ":" << std::endl ;
-			q.pop_back();
-
-			// if rule unprocessed
-			auto itRule = std::find(processed.begin(), processed.end(), rulename) ;
-			if (itRule == processed.end()) {
-
-				processed.push_back(rulename);
-
-				// std::cout << rulename << ":" << production_rules[rulename].size() << std::endl ;
-
-				// put rule tokens in queue for processing
-				for (const Rule& rule: production_rules[rulename]) {
-
-					Item new_item (rule);
-					output.add_item(new_item);
-
-					for (Token tok: rule) {
-						// std::cout << "\t" << tok.value() << std::endl ;
-						auto it = std::find(processed.begin(), processed.end(), tok.value());
-						if (it == processed.end() and tok.type() != "TERMINAL" and tok.type() != "EMPTY")
-						{
-							// std::cout << tok.value() << ":" << tok.key() << std::endl ;
-							q.push_back(tok.value());
-						}
-					}
-				}
-			}
-
-		}
-
-	}
+                for (Token tok: rule) {
+                    auto it = std::find(processed.begin(), processed.end(), tok.value());
+                    if (it == processed.end() and tok.type() != "TERMINAL" and tok.type() != "EMPTY")
+                    {
+                        q.push_back(tok.value());
+                    }
+                }
+            }
+            processed.push_back(rulename);
+        }
+    }
 
 	return output;
 }

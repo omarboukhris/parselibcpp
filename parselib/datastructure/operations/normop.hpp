@@ -26,7 +26,7 @@ Grammar removenullables (Grammar grammar) ;
  * \param[in] grammar  Input grammar
  * \return nullables rule labels in a vector
  */
-StrList getnullables (Grammar grammar) ;
+StrList getnullables (const Grammar& grammar) ;
 
 /*!
  * \brief getunitrelation from grammar
@@ -49,7 +49,7 @@ public :
 	 * \brief TERM class constructor
 	 * \param production_rules input grammar's production rules
 	 */
-	TERM (ProductionRules production_rules) ;
+	TERM (const ProductionRules &production_rules) ;
 
 	/*!
 	 * \brief apply operator
@@ -66,7 +66,7 @@ private :
 	 * \param key   rule label
 	 * \param rule  rule as a list of tokens
 	 */
-	void checkruleforterminals (std::string key, Rule rule) ;
+	void checkruleforterminals (const std::string& key, const Rule& rule) ;
 } ;
 
 /*!
@@ -83,7 +83,7 @@ public :
 	 * \brief BIN class construction
 	 * \param production_rules  input grammar's production rule
 	 */
-	BIN (ProductionRules production_rules) ;
+	BIN (const ProductionRules &production_rules) ;
 
 	/*!
 	 * \brief apply operator
@@ -97,7 +97,7 @@ private :
 	void binarize () ;
 	bool binonce () ;
 
-	void binarizerule (std::string key, Rule rule) ;
+	void binarizerule (const std::string& key, Rule rule) ;
 } ;
 
 

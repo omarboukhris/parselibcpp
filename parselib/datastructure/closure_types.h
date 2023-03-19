@@ -34,6 +34,17 @@ public:
 		return m_position;
 	}
 
+    Token read() {
+        if (m_position < m_rule.size()){
+            return m_rule.at(m_position);
+        }
+        return Token();
+    }
+
+    void next() {
+        ++m_position;
+    }
+
 	Token readNext() {
 		if (m_position < m_rule.size()){
 			return m_rule.at(m_position++);
@@ -102,23 +113,25 @@ public:
 			return false;
 		}
 
-		const Rule &r1 = it1.m_rule, &r2 = it2.m_rule;
-		if (r1.size() != r2.size()) {
-			return false;
-		}
-
-		for (size_t i = 0; i < r1.size() ; i++) {
-			if (r1.at(i) != r2.at(i)){
-				return false;
-			}
-		}
-
-		return true ;
+        return it1.m_rule == it2.m_rule;
 	}
 
 	friend bool operator!=(const Item &it1, const Item &it2) {
 		return not (it1 == it2);
 	}
+
+    friend std::ostream& operator<<(std::ostream &out, const Item &item) {
+        out << item.m_position << " ";
+        for (size_t i = 0 ; i < item.m_rule.size(); ++i) {
+            if (i == item.m_position) {
+                out << "*";
+            }
+            out << item.m_rule.at(i) ;
+        }
+        if (item.m_rule.size() == item.m_position)
+            out << "*";
+        return out;
+    }
 
 protected:
 	Rule m_rule;
@@ -136,8 +149,20 @@ public:
 	Closure()
 		: m_items()
 		, m_transitions()
-		, m_label("")
+		, m_label()
 	{}
+
+    explicit Closure(const std::string &label)
+        : m_items()
+        , m_transitions()
+        , m_label(label)
+    {}
+
+    explicit Closure(int id)
+        : m_items()
+        , m_transitions()
+        , m_label(std::to_string(id))
+    {}
 
 	Closure(const Closure &cl) {
 		m_items = cl.m_items;
@@ -157,6 +182,12 @@ public:
 		, m_label(lab)
 	{}
 
+    static Closure last_state(int id, Item &it) {
+        Closure out(id);
+        out.add_item(it);
+        return out;
+    }
+
 	void write_to (std::fstream &t_fstream) {
 
 		try {
@@ -169,7 +200,7 @@ public:
 
 			size_t transitionSize = m_transitions.size();
 			t_fstream.write(reinterpret_cast<char*>(&transitionSize), sizeof(transitionSize));
-			for (std::string transition: m_transitions) {
+			for (const std::string& transition: m_transitions) {
 				t_fstream.write(reinterpret_cast<char*>(transition.size()), sizeof(transition.size()));
 				t_fstream.write(transition.c_str(), transition.size());
 			}
@@ -221,24 +252,26 @@ public:
 	friend bool operator==(const Closure &c1, const Closure &c2) {
 		// compare items size
 		const Items &it1 = c1.m_items, &it2 = c2.m_items;
-		if (it1.size() != it2.size()) {
-			return false;
-		}
-
-		for (size_t i = 0 ; i < it1.size() ; i++) {
-			if (it1.at(i) != it2.at(i)) {
-				return false;
-			}
-		}
-
-		return true;
+        return it1 == it2;
 	}
+
+    friend std::ostream & operator<< (std::ostream &out, const Closure &c) {
+        out << "name : " << c.m_label << std::endl;
+        for (const Item &it: c.m_items) {
+            out << "\t" << it << std::endl;
+        }
+        out << "\ttransitions from : ";
+        for (const std::string &ss: c.m_transitions) {
+            out << ss << " ";
+        }
+        return out;
+    }
 
 	void add_item(Item &i) {
 		m_items.push_back(i);
 	}
 
-	void add_transition(std::string t_state) {
+	void add_transition(const std::string& t_state) {
 		m_transitions.emplace(t_state);
 	}
 

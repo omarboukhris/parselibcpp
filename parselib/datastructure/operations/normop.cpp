@@ -22,7 +22,7 @@ Grammar get2nf(Grammar grammar) {
 	return grammar ;
 }
 
-TERM::TERM (ProductionRules production_rules) {
+TERM::TERM (const ProductionRules &production_rules) {
 	this-> production_rules = production_rules ;
 	this->normalForm = ProductionRules () ;
 }
@@ -33,20 +33,20 @@ void TERM::apply() {
 
 void TERM::term() {
 	
-	for (auto item : production_rules) {
+	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 		if (production_rules.find(key) == production_rules.end()) {
 			normalForm[key] = Rules() ;
 		}
-		for (Rule rule : rules) {
+		for (const Rule& rule : rules) {
 			checkruleforterminals(key, rule);
 		}
 	}
 	production_rules = normalForm ;
 }
 
-void TERM::checkruleforterminals(std::string key, Rule rule) {
+void TERM::checkruleforterminals(const std::string& key, const Rule& rule) {
 	Rule newRule = Rule() ;
 	for (Token operand : rule) {
 		if (operand.type() == "TERMINAL") {
@@ -54,7 +54,7 @@ void TERM::checkruleforterminals(std::string key, Rule rule) {
 			if (normalForm.find(newKey) == normalForm.end()) {
 				normalForm[newKey] = Rules() ;
 			}
-			newRule.push_back(Token(newKey, "NONTERMINAL"));
+			newRule.emplace_back(newKey, "NONTERMINAL");
 			normalForm[newKey].push_back({operand});
 		} else {
 			newRule.push_back(operand);
@@ -63,7 +63,7 @@ void TERM::checkruleforterminals(std::string key, Rule rule) {
 	normalForm[key].push_back(newRule);
 }
 
-BIN::BIN(ProductionRules production_rules) {
+BIN::BIN(const ProductionRules &production_rules) {
 	this-> production_rules = production_rules ;
 	this->normalForm = ProductionRules () ;
 }
@@ -79,14 +79,14 @@ void BIN::binarize() {
 bool BIN::binonce() {
 	normalForm = ProductionRules() ;
 	bool changed = false ;
-	for (auto item : production_rules) {
+	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 		
 		if (normalForm.find(key) == normalForm.end()) {
 			normalForm[key] = Rules() ;
 		}
-		for (Rule rule : rules) {
+		for (const Rule& rule : rules) {
 			BIN::binarizerule(key, rule) ;
 			if (rule.size() > 2) {
 				changed = true ;
@@ -97,7 +97,7 @@ bool BIN::binonce() {
 	return changed ;
 }
 
-void BIN::binarizerule(std::string key, Rule rule) {
+void BIN::binarizerule(const std::string& key, Rule rule) {
 	if (rule.size() <= 2) {
 		normalForm[key].push_back(rule);
 	} else {
@@ -125,7 +125,7 @@ void BIN::binarizerule(std::string key, Rule rule) {
 
 Grammar removenullables (Grammar grammar) {
 	ProductionRules production_rules = ProductionRules() ;
-	for (auto item : grammar.production_rules) {
+	for (const auto& item : grammar.production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 		production_rules[key] = Rules() ;
@@ -146,12 +146,12 @@ Grammar removenullables (Grammar grammar) {
  * \param grammar : grammar input
  * \return list of unique nullables
  */
-StrList getnullables (Grammar grammar) {
+StrList getnullables (const Grammar& grammar) {
 	ProductionRules production_rules = grammar.production_rules ;
 	
 	StrList nullables = StrList() ;
 	size_t lenG = 0 ;
-	for (auto item : production_rules) {
+	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 		for (Rule rule : rules) {
@@ -165,7 +165,7 @@ StrList getnullables (Grammar grammar) {
 	}
 
 	for (size_t i = 0 ; i < lenG ; i++) {
-		for (auto item : production_rules) {
+		for (const auto& item : production_rules) {
 			std::string key = item.first ;
 			Rules rules = item.second ;
 			
@@ -185,7 +185,7 @@ StrList getnullables (Grammar grammar) {
 	
 	//remove duplicates
 	StrList nulls = StrList() ;
-	for (std::string str : nullables) {
+	for (const std::string& str : nullables) {
 		if (std::find (nulls.begin(), nulls.end(), str) == nulls.end()) {
 			nulls.push_back(str);
 		}
@@ -209,7 +209,7 @@ Grammar getunitrelation (Grammar grammar) {
 
 	StrList unitkeylist = StrList() ;
 	//first pass
-	for (auto item : production_rules) {
+	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 
@@ -233,7 +233,7 @@ Grammar getunitrelation (Grammar grammar) {
 	}
 
 	//second pass
-	for (auto item : production_rules) {
+	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 
@@ -263,11 +263,11 @@ Grammar getunitrelation (Grammar grammar) {
 	}
 
 	Grammar::UnitRelation outunit = Grammar::UnitRelation () ;
-	for (auto item : unitrelation) {
+	for (const auto& item : unitrelation) {
 		std::string key = item.first ;
 		StrList unitrel = item.second ;
 		outunit[key] = StrList () ;
-		for (std::string unit : unitrel) {
+		for (const std::string& unit : unitrel) {
 			if (std::find(outunit[key].begin(), outunit[key].end(), unit) == outunit[key].end()) {
 				//key doesn't exist
 				outunit[key].push_back(unit);

@@ -8,9 +8,9 @@ using namespace std ;
 namespace parselib::parsers {
 
 SequentialParser::SequentialParser (
-        const TokenList &grammar,
-        const TokenList &parsedtokens)
-: op_count(0), tok_count(0), current_rule(std::string("")) {
+    const TokenList &grammar,
+    const TokenList &parsedtokens)
+: op_count(0), tok_count(0) {
 
 	axiomflag = true ;
 
@@ -50,10 +50,9 @@ void SequentialParser::check_axiom () {
 	
 	// grammar(i).first = value,
 	//			 .second = type
-	if (grammar[i].type() == "AXIOM" && axiomflag ) {
+	if (grammar[i].type() == "AXIOM" && axiomflag) {
 		Token axiom = parsedtokens[j+2] ;
 		production_rules["AXIOM"] = {{axiom}} ;
-// 		cout << production_rules["AXIOM"][0][0].first << endl ;
 		axiomflag = false ;
 		i += 1 ;
 		j += 3 ;
@@ -144,12 +143,12 @@ void SequentialParser::check_right_side() {
 		return ;
 	}
 
-	while (i < grammar.size() &&
-		grammar[i].type() == "RSIDE") {
+	while (i < grammar.size() && grammar[i].type() == "RSIDE") {
 
 		if (parsedtokens[j].type() == "TERMINAL") {
 			parsedtokens[j].value() = utils::clean_if_terminal(parsedtokens[j].value()) ;
 		}
+
 		if (parsedtokens[j].type() == std::string("STR")) {
 			add_to_str_rules(j) ;
 			add_to_keeper(j) ;
@@ -169,7 +168,7 @@ void SequentialParser::check_right_side() {
 		} else {
 			if (parsedtokens[j].value().find('=') != std::string::npos) {
 				//naming process
-				utils::StrList out = utils::split(parsedtokens[j].value(), std::string("=")) ;
+				utils::StrList out = utils::split(parsedtokens[j].value(), "=") ;
 				std::string label, operand ;
 				
 				if (out.size() == 2) {
@@ -219,7 +218,7 @@ void SequentialParser::make_list(){
 	production_rules[current_rule].push_back({eps}) ;
 }
 
-void SequentialParser::make_regex(int j) {
+void SequentialParser::make_regex(size_t j) {
 	std::string regex = 
 	//utils::escapeRegex( //escapeRegex gives weird results
 	parsedtokens[j].value().substr(
@@ -228,9 +227,7 @@ void SequentialParser::make_regex(int j) {
 	) ; //eliminate the ["..."]
 	// 	) ;
 	
-	std::string label = 
-		std::string("__") + current_rule +
-		std::string("[") + regex + std::string("]__") ;
+	std::string label = "__" + current_rule + "[" + regex + "]__" ;
 
 	tokens.emplace_back(regex, label) ;
 
@@ -248,10 +245,10 @@ ProductionRules SequentialParser::add_operand_to_current_rule(const Token& tok) 
 	return production_rules ;
 }
 
-void SequentialParser::add_to_keeper(int j) {
+void SequentialParser::add_to_keeper(size_t j) {
 	string entry = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
 	if (keeper.find(current_rule) != keeper.end()) {
-		if (std::find (keeper[current_rule].begin(), keeper[current_rule].end(), entry) == keeper[current_rule].end()) {
+		if (std::find(keeper[current_rule].begin(), keeper[current_rule].end(), entry) == keeper[current_rule].end()) {
 			keeper[current_rule].push_back(entry);
 		}
 	} else {
@@ -260,7 +257,7 @@ void SequentialParser::add_to_keeper(int j) {
 	}
 }
 
-void SequentialParser::add_to_str_rules(int j) {
+void SequentialParser::add_to_str_rules(size_t j) {
 	std::string nodename = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
 	// add to strnodes
 	if (std::find(strnodes.begin(), strnodes.end(), nodename) == strnodes.end()) {

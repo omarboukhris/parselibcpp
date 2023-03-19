@@ -114,6 +114,11 @@ namespace parselib {
 			return not (t1 == t2);
 		}
 
+        friend std::ostream & operator<<(std::ostream &out, const Token &tok) {
+            out << "(" << tok.m_token.first << ":" << tok.m_token.second << ")";
+            return out;
+        }
+
 	protected:
 
 		// 1st:Value  | 2nd:Key(type)

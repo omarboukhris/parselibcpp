@@ -36,7 +36,7 @@ Grammar eliminatedoubles (Grammar grammar) ;
  * \param rule : rule to check
  * \returns true or false (bool)
  */
-bool checkunique (Rules uniquerules, Rule rule) ;
+bool checkunique (const Rules& uniquerules, const Rule& rule) ;
 
 /*!
  * \brief check is rule a & b are the same

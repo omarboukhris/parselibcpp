@@ -10,12 +10,13 @@
 namespace parselib::parsers {
 
 class LR_zero : public AbstractParser {
-public :	
+public :
+    std::vector<Closure> m_graph;
 
 	LR_zero () = default;
 	explicit LR_zero (const Grammar& grammar) ;
 
-	~LR_zero () override {}
+	~LR_zero () override = default;
 
 	Frame membership (const TokenList /*word*/&) override {
 		return {};
@@ -25,13 +26,12 @@ protected:
 
 	void build_table() ;
 
-	Closure make_closure(Item &current_item) ;
+	Closure make_closure(int id, Item &current_item);
 
 	void shift_reduce();
 
 protected:
 
-	std::vector<Closure> m_graph;
 
 };
 

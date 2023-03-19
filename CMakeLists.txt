@@ -31,6 +31,7 @@ file(GLOB SOURCE_FILES
 
 file(GLOB HEADER_FILES
 	parselib/datastructure/*.hpp
+	parselib/datastructure/*.h
 	parselib/datastructure/operations/*.hpp
 	parselib/operations/*.hpp
 	parselib/utils/*.hpp
@@ -61,7 +62,7 @@ if(Boost_FOUND)
 
 	add_library(${PROJECT_NAME} SHARED
 		${SOURCE_FILES}
-		${HEADER_FILES} )
+		${HEADER_FILES} parselib/datastructure/closure_types.h)
 	target_link_libraries(
 		${PROJECT_NAME}
 		${Boost_LIBRARIES}
