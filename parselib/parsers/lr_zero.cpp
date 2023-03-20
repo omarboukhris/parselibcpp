@@ -32,7 +32,6 @@ void LR_zero::build_table(){
 		for (Item current_item : clos) {
 
 			while(not current_item.done()) {
-                // add transition here
                 current_item.next();
 				Closure newest_clos = make_closure(j++, current_item);
 
@@ -42,17 +41,11 @@ void LR_zero::build_table(){
 
 				auto it = std::find(m_graph.begin(), m_graph.end(), newest_clos);
 				if (it == m_graph.end()) {
-					// add the new item to closures
-					newest_clos.add_transition(clos.label());
 					m_graph.push_back(newest_clos);
 
 					// add newest_clos to processing stack
 					stack.push_back(newest_clos);
 
-				} else {
-					it->add_transition(clos.label());
-					// make transition from clos to existing node (*it)
-					// <clos.label, current_item.read()>
 				}
 			}
 
@@ -61,14 +54,30 @@ void LR_zero::build_table(){
             auto it = std::find(m_graph.begin(), m_graph.end(), final_state);
             if (it == m_graph.end()) {
                 // add the new item to closures
-                final_state.add_transition(clos.label());
                 m_graph.push_back(final_state);
-            } else {
-                it->add_transition(clos.label());
             }
 		}
 		stack.pop_back();
 	}
+
+    // add the new item to closures
+    // transitions should be computed by batch after
+    // check token at position in items for all closures
+    // increment position and look for item in closures
+    // if found => add transition (outer_closure, reads token, inner_closure)
+    // else => throw ? we probably should find transitions everytime
+
+    for (Closure &c: m_graph) {
+        for (Item i: c) {
+            Token tok = i.readNext();
+            for (const Closure& other_c: m_graph) {
+                auto it = std::find(other_c.cbegin(), other_c.cend(), i);
+                if (it != other_c.cend() and not tok.value().empty()) {
+                    c.add_transition(tok.value(), other_c.label());
+                }
+            }
+        }
+    }
 }
 
 Closure LR_zero::make_closure(int id, Item &current_item) {

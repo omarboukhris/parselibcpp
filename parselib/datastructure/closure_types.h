@@ -141,7 +141,8 @@ protected:
 class Closure {
 public:
 	typedef std::vector<Item> Items;
-	typedef std::set<std::string> Transitions ;
+    // struct instead of pair
+	typedef std::set<std::pair<std::string, std::string>> Transitions ;
 
 	typedef typename Items::iterator iterator;
 	typedef typename Items::const_iterator const_iterator;
@@ -200,9 +201,12 @@ public:
 
 			size_t transitionSize = m_transitions.size();
 			t_fstream.write(reinterpret_cast<char*>(&transitionSize), sizeof(transitionSize));
-			for (const std::string& transition: m_transitions) {
-				t_fstream.write(reinterpret_cast<char*>(transition.size()), sizeof(transition.size()));
-				t_fstream.write(transition.c_str(), transition.size());
+			for (const auto& transition: m_transitions) {
+                std::string trans_token = transition.first, state = transition.second;
+                t_fstream.write(reinterpret_cast<char*>(trans_token.size()), sizeof(trans_token.size()));
+                t_fstream.write(trans_token.c_str(), trans_token.size());
+                t_fstream.write(reinterpret_cast<char*>(state.size()), sizeof(state.size()));
+                t_fstream.write(state.c_str(), state.size());
 			}
 
 		} catch (std::exception &e) {
@@ -228,13 +232,19 @@ public:
 			t_fstream.read(reinterpret_cast<char*>(&transitionSize), sizeof(transitionSize));
 			m_transitions.clear();
 			for (size_t i = 0 ; i < transitionSize; ++i) {
-				size_t transSize;
-				t_fstream.read(reinterpret_cast<char*>(&transSize), sizeof(transSize));
+                long trans_token_size;
+                t_fstream.read(reinterpret_cast<char*>(&trans_token_size), sizeof(trans_token_size));
+                char *trans_token_txt = new char[trans_token_size];
+                t_fstream.write(trans_token_txt, trans_token_size);
 
-				char *transtxt = new char[transSize];
-				t_fstream.write(transtxt, transSize);
-				m_transitions.emplace(transtxt);
-				delete[] transtxt;
+                long transSize;
+                t_fstream.read(reinterpret_cast<char*>(&transSize), sizeof(transSize));
+                char *transition_state = new char[transSize];
+                t_fstream.write(transition_state, transSize);
+
+                m_transitions.emplace(std::make_pair(trans_token_txt, transition_state));
+				delete[] transition_state;
+                delete[] trans_token_txt;
 			}
 
 		} catch (std::exception &e) {
@@ -260,10 +270,14 @@ public:
         for (const Item &it: c.m_items) {
             out << "\t" << it << std::endl;
         }
-        out << "\ttransitions from : ";
-        for (const std::string &ss: c.m_transitions) {
-            out << ss << " ";
+        if (c.m_transitions.empty())
+            return out;
+
+        out << "\ttransitions : ";
+        for (const auto &t_pair: c.m_transitions) {
+            out << "(" << t_pair.first << " -> " << t_pair.second << ")" << " ";
         }
+        out << std::endl;
         return out;
     }
 
@@ -271,11 +285,11 @@ public:
 		m_items.push_back(i);
 	}
 
-	void add_transition(const std::string& t_state) {
-		m_transitions.emplace(t_state);
+	void add_transition(const std::string& t_token, const std::string& t_state) {
+		m_transitions.emplace(std::make_pair(t_token, t_state));
 	}
 
-	std::string label() {
+	std::string label() const {
 		return m_label;
 	}
 
