@@ -37,6 +37,8 @@ namespace parselib::parsers {
                         return "reduce";
                     case Action::goTo:
                         return "goto";
+                    case Action::accepted:
+                        return "accepted";
                     default:
                         return "None";
                 }

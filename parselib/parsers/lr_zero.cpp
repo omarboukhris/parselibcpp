@@ -23,15 +23,15 @@ void LR_zero::build_table() {
             for (Token &tok: tokens) {
                 m_action[item_name][tok.type()] = c;
             }
+            m_action[item_name]["$"] = c;
         }
         else {
-            // add  $
-            // for epsilone, eliminate empty token w/ normalization
             for (Token &tok: tokens) {
                 m_action[item_name][tok.type()] = Cell::shift(TableBuilder::get_shift(tok.type(), item));
             }
         }
-        m_action[item_name]["$"] = Cell {Action::accepted, ""};
+        if (item_name == "1")
+            m_action[item_name]["$"] = Cell {Action::accepted, ""};
     }
 
     // make goto table
@@ -165,7 +165,26 @@ Closure LR_zero::make_closure(int id, Item &current_item) {
 }
 
 void LR_zero::shift_reduce() {
+
     //this is it
+    /*
+     * Start at state 0
+     * read from message (input) like an iterator (add $)
+     * init read stack with ("^", 0)
+     * look in action table for next state from it value
+     * if state is shift
+     *      stack token read with current state
+     *      increment message iterator (only when shifting)
+     * elif state is reduce
+     *      create node
+     *      get rule from index:flatprod in table builder
+     *      generate tree node pop as much from the stack as needed
+     *      after reduction, check goto table for next state
+     *      stack node in processed stack (r_state: popped tree nodes)
+     * else
+     *      throw exception with cool error tracing
+     * loop
+     */
 }
 
 }
