@@ -81,9 +81,7 @@ int main(int argc, char** argv){
 //	grammar = parselib::normoperators::get2nf(grammar) ;
 
 	parselib::parsers::LR_zero lr0(grammar);
-    for (const auto &c: lr0.m_graph) {
-        std::cout << c << std::endl;
-    }
+    std::cout << lr0 << std::endl;
 
 	return 0 ;
 }

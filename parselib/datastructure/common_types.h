@@ -58,7 +58,7 @@ namespace parselib {
 		 * \brief write_to writes token to binary file (serialization)
 		 * \param t_fstream open file stream
 		 */
-		void write_to (std::fstream &t_fstream) {
+		void write_to (std::fstream &t_fstream) const {
 
 			try {
 
@@ -107,12 +107,17 @@ namespace parselib {
 		// operators
 		//
 
-		friend bool operator == (const Token &t1, const Token t2) {
+		friend bool operator == (const Token &t1, const Token& t2) {
 			return t1.m_token == t2.m_token;
 		}
-		friend bool operator != (const Token &t1, const Token t2) {
+		friend bool operator != (const Token &t1, const Token& t2) {
 			return not (t1 == t2);
 		}
+
+        friend bool operator < (const Token &t1, const Token& t2) {
+            return t1.m_token.first < t2.m_token.first;
+        }
+
 
         friend std::ostream & operator<<(std::ostream &out, const Token &tok) {
             out << "(" << tok.m_token.first << ":" << tok.m_token.second << ")";
@@ -123,7 +128,13 @@ namespace parselib {
 
 		// 1st:Value  | 2nd:Key(type)
 		std::pair<std::string, std::string> m_token ;
-	};
+
+    public:
+        static inline std::string NonTerminal = "NONTERMINAL";
+        static inline std::string Terminal = "TERMINAL";
+        static inline std::string Axiom = "AXIOM";
+        static inline std::string Empty = "EMPTY";
+    };
 
 	typedef std::vector<Token> TokenList ;
 
@@ -131,7 +142,7 @@ namespace parselib {
 	typedef std::vector<Pattern> PatternsMap ;
 
 	typedef std::map<size_t, Token> MatchesMap ;
-    
+
 	typedef TokenList Rule ;
 	typedef std::vector<Rule> Rules ;
 	typedef std::map <std::string, Rules> ProductionRules ;
