@@ -46,7 +46,7 @@ public :
 	 * \param tokenizedgrammar : TokenList : list of tokens represented by the lexed grammar
 	 * \param grammartokens : TokenList : list of tokens representing the lexed grammar
 	 */
-	void makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) ;
+	void makegrammar (const TokenList& tokenizedgrammar, const TokenList& grammartokens) ;
 
 public:
 

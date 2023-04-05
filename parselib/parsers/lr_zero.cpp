@@ -20,16 +20,18 @@ void LR_zero::build_table() {
         if (item.is_reduce_action()) {
             Cell c = Cell::reduce(tableBuilder.get_reduction(item));
 
-            // add empty(epsilon) and $
             for (Token &tok: tokens) {
                 m_action[item_name][tok.type()] = c;
             }
         }
         else {
+            // add  $
+            // for epsilone, eliminate empty token w/ normalization
             for (Token &tok: tokens) {
                 m_action[item_name][tok.type()] = Cell::shift(TableBuilder::get_shift(tok.type(), item));
             }
         }
+        m_action[item_name]["$"] = Cell {Action::accepted, ""};
     }
 
     // make goto table
@@ -163,7 +165,7 @@ Closure LR_zero::make_closure(int id, Item &current_item) {
 }
 
 void LR_zero::shift_reduce() {
-
+    //this is it
 }
 
 }

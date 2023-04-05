@@ -23,6 +23,7 @@ namespace parselib::parsers {
             shift,
             reduce,
             goTo,
+            accepted,
         };
         struct Cell {
             Action action;

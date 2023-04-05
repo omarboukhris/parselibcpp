@@ -92,7 +92,7 @@ void Grammar::merge (const Grammar &grammar) {
  * \param tokenizedgrammar : TokenList : list of tokens represented by the lexed grammar
  * \param grammartokens : TokenList : list of tokens representing the lexed grammar
  */
-void Grammar::makegrammar (TokenList tokenizedgrammar, TokenList grammartokens) {
+void Grammar::makegrammar (const TokenList& tokenizedgrammar, const TokenList& grammartokens) {
 	//ngp for naive grammar parser
 	parsers::SequentialParser ngp = parsers::SequentialParser (tokenizedgrammar, grammartokens) ;
 
@@ -188,13 +188,13 @@ void Grammar::exportToFile(const string &filename) {
 
 /// \brief Screaming results for debug resons or verbose
 string Grammar::getstr () {
-	string text_rule;
+	stringstream text_rule;
 
 	for (const auto &item : production_rules) {
 		string key = item.first ;
 		Rules rules = item.second ;
 
-		text_rule += "\nRULE " + key + " = [\n\t" ;
+		text_rule << "\nRULE " << key << " = [\n\t" ;
 
 		StrList rule_in_a_line = StrList () ;
 
@@ -206,52 +206,51 @@ string Grammar::getstr () {
 			string thisrule = utils::join(ruletxt, " ") ;
 			rule_in_a_line.push_back(thisrule);
 		}
-		text_rule += utils::join(rule_in_a_line, "\n\t") + "]" ;
+		text_rule << utils::join(rule_in_a_line, "\n\t") << "\n]" ;
 	}
 
-	text_rule += "\n\n" ;
-
-	text_rule += "LABELS = [\n" ;
+	text_rule << "\n\n"
+         <<"LABELS = [\n" ;
 	for (const auto &item : labels) {
 		string key = item.first ;
 		LabelReplacement labmap = item.second ;
-		text_rule += key + " {\n" ;
+		text_rule << key << " {\n" ;
 		for (const auto &lab : labmap) {
-			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
+			text_rule << "\t" << lab.first << " : " << lab.second << "\n" ;
 		}
-		text_rule += "}\n" ;
+		text_rule << "}\n" ;
 	}
-	text_rule += "]\n" ;
+	text_rule << "]\n" ;
 
-	text_rule += "STRUCT = [\n" ;
+	text_rule << "STRUCT = [\n" ;
 	for (const auto &item : keeper) {
 		string key = item.first ;
 		StrList listkeep = item.second ;
-		text_rule += "" + key + " {\n\t" ;
-		text_rule += utils::join(listkeep, "\n\t") ;
-		text_rule += "}\n" ;
+		text_rule << "" << key << " {\n\t"
+            << utils::join(listkeep, "\n\t")
+            << "\n}\n" ;
 	}
-	text_rule += "\n]\n\n" ;
+	text_rule << "]\n\n" ;
 
-	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
+	text_rule << "STRNODE = [\n" << utils::join(strnodes, "") << "\n]\n\n" ;
 
 	for (Token tok : tokens) {
 		string label = tok.type() ;
 		string regx = tok.value() ;
-		text_rule += "TOKEN " + label + " = regex('" + regx + "')\n" ;
+        text_rule << "TOKEN " << label << " = regex('" << regx << "')\n" ;
 	}
 
-	text_rule += "UNIT = [\n" ;
+	text_rule << "\nUNIT = [\n" ;
 	for (const auto &item : unitrelation) {
 		string key = item.first ;
 		StrList listkeep = item.second ;
-		text_rule += "" + key + " {\n\t" ;
-		text_rule += utils::join(listkeep, "\n\t") ;
-		text_rule += "}\n" ;
+		text_rule << "" << key << " {\n\t"
+            << utils::join(listkeep, "\n\t")
+            << "\n}\n" ;
 	}
-	text_rule += "\n]\n\n" ;
+	text_rule << "]\n\n" ;
 
-	return text_rule ;
+	return text_rule.str() ;
 }
 
 

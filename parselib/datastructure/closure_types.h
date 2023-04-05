@@ -314,13 +314,13 @@ namespace parselib {
 
     class TableBuilder {
     private:
-        std::vector<Rule> flat_prod;
+        std::vector<std::pair<std::string, Rule>> flat_prod;
 
     public:
         explicit TableBuilder(const ProductionRules &productionRules) : flat_prod() {
             for (const auto &rules: productionRules) {
                 for (const Rule &rule: rules.second) {
-                    flat_prod.push_back(rule);
+                    flat_prod.emplace_back(rules.first, rule);
                 }
             }
         }
@@ -328,7 +328,7 @@ namespace parselib {
         [[nodiscard]] long get_reduction (const Closure &c) const {
             auto find_pred = [&](const auto &a) {
                 return std::find_if(c.cbegin(), c.cend(), [&](const Item &b) {
-                    return b == a;
+                    return b == a.second; // first is label, second is Rule
                 }) != c.cend();
             };
             auto res = std::find_if(flat_prod.begin(), flat_prod.end(), find_pred);
@@ -358,8 +358,6 @@ namespace parselib {
             }
             return {}; // empty cell
         }
-
-
     };
 
 }

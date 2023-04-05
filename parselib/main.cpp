@@ -37,7 +37,7 @@ int main(int argc, char** argv){
 
 	// change LogNone to LogBasic if needed
 	pl::ParseSession parsesession (LogLevel::LogNone) ;
-    /*
+    //*
 	if (argvlex.get("--gsrc") != "False") {
 	//parse argument
 		std::string grammarfilename = argvlex.get("--gsrc") ;
@@ -77,11 +77,11 @@ int main(int argc, char** argv){
 	LoggerPtr parseLog (new Logger(LogLevel::LogAll));
 	parselib::parsers::GenericGrammarParser ggp (preproc, parseLog) ;
 	parselib::Grammar grammar = ggp.parse (
-		"/home/omar/projects/parselibcpp/datarc/test/gram.grm", verbose, /*splits*/ true) ;
-//	grammar = parselib::normoperators::get2nf(grammar) ;
+		"/home/omar/projects/parselibcpp/datarc/test_2/gram.grm", verbose, true) ;
+	grammar = parselib::normoperators::get2nf(grammar) ;
 
 	parselib::parsers::LR_zero lr0(grammar);
-    std::cout << lr0 << std::endl;
+    std::cout << lr0 << std::endl << grammar;
 
 	return 0 ;
 }

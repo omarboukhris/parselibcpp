@@ -123,7 +123,7 @@ void BIN::binarizerule(const std::string& key, Rule rule) {
 	}
 }
 
-Grammar removenullables (Grammar grammar) {
+Grammar  removenullables (Grammar grammar) {
 	ProductionRules production_rules = ProductionRules() ;
 	for (const auto& item : grammar.production_rules) {
 		std::string key = item.first ;

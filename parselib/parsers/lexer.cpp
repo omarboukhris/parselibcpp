@@ -3,9 +3,7 @@
 
 #include "lexer.hpp"
 
-namespace parselib {
-
-namespace lexer {
+namespace parselib::lexer {
 
 using namespace std ;
 
@@ -57,7 +55,5 @@ void Lexer::tokenizeline (string str) {
 		tokens.push_back(match.second) ;
 	}
 }
-
-} // namespace lexer
 
 } //namespace parselib
