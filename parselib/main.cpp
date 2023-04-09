@@ -63,7 +63,7 @@ int main(int argc, char** argv){
 
 			for (const std::string &sourcefilename : fileglober.glob()) {
 				Printer::showinfo("now processing source code : " + sourcefilename);
-				parsesession.store_json(sourcefilename, sourcefilename+".json", verbose);
+                parsesession.process_and_store_json(sourcefilename, sourcefilename + ".json", verbose);
 				Printer::showinfo("written json to : " + sourcefilename + ".json") ;
 			}
 		}
@@ -75,13 +75,21 @@ int main(int argc, char** argv){
 
 	PreprocPtr preproc (new parselib::utils::OnePassPreprocessor()) ;
 	LoggerPtr parseLog (new Logger(LogLevel::LogAll));
-	parselib::parsers::GenericGrammarParser ggp (preproc, parseLog) ;
-	parselib::Grammar grammar = ggp.parse (
-		"/home/omar/projects/parselibcpp/datarc/test_2/gram.grm", verbose, true) ;
-	grammar = parselib::normoperators::get2nf(grammar) ;
+	pl::parsers::GenericGrammarParser ggp (preproc, parseLog) ;
+	pl::Grammar grammar = ggp.parse (
+        "/home/omar/projects/parselibcpp/datarc/test/gram.grm", verbose, true) ;
+    pl::lexer::Lexer tokenizer(grammar.tokens);
+	grammar = pl::normoperators::get2nf(grammar) ;
 
-	parselib::parsers::LR_zero lr0(grammar);
-    std::cout << lr0 << std::endl << grammar;
+    std::string source = pl::utils::get_text_file_content(
+        "/home/omar/projects/parselibcpp/datarc/test/source.txt");
+
+    tokenizer.tokenize (source, verbose) ;
+
+    pl::parsers::LR_zero lr0(grammar);
+    std::cout << lr0 << std::endl ;
+
+    pl::Frame result = lr0.membership(tokenizer.tokens);
 
 	return 0 ;
 }

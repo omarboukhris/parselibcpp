@@ -111,8 +111,6 @@ protected:
 } ;
 
 using TreePtr = Tree::TreePtr;
-using NodeType = Tree::NodeType;
-using TokenList = Tree::TokenList;
 
 /*!
  * \brief abstract node : generates the parse tree
@@ -123,6 +121,7 @@ class Node {
 public :
 
 	Node () ;
+    virtual ~Node() = default;
 
 	//
 	// Helpers and accessors
@@ -133,7 +132,7 @@ public :
 	 * check if there are / in token name
 	 * \return boolean
 	 */
-	bool iscompacted () const ;
+	[[nodiscard]] bool iscompacted () const ;
 
 	/*!
 	 * \brief abstract, pure virtual
@@ -161,6 +160,11 @@ public :
 	explicit UnitNode (UnitNode *other) ;
 	UnitNode (const std::string &nodetype, const NodePtr &unit) ;
 
+    ~UnitNode() override = default;
+
+    static inline NodePtr make_unit(const std::string &nodetype, const NodePtr &unit) {
+        return std::make_shared<UnitNode>(UnitNode (nodetype, unit)) ;
+    }
 	/*!
 	 * \brief applies lazy node unfolding of unit node U1 -> U2 into
 	 * a Tree datastructure
@@ -182,6 +186,12 @@ public :
 	explicit TokenNode(TokenNode *other);
 	TokenNode(const std::string &nodetype, const std::string &val) ;
 
+    ~TokenNode() override = default;
+
+    static inline NodePtr make_token(const std::string &k, const std::string &v) {
+        return std::make_shared<TokenNode>(TokenNode (k, v)) ;
+    }
+
 	/*!
 	 * \brief unfolds the terminal graph node into a terminal Tree node
 	 * \return Terminal Tree node
@@ -201,7 +211,13 @@ public :
 	explicit BinNode(BinNode *other);
 	BinNode(const std::string &nodetype, const NodePtr &left, const NodePtr &right) ;
 
-	/*!
+    ~BinNode() override = default;
+
+    static inline NodePtr make_bin(const std::string &nodetype, const NodePtr &left, const NodePtr &right) {
+        return std::make_shared<BinNode>(BinNode (nodetype, left, right)) ;
+    }
+
+    /*!
 	 * \brief unfolds binary production rule into a parse Tree
 	 * \param parent node name
 	 * \return TreePtr parsable into boost ptree or json

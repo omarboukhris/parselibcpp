@@ -209,8 +209,7 @@ string Grammar::getstr () {
 		text_rule << utils::join(rule_in_a_line, "\n\t") << "\n]" ;
 	}
 
-	text_rule << "\n\n"
-         <<"LABELS = [\n" ;
+	text_rule << "\n\n" << "LABELS = [\n" ;
 	for (const auto &item : labels) {
 		string key = item.first ;
 		LabelReplacement labmap = item.second ;

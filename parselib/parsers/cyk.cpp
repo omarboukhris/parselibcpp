@@ -94,7 +94,7 @@ Frame CYK::membership (const TokenList &word) {
 	std::cout << "\r" << std::flush ;
 	// std::cout << getstrmat(P) ;
 
-	if (P[n-1][0].size() == 0) {
+	if (P[n-1][0].empty()) {
 		return getBrokenNodes(P);
 	}
 	return getAxiomNodes (P[n-1][0]) ;
@@ -128,6 +128,8 @@ Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
  * \brief get terminal nodes for the cyk table + parse tree
  */
 Frame CYK::getterminal (Token token) {
+    using namespace parsetree;
+
 	Frame terminals = Frame() ;
 
 	for (const auto& item : production_rules) {
@@ -138,10 +140,9 @@ Frame CYK::getterminal (Token token) {
 
 			if (rule.size() == 1 &&
 				rule[0].value() == token.type() &&
-				rule[0].type() == "TERMINAL"
+				rule[0].type() == Token::Terminal
 			) {
-				parsetree::NodePtr node = std::make_shared<parsetree::TokenNode>(
-					parsetree::TokenNode (key, token.value())) ;
+				NodePtr node = TokenNode::make_token(key, token.value());
 				terminals.push_back (node) ;
 			}
 		}
@@ -156,7 +157,7 @@ Frame CYK::getterminal (Token token) {
 Frame CYK::getAxiomNodes(const Frame& nodes){
 	Frame axiomnodes = Frame() ;
 	for (const parsetree::NodePtr& node : nodes) {
-		if (node->nodetype == "AXIOM" ||
+		if (node->nodetype == Token::Axiom ||
 			node->nodetype == production_rules["AXIOM"][0][0].value())
 		{
 			//production_rules["AXIOM"][0][0].val :
@@ -182,7 +183,7 @@ Frame CYK::getbinproductions(const Row& AB, const int MAX) {
 		for (const parsetree::NodePtr& rulename : rulenames) {
 			//add node for parse tree here
 			if (i++<MAX)
-			bins.push_back (rulename) ;
+    			bins.push_back (rulename) ;
 		}
 	}
 // 	#return list (set(bins))
@@ -194,6 +195,8 @@ Frame CYK::getbinproductions(const Row& AB, const int MAX) {
  * to the rules being inspected in frame "line"
  */
 Frame CYK::getrulenames(Frame line) {
+    using namespace parsetree;
+
 	if (line.size() <= 1) {
 		return {} ;
 	}
@@ -208,8 +211,7 @@ Frame CYK::getrulenames(Frame line) {
 
 			if (rule[0].value() == line[0]->nodetype &&
 				rule[1].value() == line[1]->nodetype) {
-				parsetree::NodePtr node = std::make_shared<parsetree::BinNode>(
-					parsetree::BinNode (key, line[0], line[1])) ;
+				NodePtr node = BinNode::make_bin(key, line[0], line[1]);
 				rulenames.push_back (node) ;
 			}
 		}
@@ -221,14 +223,15 @@ Frame CYK::getrulenames(Frame line) {
  * \brief get inverse unit relation for the parse tree
  */
 Frame CYK::invUnitRelation(const Frame& M) {
+    using namespace parsetree;
+
 	Frame rulenames = Frame () ;
 	for (const parsetree::NodePtr& node : M) {
 		for (const auto& item : unitrelation) {
 			std::string key = item.first ;
 			StrList units = item.second ;
 			if (std::find(units.begin(), units.end(), node->nodetype) != units.end()) {
-				parsetree::NodePtr nodeOut = std::make_shared<parsetree::UnitNode>(
-					parsetree::UnitNode (key, node)) ;
+				NodePtr nodeOut = UnitNode::make_unit(key, node) ;
 				rulenames.push_back (nodeOut) ;
 			}
 		}

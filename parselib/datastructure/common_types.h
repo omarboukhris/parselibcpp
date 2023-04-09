@@ -35,7 +35,7 @@ namespace parselib {
 		 * \param value
 		 * \param type
 		 */
-		Token(std::string value, std::string type)
+		Token(const std::string& value, const std::string& type)
 			: m_token({value, type})
 		{}
 
@@ -47,8 +47,7 @@ namespace parselib {
 			{ return m_token.first; }
 		std::string &key()
 			{ return m_token.second; }
-		std::string &type()
-			{ return m_token.second; }
+		std::string & type() { return m_token.second; }
 
 		//
 		// File streams
@@ -64,11 +63,11 @@ namespace parselib {
 
 				t_fstream.write(reinterpret_cast<char*>(m_token.first.size()),
 								sizeof(m_token.first.size()));
-				t_fstream.write(m_token.first.c_str(), m_token.first.size());
+				t_fstream.write(m_token.first.c_str(), (long)m_token.first.size());
 
 				t_fstream.write(reinterpret_cast<char*>(m_token.second.size()),
 								sizeof(m_token.second.size()));
-				t_fstream.write(m_token.second.c_str(), m_token.second.size());
+				t_fstream.write(m_token.second.c_str(), (long)m_token.second.size());
 
 			} catch (std::exception &e) {
 
@@ -85,7 +84,7 @@ namespace parselib {
 
 			try {
 
-				size_t valueSize, typeSize;
+				long valueSize, typeSize;
 
 				t_fstream.read(reinterpret_cast<char*>(&valueSize), sizeof(valueSize));
 				char *value = new char[valueSize];

@@ -20,6 +20,7 @@ namespace parselib::parsers {
     class LR_zero : public AbstractParser {
     public :
         enum Action {
+            none,
             shift,
             reduce,
             goTo,
@@ -72,9 +73,7 @@ namespace parselib::parsers {
 
         ~LR_zero () override = default;
 
-        Frame membership (const TokenList /*word*/&) override {
-            return {};
-        }
+        Frame membership (const TokenList &word) override ;
 
         friend std::ostream & operator<< (std::ostream& out, const LR_zero& lrZero) {
             for (const auto & c: lrZero.m_graph)
@@ -87,11 +86,15 @@ namespace parselib::parsers {
                 }
             }
             out << std::endl;
-            for (const auto &act: lrZero.m_goto) {
-                for (const auto &m: act.second) {
-                    if (not m.second.empty())
-                        out << "state " << act.first << " reads " << m.first << " " << m.second.to_string() << std::endl;
+
+            int i = 0;
+            for (const auto &p: lrZero.flat_map) {
+                std::stringstream ss;
+                for (const auto &r: p.second) {
+                    ss << r << " ";
                 }
+                out << i++ << " " << p.first << " : " << ss.str() << std::endl;
+                ss.clear();
             }
 
             return out;
@@ -105,21 +108,19 @@ namespace parselib::parsers {
 
         void build_graph();
 
-        void shift_reduce();
-
     protected:
         TokenList tokens ;
 
         Closures m_graph;
 
         std::unordered_map<
-                std::string,
-                std::unordered_map<std::string, Cell>
-        > m_goto; // non terminals
-        std::unordered_map<
-                std::string,
-                std::unordered_map<std::string, Cell>
-        > m_action; // terminals - shift/reduce
+            std::string,
+            std::unordered_map<std::string, Cell>
+        > m_action; // terminals - shift/reduce // non terminals goto
+
+        TableBuilder::FlatProductionMap flat_map;
+
+        void reduce_fn(Frame &stack, StrList &positions, const Cell &next_step);
     };
 
 }

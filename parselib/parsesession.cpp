@@ -34,71 +34,7 @@ void ParseSession::load_grammar(const std::string &filename, bool verbose) {
 	this->grammar = normoperators::get2nf(grm) ;
 }
 
-void ParseSession::store_json(const std::string &filename, const std::string& output_filename, bool verbose, size_t index) {
-	pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
-	pt::write_json(output_filename+".json", out) ;
-}
-
-std::string ParseSession::process_to_json (const std::string &filename, bool verbose, size_t index) {
-	pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
-	std::stringstream ss;
-	pt::write_json(ss, out);
-	return ss.str();
-}
-
-pt::ptree ParseSession::process_source_to_ptree(const std::string& filename, bool verbose, size_t index) {
-
-	parser = std::make_shared<parsers::CYK> (parsers::CYK(grammar)) ;
-	std::string source = utils::get_text_file_content(filename) ;
-	
-	tokenizer = lexer::Lexer(grammar.tokens) ;
-	tokenizer.tokenize (source, verbose) ;
-
-	Frame result = parser->membership (tokenizer.tokens) ;
-
-	if (result.empty()) {
-		if (verbose) {
-			// x should point errors out if parsing failed
-			utils::Printer::showerr ("Empty result : no parse tree found, no error tracking possible") ;
-		}
-		return {} ;
-	} else {
-		index = (index > 0 && index < result.size()) ? index : 0 ;
-
-		if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
-
-			// std::cout << "got axiom" << *result[index]->unfold().get() << std::endl ;
-			pt::ptree output = parse (result[index]->unfold(), "");
-
-			// show result if verbose
-			if (verbose) {
-				std::stringstream ss;
-				pt::json_parser::write_json(ss, output);
-				utils::Printer::showinfo(ss.str());
-			}
-			return output ; // something goes horribly wrong here
-		}
-		else { // handle error
-			std::fstream fstr (filename + ".log", std::fstream::out);
-
-			if (fstr.is_open()) {
-				utils::Printer::showerr("Parsing went wrong, check : " + filename + ".log");
-				auto sus_tok = result.back();
-				std::stringstream ss ;
-				ss << sus_tok->unfold() ;
-				utils::Printer::showerr("Broken token seems to be <" + ss.str() + ">") ;
-				fstr << result[index]->unfold();
-				fstr.close();
-			}
-			else {
-				utils::Printer::showerr("Could not open log file stream.");
-			}
-			return {};
-		}
-	}
-}
-
-pt::ptree ParseSession::parse(const parsetree::TreePtr& code, std::string parent) {
+pt::ptree ParseSession::parse(const parsetree::TreePtr& code, const std::string& parent) {
 	using Map = std::map<std::string, pt::ptree> ;
 	if (code->size() == 0) {
 		return {} ;
@@ -181,7 +117,7 @@ pt::ptree ParseSession::to_ptree(const parsetree::TreePtr& tree) {
 
 	// use map to correctly parse into ptree
 	// something is fucked up otherwise in json
-	Map map = Map() ; 
+	Map map;
 	for (auto& tok : tree->tokens()) {
 		if (tok.second->type() == parsetree::Tree::NodeType::Leaf) {
 			pt::ptree tmp ;
@@ -193,13 +129,74 @@ pt::ptree ParseSession::to_ptree(const parsetree::TreePtr& tree) {
 		}
 	}
 
-	pt::ptree out = pt::ptree() ;
+	pt::ptree out;
 	for (const auto& item : map) {
 		std::string key = item.first ;
 		pt::ptree tmp = item.second ;
 		out.add_child(key, tmp) ;
 	}
 	return out ;
+}
+
+pt::ptree ParseSession::process_source_to_ptree(const std::string &filename, bool verbose, size_t index) {
+
+    std::string source = utils::get_text_file_content(filename);
+
+    tokenizer = lexer::Lexer(grammar.tokens);
+    tokenizer.tokenize(source, verbose);
+
+    Frame result = parser->membership(tokenizer.tokens);
+
+    if (result.empty()) {
+        if (verbose) {
+            // x should point errors out if parsing failed
+            utils::Printer::showerr("Empty result : no parse tree found, no error tracking possible");
+        }
+        return {};
+    } else {
+        index = (index > 0 && index < result.size()) ? index : 0;
+
+        if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
+
+            // std::cout << "got axiom" << *result[index]->unfold().get() << std::endl ;
+            pt::ptree output = parse(result[index]->unfold(), "");
+
+            // show result if verbose
+            if (verbose) {
+                std::stringstream ss;
+                pt::json_parser::write_json(ss, output);
+                utils::Printer::showinfo(ss.str());
+            }
+            return output;
+        } else { // handle error
+            std::fstream fstr(filename + ".log", std::fstream::out);
+
+            if (fstr.is_open()) {
+                utils::Printer::showerr("Parsing went wrong, check : " + filename + ".log");
+                auto sus_tok = result.back();
+                std::stringstream ss;
+                ss << sus_tok->unfold();
+                utils::Printer::showerr("Broken token seems to be <" + ss.str() + ">");
+                fstr << result[index]->unfold();
+                fstr.close();
+            } else {
+                utils::Printer::showerr("Could not open log file stream.");
+            }
+            return {};
+        }
+    }
+}
+
+std::string ParseSession::process_to_json(const std::string &filename, bool verbose, size_t index) {
+    pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
+    std::stringstream ss;
+    pt::write_json(ss, out);
+    return ss.str();
+}
+
+void ParseSession::process_and_store_json(const std::string &filename, const std::string &output_filename, bool verbose, size_t index) {
+    pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
+    pt::write_json(output_filename+".json", out) ;
 }
 
 } //namespace parselib

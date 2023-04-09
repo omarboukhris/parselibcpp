@@ -9,13 +9,10 @@ extern "C" {
 		switch (logLevel) {
 			case 0:
 			return new ParseSession(utils::LogLevel::LogNone) ;
-			break;
 			case 1:
 			return new ParseSession(utils::LogLevel::LogBasic) ;
-			break;
 			default:
 			return new ParseSession(utils::LogLevel::LogAll) ;
-			break;
 		}
 	}
 
@@ -24,7 +21,7 @@ extern "C" {
 	}
 
 	void store_json(ParseSession* session, const char* filepath, bool verb) {
-		session->store_json(std::string(filepath), std::string(filepath), verb);
+        session->process_and_store_json(std::string(filepath), std::string(filepath), verb);
 	}
 
 	const char* get_json(ParseSession* session, const char* filepath, bool verb) {

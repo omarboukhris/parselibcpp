@@ -312,11 +312,11 @@ namespace parselib {
         std::string m_label;
     };
 
-    class TableBuilder {
-    private:
-        std::vector<std::pair<std::string, Rule>> flat_prod;
 
-    public:
+    struct TableBuilder {
+        using FlatProductionMap = std::vector<std::pair<std::string, Rule>>;
+        FlatProductionMap flat_prod;
+
         explicit TableBuilder(const ProductionRules &productionRules) : flat_prod() {
             for (const auto &rules: productionRules) {
                 for (const Rule &rule: rules.second) {

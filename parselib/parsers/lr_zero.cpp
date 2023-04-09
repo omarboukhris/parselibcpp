@@ -39,14 +39,12 @@ void LR_zero::build_table() {
         std::string item_name = item.label();
         for (const auto &rules: production_rules) {
             std::string label = rules.first;
-            m_goto[item_name][label] = Cell::goTo(TableBuilder::get_goto(label, item));
+            m_action[item_name][label] = Cell::goTo(TableBuilder::get_goto(label, item));
         }
     }
 
-    // need goto and action tables, still checking requirements
-    // once tables built, shift reduce implem should just read from stack and apply rules from table
-    // which data struct should tables be ?
-    // maps probably for easy labeling or an unordered map (hash table) for quicker access
+    // flat map
+    flat_map = tableBuilder.flat_prod;
 }
 
 void LR_zero::build_graph(){
@@ -164,7 +162,55 @@ Closure LR_zero::make_closure(int id, Item &current_item) {
     return output;
 }
 
-void LR_zero::shift_reduce() {
+Frame LR_zero::membership(const TokenList &w) {
+    using namespace parsetree;
+
+    TokenList word = w;
+    word.emplace_back("End", "$");
+
+    Frame stack, output;
+    StrList positions;
+    std::string current_state("0");
+
+    stack.push_back(TokenNode::make_token("Begin", "^")); // start token
+    positions.push_back(current_state);
+
+    auto it = word.begin();
+    while (it != word.end()) {
+        std::cout << "==========================" << std::endl;
+        std::cout << *it << " " << it->type() << " " << current_state << std::endl;
+        std::cout << "action " << m_action[current_state][it->type()].to_string() << std::endl ;
+        Cell next_step = m_action[current_state][it->type()];
+
+        if (next_step.action == Action::shift) {
+            stack.push_back(parsetree::TokenNode::make_token(it->type(), it->value()));
+            positions.push_back(next_step.item);
+            current_state = next_step.item;
+            it++;
+        }
+        else if (next_step.action == Action::reduce) {
+            reduce_fn(stack, positions, next_step);
+            const auto &current_token = stack.back()->nodetype;
+            current_state = positions.back();
+            const auto &goto_pose = m_action[current_state][current_token];
+            positions.push_back(goto_pose.item);
+            current_state = positions.back();
+        }
+        else if (next_step.action == Action::accepted) {
+            return {stack.back()};
+        }
+        else {
+            throw std::runtime_error("Something bad happened, empty action/goto Cell");
+        }
+        std::cout << "[" ;
+        for (const auto &p: positions) std::cout << p << " ";
+        std::cout << "]" << std::endl
+            << "[ ";
+        for (const auto& s: stack) std::cout << s->nodetype << " ";
+        std::cout << " ]" << std::endl;
+
+    }
+    return stack;
 
     //this is it
     /*
@@ -178,13 +224,42 @@ void LR_zero::shift_reduce() {
      * elif state is reduce
      *      create node
      *      get rule from index:flatprod in table builder
-     *      generate tree node pop as much from the stack as needed
+     *      generate tree node pop as much from the stack as needed (1 or 2)
      *      after reduction, check goto table for next state
      *      stack node in processed stack (r_state: popped tree nodes)
      * else
      *      throw exception with cool error tracing
      * loop
      */
+
+    /*
+     * Note : since grammar is normalized, no need for a vectorNode data struct
+     * just use bin, unit and token:
+     *      token for simple shifts
+     *      unit for 1st order reduct
+     *      bin for 2nd order reduct
+     * output is handled through same pipeline
+     */
 }
+
+
+    void LR_zero::reduce_fn(Frame &stack, StrList &positions, const LR_zero::Cell &next_step) {
+        int idx = std::stoi(next_step.item);
+        auto r = flat_map[idx];
+        if (r.second.size() == 1) { // unit
+            parsetree::NodePtr unit = stack.back(); stack.pop_back();
+            positions.pop_back();
+            stack.push_back(parsetree::UnitNode::make_unit(r.first, unit));
+        }
+        else if (r.second.size() == 2) { // bin
+            parsetree::NodePtr left = stack.back(); stack.pop_back();
+            parsetree::NodePtr right = stack.back(); stack.pop_back();
+            positions.pop_back(); positions.pop_back();
+            stack.push_back(parsetree::BinNode::make_bin(r.first, left, right));
+        }
+        else {
+            throw std::runtime_error("Rule not bin or unit, normalize grammar!!");
+        }
+    }
 
 }
