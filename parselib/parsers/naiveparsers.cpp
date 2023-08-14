@@ -16,7 +16,7 @@ SequentialParser::SequentialParser (
 
 	production_rules = ProductionRules() ;
 
-	strnodes = StrList () ;
+	strnodes = StrMap () ;
 
 	keeper = KeepingList() ;
 	keeper["all"] = StrList() ;
@@ -259,71 +259,11 @@ void SequentialParser::add_to_keeper(size_t j) {
 
 void SequentialParser::add_to_str_rules(size_t j) {
 	std::string nodename = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
+    StrList &strnode = strnodes[current_rule];
 	// add to strnodes
-	if (std::find(strnodes.begin(), strnodes.end(), nodename) == strnodes.end()) {
-		strnodes.push_back(nodename) ;
+	if (std::find(strnode.begin(), strnode.end(), nodename) == strnode.end()) {
+		strnode.push_back(nodename) ;
 	}
-}
-
-/// \brief Screaming results for debug resons or verbose
-string SequentialParser::getstr () {
-	string text_rule ;
-
-	for (const auto& item : production_rules) {
-		string key = item.first ;
-		Rules rules = item.second ;
-		
-		text_rule += "\nRULE " + key + " = [\n\t" ;
-		
-		StrList rule_in_a_line = StrList () ;
-		
-		for (const Rule& rule : rules) {
-			StrList ruletxt = StrList () ;
-			for (Token opr : rule) {
-				ruletxt.push_back(opr.type()+"("+opr.value()+")");
-			}
-			string thisrule = utils::join(ruletxt, " ") ;
-			rule_in_a_line.push_back(thisrule);
-		}
-		text_rule += utils::join(rule_in_a_line, "\n\t") + "]" ;		
-	}
-	
-	text_rule += "\n\n" ;
-	
-	text_rule += "LABELS = [\n" ;
-	for (const auto& item : labels) {
-		string key = item.first ;
-		LabelReplacement labmap = item.second ;
-		text_rule += key + " {\n" ;
-		for (const auto& lab : labmap) {
-			text_rule += "\t" + lab.first + " : " + lab.second + "\n" ;
-		}
-		text_rule += "}\n" ;
-	}
-	text_rule += "]\n" ;
-
-	text_rule += "STRUCT = [\n" ;
-	for (const auto& item : keeper) {
-		string key = item.first ;
-		StrList listkeep = item.second ;
-		text_rule += "" + key + " {\n\t" ;
-		text_rule += utils::join(listkeep, "\n\t") ;
-		text_rule += "}\n" ;
-	}
-	text_rule += "\n]\n\n" ;
-	
-	text_rule += "STRNODE = [\n" + utils::join(strnodes, "") + "\n]\n\n" ;
-
-    std::stringstream ss;
-	for (Token tok : tokens) {
-		string label = tok.type() ;
-		string regx = tok.value() ;
-        ss << "TOKEN " << label << " = regex('" << regx << "')" << std::endl ;
-		text_rule += ss.str();
-        ss.clear();
-	}
-
-	return text_rule ;
 }
 
 } //namespace parselib

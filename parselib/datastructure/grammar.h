@@ -10,24 +10,15 @@ namespace parselib {
  * in the context of language theory with some
  * useful internal mechanisms
  */
-class Grammar {
+class Grammar: public GrammarStruct {
 
 public :
 
 	typedef std::map<std::string, StrList> UnitRelation ;
 
-	ProductionRules production_rules ;
-
-	StrList strnodes ;
-	KeepingList keeper ;
-
-	LabelReplacementMap labels ;
-
-	TokenList tokens ;
-
 	UnitRelation unitrelation ;
 
-	Grammar () ;
+	Grammar () = default;
 
 	/*!
 	 * \brief merge input grammar with this (union)
@@ -52,16 +43,11 @@ public:
 
 	bool inKeeperKeys (const std::string &toktype) ;
 	bool inLabelsKeys(const std::string &toktype) ;
-	bool keyIsStr (const std::string &toktype) ;
 	bool isTokenSavable(const std::string &parent, const std::string &child) ;
-
-	friend std::ostream & operator<< (std::ostream & out, Grammar str) {
-		out << str.getstr() ;
-		return out ;
-	}
+    bool keyIsStr(const std::string &parent, const std::string &toktype);
 
 private :
-	std::string getstr () ;
+	std::string getstr () override ;
 
 } ; // end class Grammar
 

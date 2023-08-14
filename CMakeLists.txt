@@ -62,7 +62,8 @@ if(Boost_FOUND)
 
 	add_library(${PROJECT_NAME} SHARED
 		${SOURCE_FILES}
-		${HEADER_FILES} parselib/datastructure/closure_types.h)
+		${HEADER_FILES} parselib/datastructure/closure_types.h
+            parselib/datastructure/common_types.cpp)
 	target_link_libraries(
 		${PROJECT_NAME}
 		${Boost_LIBRARIES}

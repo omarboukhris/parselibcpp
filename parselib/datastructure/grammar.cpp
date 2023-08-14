@@ -11,15 +11,6 @@ using namespace std ;
 
 namespace parselib {
 
-Grammar::Grammar () {
-	production_rules = ProductionRules () ;
-	labels = LabelReplacementMap () ;
-	keeper = KeepingList () ;
-	unitrelation = UnitRelation() ;
-	strnodes = StrList () ;
-	tokens = TokenList () ;
-}
-
 void Grammar::merge (const Grammar &grammar) {
 	// unitrelation is computed later
 	for (const Token &token : grammar.tokens) {
@@ -82,8 +73,11 @@ void Grammar::merge (const Grammar &grammar) {
 		}
 	}
 
-	for (const std::string &s : grammar.strnodes) {
-		strnodes.push_back(s) ;
+	for (const auto &item : grammar.strnodes) {
+        if (strnodes.find(item.first) != strnodes.end())
+            std::copy(item.second.begin(), item.second.end(), std::back_inserter(strnodes[item.first]));
+        else
+            strnodes.emplace(item);
 	}
 }
 
@@ -124,9 +118,11 @@ bool Grammar::inLabelsKeys(const string &toktype) {
     });
 }
 
-bool Grammar::keyIsStr(const string &toktype) {
-    return std::any_of(strnodes.begin(), strnodes.end(), [&](const std::string &x) {
-        return x == toktype;
+bool Grammar::keyIsStr(const string &parent, const string &toktype) {
+    return
+        strnodes.find(parent) != strnodes.end() and
+        std::any_of(strnodes[parent].begin(), strnodes[parent].end(), [&](const auto &x) {
+            return x == toktype;
     });
 }
 
@@ -188,68 +184,20 @@ void Grammar::exportToFile(const string &filename) {
 
 /// \brief Screaming results for debug resons or verbose
 string Grammar::getstr () {
-	stringstream text_rule;
+    std::stringstream ss;
+    ss << GrammarStruct::getstr();
 
-	for (const auto &item : production_rules) {
-		string key = item.first ;
-		Rules rules = item.second ;
-
-		text_rule << "\nRULE " << key << " = [\n\t" ;
-
-		StrList rule_in_a_line = StrList () ;
-
-		for (const Rule &rule : rules) {
-			StrList ruletxt = StrList () ;
-			for (Token opr : rule) {
-				ruletxt.push_back(opr.type()+"("+opr.value()+")");
-			}
-			string thisrule = utils::join(ruletxt, " ") ;
-			rule_in_a_line.push_back(thisrule);
-		}
-		text_rule << utils::join(rule_in_a_line, "\n\t") << "\n]" ;
-	}
-
-	text_rule << "\n\n" << "LABELS = [\n" ;
-	for (const auto &item : labels) {
-		string key = item.first ;
-		LabelReplacement labmap = item.second ;
-		text_rule << key << " {\n" ;
-		for (const auto &lab : labmap) {
-			text_rule << "\t" << lab.first << " : " << lab.second << "\n" ;
-		}
-		text_rule << "}\n" ;
-	}
-	text_rule << "]\n" ;
-
-	text_rule << "STRUCT = [\n" ;
-	for (const auto &item : keeper) {
-		string key = item.first ;
-		StrList listkeep = item.second ;
-		text_rule << "" << key << " {\n\t"
-            << utils::join(listkeep, "\n\t")
-            << "\n}\n" ;
-	}
-	text_rule << "]\n\n" ;
-
-	text_rule << "STRNODE = [\n" << utils::join(strnodes, "") << "\n]\n\n" ;
-
-	for (Token tok : tokens) {
-		string label = tok.type() ;
-		string regx = tok.value() ;
-        text_rule << "TOKEN " << label << " = regex('" << regx << "')\n" ;
-	}
-
-	text_rule << "\nUNIT = [\n" ;
+    ss << "\nUNIT = [\n" ;
 	for (const auto &item : unitrelation) {
 		string key = item.first ;
 		StrList listkeep = item.second ;
-		text_rule << "" << key << " {\n\t"
+		ss << "" << key << " {\n\t"
             << utils::join(listkeep, "\n\t")
             << "\n}\n" ;
 	}
-	text_rule << "]\n\n" ;
+	ss << "]\n\n" ;
 
-	return text_rule.str() ;
+	return ss.str() ;
 }
 
 

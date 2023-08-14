@@ -74,7 +74,7 @@ pt::ptree ParseSession::parse(const parsetree::TreePtr& code, const std::string&
 
 			//-------------------------------------------------
 			// part handling str tokens
-			if (grammar.keyIsStr(element.first)) {
+			if (grammar.keyIsStr(parent, element.first)) {
 				std::string out_elementstr = element.second->strUnfold () ;
 				pt::ptree tmp ;
 				tmp.put ("", out_elementstr) ;

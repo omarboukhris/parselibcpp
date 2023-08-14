@@ -2,32 +2,15 @@
 
 #include <parselib/datastructure/common_types.h>
 
-namespace parselib {
+namespace parselib::parsers {
 
-namespace parsers {
-
-class SequentialParser {
+class SequentialParser: public GrammarStruct {
 
 public :
-
-	ProductionRules production_rules ;
-	
-	StrList strnodes ;
-	KeepingList keeper ;
-	
-	LabelReplacementMap labels ;
-	
-	TokenList tokens ;
 
 	SequentialParser (const TokenList &grammar, const TokenList &parsedtokens) ;
 
 	void parse () ;
-
-	friend std::ostream & operator<< (std::ostream & out, SequentialParser str) {
-		out << str.getstr() ;
-		return out ;
-	}
-
 
 private :
 
@@ -41,8 +24,6 @@ private :
 	TokenList parsedtokens ;
 	
 	ProductionRules add_operand_to_current_rule (const Token& tok) ;
-
-	std::string getstr () ;
 
 	inline bool stillparsing () {
 		return op_count < grammar.size() ;
@@ -75,6 +56,6 @@ private :
 
 } ;
 
-} //namespace parsers
+} // namespace parselib::parsers
 
-} //namespace parselib
+
