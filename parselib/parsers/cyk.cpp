@@ -229,6 +229,13 @@ Frame CYK::getrulenames(Frame line) {
  * \brief get inverse unit relation for the parse tree
  */
 Frame CYK::invUnitRelation(const Frame& M) {
+	// this can be done better
+	// refactor unitrelation as inverse unit graph
+	// use it to probe for non-cyclic unit relations
+	// use todo_ queand processed queues to avoid resp. recursion and cycles
+	// note to self : unroll recursion in parsesession
+	// once this is figured out debug non-terminals relabeling
+	// then go to LR0
     using namespace parsetree;
 
 	Frame rulenames = Frame () ;
