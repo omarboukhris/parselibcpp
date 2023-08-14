@@ -96,9 +96,9 @@ Frame CYK::membership (const TokenList &word) {
 		pbar.update(l);
 	}
 	std::cout << "\r" << std::flush ;
-    std::ofstream f ("cykmat.html", std::ofstream::out);
-	f << getstrmat(P) ;
-    f.close();
+//	std::ofstream f ("cykmat.html", std::ofstream::out);
+//	f << getstrmat(P) ;
+//	f.close();
 
 	if (P[n-1][0].empty()) {
 		return getBrokenNodes(P);
@@ -230,25 +230,26 @@ Frame CYK::getrulenames(Frame line) {
  */
 Frame CYK::invUnitRelation(const Frame& M) {
 	// this can be done better
-	// refactor unitrelation as inverse unit graph
-	// use it to probe for non-cyclic unit relations
-	// use todo_ queand processed queues to avoid resp. recursion and cycles
-	// note to self : unroll recursion in parsesession
-	// once this is figured out debug non-terminals relabeling
-	// then go to LR0
+	// refactor unitrelation as inverse unit graph : done
+	// use it to probe for non-cyclic unit relations : wip
+	// use todo_ queue and processed queues to avoid resp. recursion and cycles : wip
+	// note to self : unroll recursion in parsesession : todo
+	// once this is figured out debug non-terminals relabeling : todo
+	// then go to LR0 : backlog
     using namespace parsetree;
+
+//    StrVect processed = StrVect();
+//    Frame todo_ = Frame();
 
 	Frame rulenames = Frame () ;
 	for (const parsetree::NodePtr& node : M) {
-		for (const auto& item : unitrelation) {
-			std::string key = item.first ;
-			StrList units = item.second ;
-			if (std::find(units.begin(), units.end(), node->nodetype) != units.end()) {
-				NodePtr nodeOut = UnitNode::make_unit(key, node) ;
-				rulenames.push_back (nodeOut) ;
-			}
-		}
-	}
+        if (unitrelation.find(node->nodetype) != unitrelation.end()) {
+            for (const auto& unitkey : unitrelation[node->nodetype]) {
+                NodePtr nodeOut = UnitNode::make_unit(unitkey, node) ;
+                rulenames.push_back (nodeOut) ;
+            }
+        }
+    }
 	return rulenames ;
 }
 

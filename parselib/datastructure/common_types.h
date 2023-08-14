@@ -1,5 +1,4 @@
-#ifndef COMMON_TYPES_H
-#define COMMON_TYPES_H
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -41,6 +40,7 @@ namespace parselib {
         inline std::string &key() { return type_; }
 
         inline std::string &type() { return type_; }
+        [[nodiscard]] inline const std::string &ctype() const { return type_; }
 
         //
         // File streams
@@ -172,4 +172,3 @@ namespace parselib {
         virtual std::string getstr();
     };
 }
-#endif // COMMON_TYPES_H

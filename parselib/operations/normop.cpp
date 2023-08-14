@@ -63,7 +63,6 @@ void TERM::checkruleforterminals(const std::string& key, const Rule& rule) {
 
 BIN::BIN(const ProductionRules &production_rules) {
 	this-> production_rules = production_rules ;
-	this->normalForm = ProductionRules () ;
 }
 
 void BIN::apply() {
@@ -220,36 +219,22 @@ Grammar getunitrelation (Grammar grammar) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 
-		for (Rule rule : rules) {
+		for (const Rule& rule : rules) {
 
             if (rule.size() == 1) {
-                if (unitrelation.find(key) != unitrelation.end()) {
-                    unitrelation[key].push_back (rule[0].value()) ;
-                } else {
-                    unitrelation[key] = StrList({rule[0].value()}) ;
-                }
+				unitrelation[rule[0].cvalue()].push_back(key) ;
             }
 
             else if (rule.size() == 2) {
-                if (nullables.find(rule[0].type()) == nullables.end()) {
-                    if (unitrelation.find(key) != unitrelation.end()) {
-                        unitrelation[key].push_back (rule[0].value()) ;
-                    } else {
-                        unitrelation[key] = StrList({rule[0].value()}) ;
-                    }
+                if (nullables.find(rule[0].ctype()) == nullables.end()) {
+					unitrelation[rule[0].cvalue()].push_back (key) ;
                 }
-                if (nullables.find(rule[1].type()) == nullables.end()) {
-                    if (unitrelation.find(key) != unitrelation.end()) {
-                        unitrelation[key].push_back (rule[1].value()) ;
-                    } else {
-                        unitrelation[key] = StrList({rule[1].value()}) ;
-                    }
+                if (nullables.find(rule[1].ctype()) == nullables.end()) {
+					unitrelation[rule[1].cvalue()].push_back (key) ;
                 }
             }
 		}
 	}
-
-    // propagate unit relation using computed unit graph
 
  	grammar.unitrelation = unitrelation;
 	return grammar ;

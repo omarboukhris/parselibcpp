@@ -83,7 +83,7 @@ public :
 	 * \brief BIN class construction
 	 * \param production_rules  input grammar's production rule
 	 */
-	BIN (const ProductionRules &production_rules) ;
+	explicit BIN (const ProductionRules &production_rules) ;
 
 	/*!
 	 * \brief apply operator
@@ -94,7 +94,7 @@ private :
 
 	ProductionRules normalForm ;
 
-	void binarize () ;
+	inline void binarize () ;
 	bool binonce () ;
 
 	void binarizerule (const std::string& key, Rule rule) ;

@@ -1,5 +1,4 @@
-#ifndef GRAMMAR_H
-#define GRAMMAR_H
+#pragma once
 
 #include <parselib/datastructure/common_types.h>
 
@@ -52,5 +51,3 @@ private :
 } ; // end class Grammar
 
 }
-
-#endif // GRAMMAR_H
