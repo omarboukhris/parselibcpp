@@ -1,9 +1,9 @@
 #pragma once
 
-#include <parselib/datastructure/common_types.h>
-#include <parselib/datastructure/grammar.h>
+#include "parselib/datastructure/common_types.h"
+#include "parselib/datastructure/grammar.h"
 
-#include <parselib/parsers/lexer.hpp>
+#include "parselib/parsers/lexer.hpp"
 
 namespace parselib {
 	

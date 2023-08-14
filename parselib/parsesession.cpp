@@ -1,8 +1,8 @@
 
 #include <boost/variant.hpp>
 
-#include <parselib/datastructure/operations/generalop.hpp>
-#include <parselib/datastructure/operations/normop.hpp>
+#include <parselib/operations/generalop.hpp>
+#include <parselib/operations/normop.hpp>
 
 #include <parselib/utils/logger.h>
 

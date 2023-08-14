@@ -36,6 +36,7 @@ namespace parselib {
         //
 
         inline std::string &value() { return value_; }
+        [[nodiscard]] inline const std::string &cvalue() const { return value_; }
 
         inline std::string &key() { return type_; }
 
@@ -124,6 +125,7 @@ namespace parselib {
         std::string type_;
 
     public:
+
         static inline std::string NonTerminal = "NONTERMINAL";
         static inline std::string Terminal = "TERMINAL";
         static inline std::string Axiom = "AXIOM";

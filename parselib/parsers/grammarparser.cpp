@@ -1,7 +1,7 @@
 
 #include <fstream>
 
-#include <parselib/datastructure/operations/generalop.hpp>
+#include <parselib/operations/generalop.hpp>
 
 #include <parselib/parsers/naiveparsers.hpp>
 

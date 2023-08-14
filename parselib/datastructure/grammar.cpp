@@ -1,7 +1,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
-#include <parselib/datastructure/operations/generalop.hpp>
+#include <parselib/operations/generalop.hpp>
 #include <parselib/parsers/naiveparsers.hpp>
 #include <parselib/utils/io.hpp>
 

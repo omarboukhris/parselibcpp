@@ -1,7 +1,7 @@
 #pragma once
 
-#include <parselib/datastructure/common_types.h>
-#include <parselib/parsers/grammarparser.hpp>
+#include "parselib/datastructure/common_types.h"
+#include "parselib/parsers/grammarparser.hpp"
 
 namespace parselib {
 
@@ -24,9 +24,9 @@ Grammar removenullables (Grammar grammar) ;
 /*!
  * \brief getnullables from a grammar
  * \param[in] grammar  Input grammar
- * \return nullables rule labels in a vector
+ * \return nullables rule labels in a set
  */
-StrList getnullables (const Grammar& grammar) ;
+std::set<std::string> getnullables (const Grammar& grammar) ;
 
 /*!
  * \brief getunitrelation from grammar

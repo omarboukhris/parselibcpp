@@ -1,6 +1,6 @@
 
 #include <parselib/utils/io.hpp>
-#include <parselib/datastructure/operations/normop.hpp>
+#include <parselib/operations/normop.hpp>
 #include <parselib/parsesession.hpp>
 
 namespace pt = boost::property_tree ;

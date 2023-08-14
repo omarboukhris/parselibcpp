@@ -22,7 +22,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 #############################
 file(GLOB SOURCE_FILES
 	parselib/datastructure/*.cpp
-	parselib/datastructure/operations/*.cpp
 	parselib/operations/*.cpp
  	parselib/utils/*.cpp
  	parselib/parsers/*.cpp
@@ -32,8 +31,8 @@ file(GLOB SOURCE_FILES
 file(GLOB HEADER_FILES
 	parselib/datastructure/*.hpp
 	parselib/datastructure/*.h
-	parselib/datastructure/operations/*.hpp
 	parselib/operations/*.hpp
+	parselib/operations/*.h
 	parselib/utils/*.hpp
 	parselib/parsers/*.hpp
 	parselib/*.hpp

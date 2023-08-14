@@ -1,12 +1,10 @@
 
-#include <parselib/datastructure/operations/generalop.hpp>
+#include "generalop.hpp"
 
 #include "normop.hpp"
 
 
-namespace parselib {
-
-namespace normoperators {
+namespace parselib::normoperators {
 
 
 Grammar get2nf(Grammar grammar) {
@@ -146,51 +144,62 @@ Grammar  removenullables (Grammar grammar) {
  * \param grammar : grammar input
  * \return list of unique nullables
  */
-StrList getnullables (const Grammar& grammar) {
+std::set<std::string> getnullables (const Grammar& grammar) {
 	ProductionRules production_rules = grammar.production_rules ;
-	
-	StrList nullables = StrList() ;
-	size_t lenG = 0 ;
+
+    // construct occurences map for back propagation of nullables
+    auto occurs = std::map<std::string, std::vector<StrList>>();
+    for (const auto& item : production_rules) {
+        std::string key = item.first;
+        Rules rules = item.second;
+
+        for (const auto& rule: rules) {
+            if (rule.size() == 1) {
+                if (occurs.find(rule[0].cvalue()) == occurs.end())
+                    occurs[rule[0].cvalue()] = std::vector<StrList>();
+                occurs[rule[0].cvalue()].push_back({key});
+            }
+            else if (rule.size() == 2) {
+                if (occurs.find(rule[0].cvalue()) == occurs.end())
+                    occurs[rule[0].cvalue()] = std::vector<StrList>();
+                if (occurs.find(rule[1].cvalue()) == occurs.end())
+                    occurs[rule[1].cvalue()] = std::vector<StrList>();
+                occurs[rule[0].cvalue()].push_back(StrList({key, rule[1].cvalue()}));
+                occurs[rule[1].cvalue()].push_back(StrList({key, rule[0].cvalue()}));
+            }
+        }
+
+    }
+
+    // prepare todo_ queue
+    auto nullables = std::set<std::string>() ;
+    auto todo = std::vector<std::string>();
 	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 		for (Rule rule : rules) {
-			lenG += 1 ;
-			
+
 			bool isruleempty = (rule.size() == 1 && rule[0].type() == Token::Empty) ;
 			if (isruleempty) {
-				nullables.push_back (key) ;
+				nullables.emplace(key) ;
+                todo.push_back(key);
 			}
 		}
 	}
 
-	for (size_t i = 0 ; i < lenG ; i++) {
-		for (const auto& item : production_rules) {
-			std::string key = item.first ;
-			Rules rules = item.second ;
-			
-			for (Rule rule : rules) {
-				if (rule.size() != 2) {
-					continue ;
-				}
-				bool isruleempty = (
-					std::find(nullables.begin(), nullables.end(), rule[0].value()) != nullables.end() &&
-					std::find(nullables.begin(), nullables.end(), rule[1].value()) != nullables.end()) ;
-				if (isruleempty) {
-					nullables.push_back (key) ;
-				}
-			}
-		}
+    // construct and propagate nullables
+    while(not todo.empty()) {
+        const auto& occ = occurs[todo.back()];
+        todo.pop_back();
+
+        for (const auto& rule : occ) {
+            if (nullables.find(rule.back()) != nullables.end() and nullables.find(rule.front()) == nullables.end()) {
+                nullables.emplace(rule.front());
+                todo.push_back(rule.front());
+            }
+        }
 	}
-	
-	//remove duplicates
-	StrList nulls = StrList() ;
-	for (const std::string& str : nullables) {
-		if (std::find (nulls.begin(), nulls.end(), str) == nulls.end()) {
-			nulls.push_back(str);
-		}
-	}
-	return nulls ;
+	return nullables ;
 }
 
 /*!
@@ -201,86 +210,53 @@ StrList getnullables (const Grammar& grammar) {
  * \return grammar 
  */
 Grammar getunitrelation (Grammar grammar) {
-	StrList nullables = getnullables (grammar) ;
+	std::set<std::string> nullables = getnullables (grammar) ;
 
 	ProductionRules production_rules = grammar.production_rules ;
 
 	Grammar::UnitRelation unitrelation = Grammar::UnitRelation() ;
 
-	StrList unitkeylist = StrList() ;
-	//first pass
 	for (const auto& item : production_rules) {
 		std::string key = item.first ;
 		Rules rules = item.second ;
 
 		for (Rule rule : rules) {
-			if (rule.size() != 1) {
-				continue ;
-			}
-			StrList epsOrTerminal = StrList({Token::Empty, Token::Terminal}) ;
-			bool isruleunit = (
-				(std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].type()) == epsOrTerminal.end())
-			) ;
-			if (isruleunit) {
-				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-					unitrelation[key].push_back (rule[0].value()) ;
-				} else {
-					unitrelation[key] = StrList({rule[0].value()}) ;
-					unitkeylist.push_back(key);
-				}
-			}
+
+            if (rule.size() == 1) {
+                if (unitrelation.find(key) != unitrelation.end()) {
+                    unitrelation[key].push_back (rule[0].value()) ;
+                } else {
+                    unitrelation[key] = StrList({rule[0].value()}) ;
+                }
+            }
+
+            else if (rule.size() == 2) {
+                if (nullables.find(rule[0].type()) == nullables.end()) {
+                    if (unitrelation.find(key) != unitrelation.end()) {
+                        unitrelation[key].push_back (rule[0].value()) ;
+                    } else {
+                        unitrelation[key] = StrList({rule[0].value()}) ;
+                    }
+                }
+                if (nullables.find(rule[1].type()) == nullables.end()) {
+                    if (unitrelation.find(key) != unitrelation.end()) {
+                        unitrelation[key].push_back (rule[1].value()) ;
+                    } else {
+                        unitrelation[key] = StrList({rule[1].value()}) ;
+                    }
+                }
+            }
 		}
 	}
 
-	//second pass
-	for (const auto& item : production_rules) {
-		std::string key = item.first ;
-		Rules rules = item.second ;
+    // propagate unit relation using computed unit graph
 
-		for (Rule rule : rules) {
-			if (rule.size() != 2) {
-				continue ;
-			}
-			bool isruleunit = (std::find(nullables.begin(), nullables.end(), rule[0].value()) != nullables.end()) ;
-			if (isruleunit) {
-				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-					unitrelation[key].push_back (rule[1].value()) ;
-				} else {
-					unitrelation[key] = StrList({rule[1].value()}) ;
-					unitkeylist.push_back(key);
-				}
-			}
-			isruleunit = (std::find(nullables.begin(), nullables.end(), rule[1].value()) != nullables.end()) ;
-			if (isruleunit) {
-				if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
-					unitrelation[key].push_back (rule[0].value()) ;
-				} else {
-					unitrelation[key] = StrList({rule[0].value()}) ;
-					unitkeylist.push_back(key);
-				}
-			}
-		}
-	}
-
-	Grammar::UnitRelation outunit = Grammar::UnitRelation () ;
-	for (const auto& item : unitrelation) {
-		std::string key = item.first ;
-		StrList unitrel = item.second ;
-		outunit[key] = StrList () ;
-		for (const std::string& unit : unitrel) {
-			if (std::find(outunit[key].begin(), outunit[key].end(), unit) == outunit[key].end()) {
-				//key doesn't exist
-				outunit[key].push_back(unit);
-			}
-		}
-	}
-	
- 	grammar.unitrelation = outunit ;
+ 	grammar.unitrelation = unitrelation;
 	return grammar ;
 }
 
-} //namespace normoperators
+} // namespace parselib::normoperators
 
-} //namespace parselib
+
 
 	
