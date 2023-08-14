@@ -52,7 +52,7 @@ void Grammar::merge (const Grammar &grammar) {
 	//keeper merge
 	for (const auto &item : grammar.keeper) {
 		std::string key = item.first ;
-		StrList kept = item.second ;
+		StrVect kept = item.second ;
 
 		if (keeper.find(key) != keeper.end()) {
 			for (const std::string &str : kept) {
@@ -151,7 +151,7 @@ void Grammar::exportToFile(const string &filename) {
 		boost::replace_all (key, ".", "_tok");
 		Rules rules = item.second ;
 		for (const Rule &rule : rules) {
-			StrList r ;
+			StrVect r ;
 			for (Token op : rule) {
 				std::string val = op.value() ;
 				boost::replace_all (val, "-", "");
@@ -190,7 +190,7 @@ string Grammar::getstr () {
     ss << "\nUNIT = [\n" ;
 	for (const auto &item : unitrelation) {
 		string key = item.first ;
-		StrList listkeep = item.second ;
+        StrVect listkeep = StrVect{std::begin(item.second), std::end(item.second)} ;
 		ss << "" << key << " {\n\t"
             << utils::join(listkeep, "\n\t")
             << "\n}\n" ;

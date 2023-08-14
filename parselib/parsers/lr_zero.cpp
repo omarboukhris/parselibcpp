@@ -169,7 +169,7 @@ Frame LR_zero::membership(const TokenList &w) {
     word.emplace_back("End", "$");
 
     Frame stack, output;
-    StrList positions;
+    StrVect positions;
     std::string current_state("0");
 
     stack.push_back(TokenNode::make_token("Begin", "^")); // start token
@@ -243,7 +243,7 @@ Frame LR_zero::membership(const TokenList &w) {
 }
 
 
-    void LR_zero::reduce_fn(Frame &stack, StrList &positions, const LR_zero::Cell &next_step) {
+    void LR_zero::reduce_fn(Frame &stack, StrVect &positions, const LR_zero::Cell &next_step) {
         int idx = std::stoi(next_step.item);
         auto r = flat_map[idx];
         if (r.second.size() == 1) { // unit

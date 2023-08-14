@@ -13,18 +13,22 @@ inline void DEBUG_OUT(const std::string& x) {
 namespace parselib::parsers {
 
 std::string CYK::getstrmat (const CYKMatrix& cykmat) {
-	//print matrix here
-	std::string ss ;
+	//print html matrix here
+	std::stringstream ss ;
+    ss << "<html><head><title>CYK Debug</title></head><body><table>";
 	for (const Row& row : cykmat) {
-		for (const Frame& frame : row) {
+        ss << "<tr>";
+        for (const Frame& frame : row) {
+            ss << "<td>";
 			for (const parsetree::NodePtr& node : frame) {
-				ss += node->nodetype + ":" ;
+				ss << node->nodetype + "/" ;
 			}
-			ss += "|" ;
+			ss << "</td>" ;
 		}
-		ss += "\n" ;
+		ss << "</tr>\n" ;
 	}
-	return ss ;
+    ss << "</table></body></html>";
+    return ss.str() ;
 }
 
 Row cartesianprod(const Frame& A, const Frame& B) {
@@ -92,7 +96,9 @@ Frame CYK::membership (const TokenList &word) {
 		pbar.update(l);
 	}
 	std::cout << "\r" << std::flush ;
-	// std::cout << getstrmat(P) ;
+    std::ofstream f ("cykmat.html", std::ofstream::out);
+	f << getstrmat(P) ;
+    f.close();
 
 	if (P[n-1][0].empty()) {
 		return getBrokenNodes(P);
@@ -171,7 +177,7 @@ Frame CYK::getAxiomNodes(const Frame& nodes){
  * \brief get a list of binarized production rules in a frame
  */
 Frame CYK::getbinproductions(const Row& AB, const int MAX) {
-	StrList keys = StrList() ;
+	StrVect keys = StrVect() ;
 	for (const auto& item : production_rules) {
 		keys.push_back(item.first);
 	}

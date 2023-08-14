@@ -19,7 +19,7 @@ SequentialParser::SequentialParser (
 	strnodes = StrMap () ;
 
 	keeper = KeepingList() ;
-	keeper["all"] = StrList() ;
+	keeper["all"] = StrVect() ;
 
 	labels = LabelReplacementMap() ;
 
@@ -168,7 +168,7 @@ void SequentialParser::check_right_side() {
 		} else {
 			if (parsedtokens[j].value().find('=') != std::string::npos) {
 				//naming process
-				utils::StrList out = utils::split(parsedtokens[j].value(), "=") ;
+				StrVect out = utils::split(parsedtokens[j].value(), "=") ;
 				std::string label, operand ;
 				
 				if (out.size() == 2) {
@@ -206,7 +206,7 @@ void SequentialParser::process_label(const std::string& label, const std::string
 	if (keeper.find(current_rule) != keeper.end()) {
 		keeper[current_rule].push_back(label) ;
 	} else {
-		keeper[current_rule] = StrList() ;
+		keeper[current_rule] = StrVect() ;
 		keeper[current_rule].push_back(label) ;
 	}
 }
@@ -252,14 +252,14 @@ void SequentialParser::add_to_keeper(size_t j) {
 			keeper[current_rule].push_back(entry);
 		}
 	} else {
-		keeper[current_rule] = StrList() ;
+		keeper[current_rule] = StrVect() ;
 		keeper[current_rule].push_back(entry) ;
 	}
 }
 
 void SequentialParser::add_to_str_rules(size_t j) {
 	std::string nodename = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
-    StrList &strnode = strnodes[current_rule];
+    StrVect &strnode = strnodes[current_rule];
 	// add to strnodes
 	if (std::find(strnode.begin(), strnode.end(), nodename) == strnode.end()) {
 		strnode.push_back(nodename) ;

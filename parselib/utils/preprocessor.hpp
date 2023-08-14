@@ -58,7 +58,7 @@ public :
 		}
 
 		// get grammar directory 
-		utils::StrList x = utils::split(filename, "/") ;
+        StrVect x = utils::split(filename, "/") ;
 		x.pop_back() ;
 
 		pwd = utils::join(x, "/") ;

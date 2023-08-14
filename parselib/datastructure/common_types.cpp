@@ -15,10 +15,10 @@ std::string GrammarStruct::getstr() {
 
         ss << "\nRULE " << key << " = [\n\t" ;
 
-        StrList rule_in_a_line = StrList () ;
+        StrVect rule_in_a_line = StrVect () ;
 
         for (const Rule& rule : rules) {
-            StrList ruletxt = StrList () ;
+            StrVect ruletxt = StrVect () ;
             for (Token opr : rule) {
                 ruletxt.push_back(opr.type()+"("+opr.value()+")");
             }
@@ -43,7 +43,7 @@ std::string GrammarStruct::getstr() {
     ss << "STRUCT = [\n" ;
     for (const auto& item : keeper) {
         std::string key = item.first ;
-        StrList listkeep = item.second ;
+        StrVect listkeep = item.second ;
         ss << "" << key << " {\n\t" << utils::join(listkeep, "\n\t") << "}\n" ;
     }
     ss << "\n]\n\n" ;

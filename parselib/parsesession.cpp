@@ -32,6 +32,8 @@ void ParseSession::load_grammar(const std::string &filename, bool verbose) {
 	Grammar grm = ggp.parse (filename, verbose, true) ;
 	// grm.exportToFile(filename);
 	this->grammar = normoperators::get2nf(grm) ;
+	this->parser = std::make_shared<parsers::CYK> (parsers::CYK(this->grammar)) ;
+
 }
 
 pt::ptree ParseSession::parse(const parsetree::TreePtr& code, const std::string& parent) {

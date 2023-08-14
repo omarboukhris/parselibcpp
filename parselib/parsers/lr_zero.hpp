@@ -120,7 +120,7 @@ namespace parselib::parsers {
 
         TableBuilder::FlatProductionMap flat_map;
 
-        void reduce_fn(Frame &stack, StrList &positions, const Cell &next_step);
+        void reduce_fn(Frame &stack, StrVect &positions, const Cell &next_step);
     };
 
 }

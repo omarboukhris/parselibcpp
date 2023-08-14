@@ -27,9 +27,8 @@ std::string clean_if_terminal (std::string token) ;
 std::string clean_regex (const std::string& regx) ;
 std::string escape_regex (const std::string& regx) ;
 
-typedef std::vector<std::string> StrList ; 
-StrList split (std::string target, const std::string& delim) ;
-std::string join (StrList strlist, const std::string& delim) ;
+StrVect split (std::string target, const std::string& delim) ;
+std::string join (StrVect strlist, const std::string& delim) ;
 
 typedef std::vector<std::string> FilesList ;
 
@@ -40,7 +39,7 @@ typedef std::vector<std::string> FilesList ;
 class FileGlober {
 public :
 
-	FileGlober (const std::string folderpath, const std::string ext) {
+	FileGlober (const std::string& folderpath, const std::string& ext) {
 		this->folderpath = folderpath ;
 		this->ext = ext ;
 	}
@@ -62,22 +61,22 @@ protected :
 
 class Printer {
 public :
-	static void showinfo (std::string str) {
+	static void showinfo (const std::string& str) {
 		std::cout << "(info) " << str << std::endl ;
 	}
 
-	static void showerr (std::string str) {
+	static void showerr (const std::string& str) {
 		std::cerr << "(error) " << str << std::endl ;
 	}
 } ;
 
 class ProgressBar {
 public :
-	ProgressBar (size_t max) {
+	explicit ProgressBar (size_t max) {
 		this->max = max ;
 	}
 	
-	void update (size_t i) {
+	void update (size_t i) const {
 		std::cout << "\r" << int(i*100.0f/max) << "%" << std::flush;
 		if (i == max-1) {
 			std::cout << "\r100%" ;
@@ -102,7 +101,7 @@ public :
 		return all_args ;
 	}
 	
-	ArgvLex (const ArgList& argv) ;
+	explicit ArgvLex (const ArgList& argv) ;
 	
 	std::string get (const std::string& key) ;
 

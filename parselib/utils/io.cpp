@@ -31,7 +31,7 @@ string get_text_file_content (const string &filename) {
 ArgvLex::ArgvLex(const ArgList& argv) {
 	parsedargv = {} ;
 	for (const string& arg : argv) {
-		StrList slist = split(arg, "=") ;
+        StrVect slist = split(arg, "=") ;
 
 		switch (slist.size()) {
 			case 1 :
@@ -77,27 +77,27 @@ string escape_regex(const string& regx) {
 }
 
 
-StrList split (string target, const string& delim) {
+StrVect split (string target, const string& delim) {
     if (target.empty()) {
 		//maybe show err : target is empty
 		return {} ;
 	}
 
-    StrList v = StrList() ;
+    auto v = StrVect() ;
 	boost::split(v, target, boost::is_any_of(delim)) ;
 	return v;
 }
 
-string join (StrList strlist, const string& delim) {
-	if (strlist.empty()) {
-		return "" ;
-	}
-	string out ;
-	for (size_t i = 0 ; i < strlist.size()-1 ; i++) {
-		std::string s = strlist[i] ;
-		out += s + delim ;
-	}
-	return out+strlist.back() ;
+string join (StrVect strlist, const string& delim) {
+    if (strlist.empty()) {
+        return "" ;
+    }
+    string out ;
+    for (size_t i = 0 ; i < strlist.size()-1 ; i++) {
+        std::string s = strlist[i] ;
+        out += s + delim ;
+    }
+    return out+strlist.back() ;
 }
 
 std::string transform_to_source ( const TokenList& tokenizedgrammar )

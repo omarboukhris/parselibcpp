@@ -143,9 +143,10 @@ namespace parselib {
     typedef std::vector<Rule> Rules;
     typedef std::map<std::string, Rules> ProductionRules;
 
-    typedef std::vector<std::string> StrList;
-    typedef std::map<std::string, StrList> StrMap;
-    typedef std::map<std::string, StrList> KeepingList;
+    typedef std::list<std::string> StrList;
+    typedef std::vector<std::string> StrVect;
+    typedef std::map<std::string, StrVect> StrMap;
+    typedef std::map<std::string, StrVect> KeepingList;
 
     typedef std::map<std::string, std::string> LabelReplacement;
     typedef std::map<std::string, LabelReplacement> LabelReplacementMap;

@@ -100,7 +100,7 @@ void BIN::binarizerule(const std::string& key, Rule rule) {
 		normalForm[key].push_back(rule);
 	} else {
 		Rule newRule = Rule () ;
-		StrList rulebyname = StrList() ;
+		StrVect rulebyname = StrVect() ;
 		bool dirty = true ;
 		for (Token token : rule) {
 			if (dirty) {
@@ -148,7 +148,7 @@ std::set<std::string> getnullables (const Grammar& grammar) {
 	ProductionRules production_rules = grammar.production_rules ;
 
     // construct occurences map for back propagation of nullables
-    auto occurs = std::map<std::string, std::vector<StrList>>();
+    auto occurs = std::map<std::string, std::vector<StrVect>>();
     for (const auto& item : production_rules) {
         std::string key = item.first;
         Rules rules = item.second;
@@ -156,16 +156,16 @@ std::set<std::string> getnullables (const Grammar& grammar) {
         for (const auto& rule: rules) {
             if (rule.size() == 1) {
                 if (occurs.find(rule[0].cvalue()) == occurs.end())
-                    occurs[rule[0].cvalue()] = std::vector<StrList>();
+                    occurs[rule[0].cvalue()] = std::vector<StrVect>();
                 occurs[rule[0].cvalue()].push_back({key});
             }
             else if (rule.size() == 2) {
                 if (occurs.find(rule[0].cvalue()) == occurs.end())
-                    occurs[rule[0].cvalue()] = std::vector<StrList>();
+                    occurs[rule[0].cvalue()] = std::vector<StrVect>();
                 if (occurs.find(rule[1].cvalue()) == occurs.end())
-                    occurs[rule[1].cvalue()] = std::vector<StrList>();
-                occurs[rule[0].cvalue()].push_back(StrList({key, rule[1].cvalue()}));
-                occurs[rule[1].cvalue()].push_back(StrList({key, rule[0].cvalue()}));
+                    occurs[rule[1].cvalue()] = std::vector<StrVect>();
+                occurs[rule[0].cvalue()].push_back(StrVect({key, rule[1].cvalue()}));
+                occurs[rule[1].cvalue()].push_back(StrVect({key, rule[0].cvalue()}));
             }
         }
 
