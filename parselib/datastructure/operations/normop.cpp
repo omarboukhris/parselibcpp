@@ -49,12 +49,12 @@ void TERM::term() {
 void TERM::checkruleforterminals(const std::string& key, const Rule& rule) {
 	Rule newRule = Rule() ;
 	for (Token operand : rule) {
-		if (operand.type() == "TERMINAL") {
+		if (operand.type() == Token::Terminal) {
 			std::string newKey = operand.value() + "." ;
 			if (normalForm.find(newKey) == normalForm.end()) {
 				normalForm[newKey] = Rules() ;
 			}
-			newRule.emplace_back(newKey, "NONTERMINAL");
+			newRule.emplace_back(newKey, Token::NonTerminal);
 			normalForm[newKey].push_back({operand});
 		} else {
 			newRule.push_back(operand);
@@ -117,7 +117,7 @@ void BIN::binarizerule(const std::string& key, Rule rule) {
 			normalForm[newKey] = Rules () ;
 		}
 		normalForm[key].push_back({
-			rule[0], Token(newKey, "NONTERMINAL")
+			rule[0], Token(newKey, Token::NonTerminal)
 		});
 		normalForm[newKey].push_back(newRule);
 	}
@@ -130,7 +130,7 @@ Grammar  removenullables (Grammar grammar) {
 		Rules rules = item.second ;
 		production_rules[key] = Rules() ;
 		for (Rule rule : rules) {
-			if (rule.size() == 1 && rule[0].type() == "EMPTY") {
+			if (rule.size() == 1 && rule[0].type() == Token::Empty) {
 				continue ;
 			}
 			production_rules[key].push_back(rule) ;
@@ -157,7 +157,7 @@ StrList getnullables (const Grammar& grammar) {
 		for (Rule rule : rules) {
 			lenG += 1 ;
 			
-			bool isruleempty = (rule.size() == 1 && rule[0].type() == "EMPTY") ;
+			bool isruleempty = (rule.size() == 1 && rule[0].type() == Token::Empty) ;
 			if (isruleempty) {
 				nullables.push_back (key) ;
 			}
@@ -217,7 +217,7 @@ Grammar getunitrelation (Grammar grammar) {
 			if (rule.size() != 1) {
 				continue ;
 			}
-			StrList epsOrTerminal = StrList({"EMPTY", "TERMINAL"}) ;
+			StrList epsOrTerminal = StrList({Token::Empty, Token::Terminal}) ;
 			bool isruleunit = (
 				(std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].type()) == epsOrTerminal.end())
 			) ;

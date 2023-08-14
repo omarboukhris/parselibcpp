@@ -158,9 +158,9 @@ Frame CYK::getAxiomNodes(const Frame& nodes){
 	Frame axiomnodes = Frame() ;
 	for (const parsetree::NodePtr& node : nodes) {
 		if (node->nodetype == Token::Axiom ||
-			node->nodetype == production_rules["AXIOM"][0][0].value())
+			node->nodetype == production_rules[Token::Axiom][0][0].value())
 		{
-			//production_rules["AXIOM"][0][0].val :
+			//production_rules[Token::Axiom][0][0].val :
 			axiomnodes.push_back (node) ;
 		}
 	}

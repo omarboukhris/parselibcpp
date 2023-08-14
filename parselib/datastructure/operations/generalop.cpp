@@ -11,8 +11,8 @@ PatternsMap GenericGrammarTokenizer::grammartokens = {
 
 	//KEYWORDS
 	{"(//|\\;).*",                      "LINECOMMENT"},
-	{R"(''|"")",                       "EMPTY"},
-	{"AXIOM",                           "AXIOM"},
+	{R"(''|"")",                       Token::Empty},
+	{Token::Axiom,                           Token::Axiom},
 
 	// SPECIAL OPERATORS
 	{R"((\_\_list\_\_|\[\]))",       "LIST"},
@@ -27,13 +27,13 @@ PatternsMap GenericGrammarTokenizer::grammartokens = {
 	{"\\)",                             "RPAR"},
 
 	//OPERANDS
-	{R"(([a-zA-Z_]\w*=)?[a-zA-Z0-9_]\w*\.)",    "TERMINAL"},
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",       "NONTERMINAL"}
+	{R"(([a-zA-Z_]\w*=)?[a-zA-Z0-9_]\w*\.)",    Token::Terminal},
+	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",       Token::NonTerminal}
 } ;
 
 PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 	{"LINECOMMENT",                                     "LINECOMMENT"},
-	{"AXIOM EQUAL NONTERMINAL",                         "AXIOM"},
+	{"AXIOM EQUAL NONTERMINAL",                         Token::Axiom},
 	{"TERMINAL REGEX",                                  "TOKEN"},
 	{"NONTERMINAL EQUAL",                               "LSIDE"},
 	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY", "RSIDE"},

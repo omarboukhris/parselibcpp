@@ -53,7 +53,7 @@ void LR_zero::build_graph(){
         return ;
     }
     int j = 0;
-    Rule axiom_rule = production_rules["AXIOM"].at(0);
+    Rule axiom_rule = production_rules[Token::Axiom].at(0);
     Item axiom (axiom_rule);
     Closure i0 = make_closure(j++, axiom);
 

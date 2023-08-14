@@ -44,9 +44,9 @@ pt::ptree ParseSession::parse(const parsetree::TreePtr& code, const std::string&
 
 	for (parsetree::Tree::Token& element : code->tokens()) {
 
-		if (element.first == "AXIOM") {
+		if (element.first == Token::Axiom) {
 
-			return parse (element.second, "AXIOM") ;
+			return parse (element.second, Token::Axiom) ;
 		}
 		
 		element.first = processnodename(element.first) ;
@@ -156,7 +156,7 @@ pt::ptree ParseSession::process_source_to_ptree(const std::string &filename, boo
     } else {
         index = (index > 0 && index < result.size()) ? index : 0;
 
-        if (result[index]->nodetype == grammar.production_rules["AXIOM"][0][0].value()) {
+        if (result[index]->nodetype == grammar.production_rules[Token::Axiom][0][0].value()) {
 
             // std::cout << "got axiom" << *result[index]->unfold().get() << std::endl ;
             pt::ptree output = parse(result[index]->unfold(), "");

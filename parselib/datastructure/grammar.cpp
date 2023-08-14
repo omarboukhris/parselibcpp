@@ -131,7 +131,7 @@ bool Grammar::keyIsStr(const string &toktype) {
 }
 
 bool Grammar::isTokenSavable(const string &parent, const string &child) {
-	if (parent == "AXIOM" || child == production_rules["AXIOM"][0][0].value()) {
+	if (parent == Token::Axiom || child == production_rules[Token::Axiom][0][0].value()) {
 		return true ;
 	}
 	if (!inKeeperKeys(parent)) {

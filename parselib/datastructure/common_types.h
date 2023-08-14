@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include <utility>
 #include <vector>
 #include <map>
 #include <iterator>
@@ -26,28 +27,21 @@ namespace parselib {
 		/*!
 		 * \brief Token default constructor
 		 */
-		Token()
-			: m_token({"", ""})
-		{}
+		Token() = default;
 
-		/*!
-		 * \brief Token construction with key value pairing
-		 * \param value
-		 * \param type
-		 */
-		Token(const std::string& value, const std::string& type)
-			: m_token({value, type})
-		{}
+		Token(std::string  val, std::string  t)
+            : value_(std::move(val)), type_(std::move(t))
+        {}
 
 		//
 		// Accessors
 		//
 
-		std::string &value()
-			{ return m_token.first; }
-		std::string &key()
-			{ return m_token.second; }
-		std::string & type() { return m_token.second; }
+		inline std::string &value()
+			{ return value_; }
+		inline std::string &key()
+			{ return type_; }
+		inline std::string & type() { return type_; }
 
 		//
 		// File streams
@@ -61,13 +55,13 @@ namespace parselib {
 
 			try {
 
-				t_fstream.write(reinterpret_cast<char*>(m_token.first.size()),
-								sizeof(m_token.first.size()));
-				t_fstream.write(m_token.first.c_str(), (long)m_token.first.size());
+				t_fstream.write(reinterpret_cast<char*>(value_.size()),
+								sizeof(value_.size()));
+				t_fstream.write(value_.c_str(), (long)value_.size());
 
-				t_fstream.write(reinterpret_cast<char*>(m_token.second.size()),
-								sizeof(m_token.second.size()));
-				t_fstream.write(m_token.second.c_str(), (long)m_token.second.size());
+				t_fstream.write(reinterpret_cast<char*>(type_.size()),
+								sizeof(type_.size()));
+				t_fstream.write(type_.c_str(), (long)type_.size());
 
 			} catch (std::exception &e) {
 
@@ -93,7 +87,8 @@ namespace parselib {
 				t_fstream.read(reinterpret_cast<char*>(&typeSize), sizeof(typeSize));
 				char *type = new char[typeSize];
 				t_fstream.read(type, typeSize);
-				m_token = std::make_pair(value, type) ;
+				value_ = std::string(value);
+                type_ = std::string(type_);
 
 			} catch (std::exception &e) {
 
@@ -107,26 +102,27 @@ namespace parselib {
 		//
 
 		friend bool operator == (const Token &t1, const Token& t2) {
-			return t1.m_token == t2.m_token;
+			return (t1.value_ == t2.value_) and (t1.type_ == t2.type_);
 		}
 		friend bool operator != (const Token &t1, const Token& t2) {
 			return not (t1 == t2);
 		}
 
         friend bool operator < (const Token &t1, const Token& t2) {
-            return t1.m_token.first < t2.m_token.first;
+            return t1.value_ < t2.value_;
         }
 
 
         friend std::ostream & operator<<(std::ostream &out, const Token &tok) {
-            out << "(" << tok.m_token.first << ":" << tok.m_token.second << ")";
+            out << "(" << tok.value_ << ":" << tok.type_ << ")";
             return out;
         }
 
 	protected:
 
 		// 1st:Value  | 2nd:Key(type)
-		std::pair<std::string, std::string> m_token ;
+        std::string value_;
+        std::string type_;
 
     public:
         static inline std::string NonTerminal = "NONTERMINAL";

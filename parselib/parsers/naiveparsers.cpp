@@ -50,9 +50,9 @@ void SequentialParser::check_axiom () {
 	
 	// grammar(i).first = value,
 	//			 .second = type
-	if (grammar[i].type() == "AXIOM" && axiomflag) {
+	if (grammar[i].type() == Token::Axiom && axiomflag) {
 		Token axiom = parsedtokens[j+2] ;
-		production_rules["AXIOM"] = {{axiom}} ;
+		production_rules[Token::Axiom] = {{axiom}} ;
 		axiomflag = false ;
 		i += 1 ;
 		j += 3 ;
@@ -145,7 +145,7 @@ void SequentialParser::check_right_side() {
 
 	while (i < grammar.size() && grammar[i].type() == "RSIDE") {
 
-		if (parsedtokens[j].type() == "TERMINAL") {
+		if (parsedtokens[j].type() == Token::Terminal) {
 			parsedtokens[j].value() = utils::clean_if_terminal(parsedtokens[j].value()) ;
 		}
 
@@ -212,8 +212,8 @@ void SequentialParser::process_label(const std::string& label, const std::string
 }
 
 void SequentialParser::make_list(){
-	Token thisnode (current_rule, std::string("NONTERMINAL")) ;
-	Token eps (std::string("''"), std::string("EMPTY")) ;
+	Token thisnode (current_rule, std::string(Token::NonTerminal)) ;
+	Token eps (std::string("''"), std::string(Token::Empty)) ;
 	production_rules[current_rule].back() = {thisnode, thisnode} ;
 	production_rules[current_rule].push_back({eps}) ;
 }
@@ -231,7 +231,7 @@ void SequentialParser::make_regex(size_t j) {
 
 	tokens.emplace_back(regex, label) ;
 
-	Token thisnode (label, "TERMINAL") ;
+	Token thisnode (label, Token::Terminal) ;
 	production_rules = add_operand_to_current_rule(thisnode) ;
 }
 
