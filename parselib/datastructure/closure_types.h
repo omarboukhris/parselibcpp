@@ -1,5 +1,4 @@
-#ifndef CLOSURE_TYPES_H
-#define CLOSURE_TYPES_H
+#pragma once
 
 #include <parselib/datastructure/common_types.h>
 
@@ -21,7 +20,7 @@ namespace parselib {
 
         Item(const Item &it) = default;
 
-        explicit Item(Rule  r)
+        explicit Item(Rule r)
                 : m_rule(std::move(r))
                 , m_position(0)
         {
@@ -360,7 +359,10 @@ namespace parselib {
         }
     };
 
+    class Closures : public std::vector<Closure> {
+
+    public:
+
+    };
+
 }
-
-
-#endif // CLOSURE_TYPES_H

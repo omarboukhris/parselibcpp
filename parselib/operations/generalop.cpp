@@ -75,12 +75,9 @@ Grammar eliminatedoubles (Grammar grammar) {
  * \returns true or false (bool)
  */
 bool checkunique (const Rules& uniquerules, const Rule& rule) {
-	for (const Rule& r : uniquerules) {
-		if (samerule (r, rule)) {
-			return true ;
-		}
-	}
-	return false ;
+    std::any_of(uniquerules.begin(), uniquerules.end(), [&] (const Rule& r) {
+        return r == rule;
+    });
 }
 	
 /*!

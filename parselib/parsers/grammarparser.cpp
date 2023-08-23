@@ -3,7 +3,7 @@
 
 #include <parselib/operations/generalop.hpp>
 
-#include <parselib/parsers/naiveparsers.hpp>
+#include <parselib/parsers/seqparsers.hpp>
 
 #include <parselib/utils/io.hpp>
 

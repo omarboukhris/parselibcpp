@@ -1,7 +1,7 @@
 
 #include <parselib/utils/io.hpp>
 
-#include "naiveparsers.hpp"
+#include "seqparsers.hpp"
 
 using namespace std ;
 
@@ -212,10 +212,12 @@ void SequentialParser::process_label(const std::string& label, const std::string
 }
 
 void SequentialParser::make_list(){
+    /// note : try not to use epsilone rules when they can be avoided
+    /// they needlessly inflate the grammar and thus processing time
 	Token thisnode (current_rule, std::string(Token::NonTerminal)) ;
-	Token eps (std::string("''"), std::string(Token::Empty)) ;
+//	Token eps (std::string("''"), std::string(Token::Empty)) ;
 	production_rules[current_rule].back() = {thisnode, thisnode} ;
-	production_rules[current_rule].push_back({eps}) ;
+//	production_rules[current_rule].push_back({eps}) ;
 }
 
 void SequentialParser::make_regex(size_t j) {

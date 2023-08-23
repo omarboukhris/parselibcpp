@@ -149,6 +149,33 @@ public :
 } ;
 
 typedef std::shared_ptr<Node> NodePtr ;
+typedef std::vector<NodePtr> NodePtrVect;
+/*!
+ * \brief The KNode class represents a unit node with the form
+ * ProductionRule_a -> ProductionRule_b..ProdRule_k
+ */
+class KNode : public Node {
+public :
+
+    KNode (const KNode& other) = default;
+    KNode (const std::string &nodetype, const NodePtrVect &knode) ;
+
+    ~KNode() override = default;
+
+    static inline NodePtr make_knode(const std::string &nodetype, const NodePtrVect &knode) {
+        return std::make_shared<KNode>(KNode (nodetype, knode)) ;
+    }
+    /*!
+     * \brief applies lazy node unfolding of k node U1 -> U2..Uk into
+     * a Tree datastructure
+     * \param parent node name
+     * \return unfolded TreePtr (parsable into pt::ptree/json)
+     */
+    TreePtr unfold (const std::string &parent) override ;
+private :
+    NodePtrVect knode ;
+} ;
+
 
 /*!
  * \brief The UnitNode class represents a unit node with the form
@@ -157,7 +184,7 @@ typedef std::shared_ptr<Node> NodePtr ;
 class UnitNode : public Node {
 public :
 
-	explicit UnitNode (UnitNode *other) ;
+	UnitNode (const UnitNode& other) = default;
 	UnitNode (const std::string &nodetype, const NodePtr &unit) ;
 
     ~UnitNode() override = default;

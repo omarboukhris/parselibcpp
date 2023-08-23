@@ -3,19 +3,11 @@
 #include <queue>
 
 #include <parselib/datastructure/closure_types.h>
-#include <parselib/parsers/naiveparsers.hpp>
+#include <parselib/parsers/seqparsers.hpp>
 
 #include "absparser.hpp"
 
 namespace parselib::parsers {
-
-    class Closures : public std::vector<Closure> {
-
-    public:
-
-
-
-    };
 
     class LR_zero : public AbstractParser {
     public :

@@ -158,12 +158,6 @@ bool Node::iscompacted() const {
 	return (nodetype.find('/') != std::string::npos) ;
 }
 
-
-UnitNode::UnitNode(UnitNode *other) {
-	this->nodetype = other->nodetype ;
-	this->unit = other->unit ;
-}
-
 UnitNode::UnitNode(const std::string &nodetype, const NodePtr &unit) {
 	this->nodetype = nodetype ;
 	this->unit = unit ;
@@ -231,6 +225,19 @@ TreePtr BinNode::unfold(const std::string &parent) {
 		treeout.push_back(tok);
 		return std::make_shared<Tree>(treeout) ;
 	}
+}
+
+KNode::KNode(const std::string &nodetype, const NodePtrVect &knode) {
+    this->nodetype = nodetype;
+    this->knode = knode;
+}
+
+TreePtr KNode::unfold(const std::string &parent) {
+    TreePtr tree = {};
+    std::for_each(knode.begin(), knode.end(), [&] (const auto &node) {
+        tree->merge(node->unfold(parent));
+    });
+    return tree;
 }
 
 }

@@ -65,7 +65,7 @@ void LR_zero::build_graph(){
     while(not stack.empty()) {
         Closure clos(stack.back());
 
-        for (Item current_item : clos) {
+        for (Item& current_item : clos) {
 
             while(not current_item.done()) {
                 current_item.next();
@@ -242,24 +242,28 @@ Frame LR_zero::membership(const TokenList &w) {
      */
 }
 
+void LR_zero::reduce_fn(Frame &stack, StrVect &positions, const LR_zero::Cell &next_step) {
+    using namespace parsetree;
 
-    void LR_zero::reduce_fn(Frame &stack, StrVect &positions, const LR_zero::Cell &next_step) {
-        int idx = std::stoi(next_step.item);
-        auto r = flat_map[idx];
-        if (r.second.size() == 1) { // unit
-            parsetree::NodePtr unit = stack.back(); stack.pop_back();
-            positions.pop_back();
-            stack.push_back(parsetree::UnitNode::make_unit(r.first, unit));
-        }
-        else if (r.second.size() == 2) { // bin
-            parsetree::NodePtr left = stack.back(); stack.pop_back();
-            parsetree::NodePtr right = stack.back(); stack.pop_back();
-            positions.pop_back(); positions.pop_back();
-            stack.push_back(parsetree::BinNode::make_bin(r.first, left, right));
-        }
-        else {
-            throw std::runtime_error("Rule not bin or unit, normalize grammar!!");
-        }
+    int idx = std::stoi(next_step.item);
+    auto r = flat_map[idx];
+
+    if (r.second.empty() or r.second.size() >= stack.size()) {
+        throw std::runtime_error("Rule empty or Rule size larger than stack content");
     }
+
+    auto knode = NodePtrVect();
+    for (const auto& n: r.second) {
+        const auto& token = stack.back();
+        if (n.ctype() != token->nodetype) {
+            // should get better error tracking
+            throw std::runtime_error("nodetype is different than rule type");
+        }
+        knode.push_back(token);
+        positions.pop_back();
+        stack.pop_back();
+    }
+    stack.push_back(KNode::make_knode(r.first, knode));
+}
 
 }
