@@ -17,6 +17,17 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+########################### gtest
+include(FetchContent)
+FetchContent_Declare(
+		googletest
+		URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+########################### gtest
+
 #############################
 ### fetch library source code
 #############################
@@ -25,7 +36,8 @@ file(GLOB SOURCE_FILES
 	parselib/operations/*.cpp
  	parselib/utils/*.cpp
  	parselib/parsers/*.cpp
- 	parselib/*.cpp
+ 	parselib/parsesession.cpp
+	parselib/pyparselib.cpp
 )
 
 file(GLOB HEADER_FILES
@@ -35,10 +47,12 @@ file(GLOB HEADER_FILES
 	parselib/operations/*.h
 	parselib/utils/*.hpp
 	parselib/parsers/*.hpp
-	parselib/*.hpp
+	parselib/parsesession.hpp
 )
 
-list(REMOVE_ITEM SOURCE_FILES "parselib/main.cpp")
+file(GLOB TEST_FILES
+	parselib/tests/*.h
+)
 
 #############################
 ### parselib depends on boost
@@ -62,7 +76,8 @@ if(Boost_FOUND)
 	add_library(${PROJECT_NAME} SHARED
 		${SOURCE_FILES}
 		${HEADER_FILES} parselib/datastructure/closure_types.h
-            parselib/datastructure/common_types.cpp)
+            parselib/datastructure/common_types.cpp
+			parselib/tests/test_template.h)
 	target_link_libraries(
 		${PROJECT_NAME}
 		${Boost_LIBRARIES}
@@ -73,7 +88,7 @@ endif()
 
 
 if(NOT BUILD_EX)
-    set(BUILD_EX true)
+	set(BUILD_EX true)
 endif()
 
 # build test exemple if needed
@@ -81,7 +96,24 @@ if(BUILD_EX)
 	set(APP parcexlib)
 	add_executable(${APP} parselib/main.cpp)
 	target_link_libraries(${APP}
-		${PROJECT_NAME}
-		${Boost_LIBRARIES}
+			${PROJECT_NAME}
+			${Boost_LIBRARIES}
 	)
+endif()
+
+if(NOT BUILD_TEST)
+	set(BUILD_TEST true)
+endif()
+
+# build test exemple if needed
+if(BUILD_TEST)
+	set(APP_TEST parsetestlib)
+	add_executable(${APP_TEST} ${TEST_FILES} parselib/main_test.cpp)
+	target_link_libraries(${APP_TEST}
+			GTest::gtest_main
+			${PROJECT_NAME}
+			${Boost_LIBRARIES}
+	)
+	include(GoogleTest)
+	gtest_discover_tests(${APP_TEST})
 endif()

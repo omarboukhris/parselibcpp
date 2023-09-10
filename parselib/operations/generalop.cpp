@@ -75,33 +75,9 @@ Grammar eliminatedoubles (Grammar grammar) {
  * \returns true or false (bool)
  */
 bool checkunique (const Rules& uniquerules, const Rule& rule) {
-    std::any_of(uniquerules.begin(), uniquerules.end(), [&] (const Rule& r) {
+    return std::any_of(uniquerules.begin(), uniquerules.end(), [&] (const Rule& r) {
         return r == rule;
     });
-}
-	
-/*!
- * \brief check is rule a & b are the same
- * \param a
- * \param b : rules to compare
- * \returns bool
- */
-bool samerule (Rule rulea, Rule ruleb) {
-	if (rulea.size() == ruleb.size()) {
-		auto opa = rulea.begin() ;
-		auto opb = ruleb.begin() ;
-		
-		while (opa != rulea.end() && opb != ruleb.end()) {
-			if (!(opa->value() == opb->value() &&
-				opa->type() == opb->type())) {
-				return false ;
-			}
-			opa++ ; opb++ ;
-		}
-		return true ;
-	} else {
-		return false ;
-	}
 }
 
 }
