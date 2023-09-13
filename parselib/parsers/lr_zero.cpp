@@ -177,9 +177,6 @@ Frame LR_zero::membership(const TokenList &w) {
 
     auto it = word.begin();
     while (it != word.end()) {
-        std::cout << "==========================" << std::endl;
-        std::cout << *it << " " << it->type() << " " << current_state << std::endl;
-        std::cout << "action " << m_action[current_state][it->type()].to_string() << std::endl ;
         Cell next_step = m_action[current_state][it->type()];
 
         if (next_step.action == Action::shift) {
@@ -202,13 +199,6 @@ Frame LR_zero::membership(const TokenList &w) {
         else {
             throw std::runtime_error("Something bad happened, empty action/goto Cell");
         }
-        std::cout << "[" ;
-        for (const auto &p: positions) std::cout << p << " ";
-        std::cout << "]" << std::endl
-            << "[ ";
-        for (const auto& s: stack) std::cout << s->nodetype << " ";
-        std::cout << " ]" << std::endl;
-
     }
     return stack;
 

@@ -15,14 +15,6 @@ namespace parselib {
 */
 bool checkunique (const Rules& uniquerules, const Rule& rule) ;
 
-/*!
-* \brief check is rule a & b are the same
-* \param a
-* \param b : rules to compare
-* \returns bool
-*/
-bool samerule (Rule rulea, Rule ruleb) ;
-
 namespace grammaroperators {
 
 class GenericGrammarTokenizer {

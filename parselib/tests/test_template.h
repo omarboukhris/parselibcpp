@@ -1,27 +1,22 @@
 //
 // Created by omar on 10/09/23.
 //
-
-#ifndef PARSELIB_TEST_TEMPLATE_H
-#define PARSELIB_TEST_TEMPLATE_H
+#pragma once
 
 #include <gtest/gtest.h>
+#include <parselib/utils/preprocessor.hpp>
+#include <parselib/parsers/parsers.hpp>
 
-namespace my::project {
+namespace parselib::tests {
 
 // The fixture for testing class Foo.
-class FooTest : public ::testing::Test {
+class LRParserTest : public ::testing::Test {
 protected:
-    // You can remove any or all of the following functions if their bodies would
-    // be empty.
+    Grammar grammar;
 
-    FooTest() {
-        // You can do set-up work for each test here.
-    }
+    LRParserTest() = default;
 
-    ~FooTest() override {
-        // You can do clean-up work that doesn't throw exceptions here.
-    }
+    ~LRParserTest() override = default;
 
     // If the constructor and destructor are not enough for setting up
     // and cleaning up each test, you can define the following methods:
@@ -36,17 +31,31 @@ protected:
         // before the destructor).
     }
 
-    // Class members declared here can be used by all tests in the test suite
-    // for Foo.
+    void setup(const std::string& filename, bool verbose = true) {
+        auto logger = std::make_shared<utils::Logger>(utils::Logger::LogLevel::LogAll) ;
+
+        utils::PreprocPtr preproc (new utils::OnePassPreprocessor()) ;
+        parsers::GenericGrammarParser ggp (preproc, logger) ;
+
+        grammar = ggp.parse (filename, verbose, true) ;
+    }
+
+    void parse(const std::string& filename, bool verbose = true) {
+        std::string source = utils::get_text_file_content(filename);
+
+        auto tokenizer = lexer::Lexer(grammar.tokens);
+        tokenizer.tokenize(source, verbose);
+
+        auto parser = parsers::LR_zero(grammar);
+        parser.membership(tokenizer.tokens);
+    }
+
 };
 
 // Tests that the Foo::Bar() method does Abc.
-TEST_F(FooTest, MethodBarDoesAbc) {
+TEST_F(LRParserTest, MethodBarDoesAbc) {
     int expected = 0;
     EXPECT_EQ(expected, 0);
 }
 
-} // namespace my::project
-
-
-#endif //PARSELIB_TEST_TEMPLATE_H
+} // namespace parselib::tests
