@@ -119,7 +119,7 @@ namespace parselib {
         }
 
         friend std::ostream& operator<<(std::ostream &out, const Item &item) {
-            out << item.m_position << " ";
+//            out << item.m_position << " ";
             for (size_t i = 0 ; i < item.m_rule.size(); ++i) {
                 if (i == item.m_position) {
                     out << "*";
@@ -141,7 +141,7 @@ namespace parselib {
         typedef std::vector<Item> Items;
         // struct instead of pair
         typedef std::pair<Token, std::string> Transition;
-        typedef std::set<Transition> Transitions ;
+        typedef std::map<Token, std::string> Transitions ;
 
         typedef typename Items::iterator iterator;
         typedef typename Items::const_iterator const_iterator;
@@ -152,16 +152,10 @@ namespace parselib {
                 , m_label()
         {}
 
-        explicit Closure(std::string label)
+        explicit Closure(std::string  label)
                 : m_items()
                 , m_transitions()
                 , m_label(std::move(label))
-        {}
-
-        explicit Closure(int id)
-                : m_items()
-                , m_transitions()
-                , m_label(std::to_string(id))
         {}
 
         Closure(const Closure &cl) {
@@ -170,20 +164,20 @@ namespace parselib {
             m_label = cl.m_label;
         }
 
-        Closure(Items its, Transitions tr, std::string lab)
+        Closure(Items  its, Transitions  tr, std::string  lab)
                 : m_items(std::move(its))
                 , m_transitions(std::move(tr))
                 , m_label(std::move(lab))
         {}
 
-        Closure(Items its, std::string lab)
+        Closure(Items  its, std::string  lab)
                 : m_items(std::move(its))
                 , m_transitions()
                 , m_label(std::move(lab))
         {}
 
-        static Closure last_state(int id, Item &it) {
-            Closure out(id);
+        static Closure last_state(const std::string& name, Item &it) {
+            Closure out(name);
             out.add_item(it);
             return out;
         }
@@ -251,9 +245,9 @@ namespace parselib {
         }
 
         inline iterator begin() noexcept { return m_items.begin(); }
-        [[nodiscard]] inline const_iterator cbegin() const noexcept { return m_items.cbegin(); }
+        [[nodiscard]] inline const_iterator begin() const noexcept { return m_items.cbegin(); }
         inline iterator end() noexcept { return m_items.end(); }
-        [[nodiscard]] inline const_iterator cend() const noexcept { return m_items.cend(); }
+        [[nodiscard]] inline const_iterator end() const noexcept { return m_items.cend(); }
 
         friend bool operator==(const Closure &c1, const Closure &c2) {
             // compare items size
@@ -262,18 +256,25 @@ namespace parselib {
         }
 
         friend std::ostream & operator<< (std::ostream &out, const Closure &c) {
-            out << "name : " << c.m_label << std::endl;
-            for (const Item &it: c.m_items) {
-                out << "\t" << it << std::endl;
-            }
-            if (c.m_transitions.empty())
-                return out;
-
-            out << "\ttransitions : ";
+            std::stringstream ss;
             for (const auto &t_pair: c.m_transitions) {
-                out << "(" << t_pair.first << " -> " << t_pair.second << ")" << " ";
+                ss << c.m_label << " -> " << t_pair.second
+                    << " [label=\"" << t_pair.first << "\"];" << std::endl;
             }
-            out << std::endl;
+
+//            out << "name : " << c.m_label << std::endl;
+//            for (const Item &it: c.m_items) {
+//                out << "\t" << it << std::endl;
+//            }
+//            if (c.m_transitions.empty())
+//                return out;
+//
+//            out << "\ttransitions : ";
+//            for (const auto &t_pair: c.m_transitions) {
+//                out << "(" << t_pair.first << " -> " << t_pair.second << ")" << " ";
+//            }
+//            out << std::endl;
+            out << ss.str() ;
             return out;
         }
 
@@ -313,27 +314,36 @@ namespace parselib {
 
 
     struct TableBuilder {
-        using FlatProductionMap = std::vector<std::pair<std::string, Rule>>;
+//        using FlatProductionMap = std::vector<std::pair<std::string, Rule>>;
+        using FlatProductionMap = std::map<std::string, Rule>;
         FlatProductionMap flat_prod;
+
+        explicit TableBuilder() = default;
 
         explicit TableBuilder(const ProductionRules &productionRules) : flat_prod() {
             for (const auto &rules: productionRules) {
+                int c = 0;
                 for (const Rule &rule: rules.second) {
-                    flat_prod.emplace_back(rules.first, rule);
+                    std::stringstream ss ;
+                    ss << rules.first << ":" << c++;
+                    flat_prod.emplace(ss.str(), rule);
                 }
             }
         }
 
-        [[nodiscard]] long get_reduction (const Closure &c) const {
-            auto find_pred = [&](const auto &a) {
-                return std::find_if(c.cbegin(), c.cend(), [&](const Item &b) {
-                    return b == a.second; // first is label, second is Rule
-                }) != c.cend();
-            };
-            auto res = std::find_if(flat_prod.begin(), flat_prod.end(), find_pred);
-            if (res != flat_prod.end())
-                return res - flat_prod.begin();
-            throw std::runtime_error("Did not find appropriate rule");
+        [[nodiscard]] StrVect get_reduction (const Closure &c) const {
+            auto output = StrVect();
+            for (const auto& rule: flat_prod) {
+                bool found = std::any_of(c.begin(), c.end(), [&rule] (const Item &i) {
+                    return (i == rule.second);
+                });
+                if (found) {
+                    output.push_back(rule.first);
+                }
+            }
+            if (output.empty())
+                throw std::runtime_error("Did not find appropriate rule");
+            return output;
         }
 
         [[nodiscard]] static std::string get_goto(const std::string &token_type, const Closure &c) {

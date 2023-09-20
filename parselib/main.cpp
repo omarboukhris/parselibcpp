@@ -70,27 +70,6 @@ int main(int argc, char** argv){
 	} else {
 		showhelp();
 	}
-    //*/
-////	quick and dirty test for lr0
-//
-//	PreprocPtr preproc (new parselib::utils::OnePassPreprocessor()) ;
-//	LoggerPtr parseLog (new Logger(LogLevel::LogAll));
-//	pl::parsers::GenericGrammarParser ggp (preproc, parseLog) ;
-//	pl::Grammar grammar = ggp.parse (
-//        "/home/omar/projects/parselibcpp/datarc/test/gram.grm", verbose, true) ;
-//    pl::lexer::Lexer tokenizer(grammar.tokens);
-//	grammar = pl::normoperators::get2nf(grammar) ;
-//
-//    std::string source = pl::utils::get_text_file_content(
-//        "/home/omar/projects/parselibcpp/datarc/test/source.txt");
-//
-//    tokenizer.tokenize (source, verbose) ;
-//
-//    pl::parsers::LR_zero lr0(grammar);
-//    std::cout << lr0 << std::endl ;
-//
-//    pl::Frame result = lr0.membership(tokenizer.tokens);
-
 	return 0 ;
 }
 

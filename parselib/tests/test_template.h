@@ -54,6 +54,10 @@ protected:
 
 // Tests that the Foo::Bar() method does Abc.
 TEST_F(LRParserTest, MethodBarDoesAbc) {
+
+    setup("/home/omar/projects/parselibcpp/datarc/test/gram.grm");
+    parse("/home/omar/projects/parselibcpp/datarc/test/source.txt");
+
     int expected = 0;
     EXPECT_EQ(expected, 0);
 }

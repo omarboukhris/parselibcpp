@@ -6,32 +6,42 @@
 namespace parselib::parsers {
 
 LR_zero::LR_zero (const Grammar& grammar) : AbstractParser(grammar), tokens(grammar.tokens) {
+    // flat map
+    tableBuilder = TableBuilder (production_rules);
+    flat_map = tableBuilder.flat_prod;
+
     build_graph();
     build_table();
 }
 
 void LR_zero::build_table() {
+    // THIS IS BUGGY! FIX IT PLS!
+    // THX !
 
     // make action table
-    TableBuilder tableBuilder(production_rules);
-    for (const Closure &item: m_graph) {
-        std::string item_name = item.label();
+    for (const Closure &closure: m_graph) {
+        std::string item_name = closure.label();
         m_action[item_name] = {};
-        if (item.is_reduce_action()) {
-            Cell c = Cell::reduce(tableBuilder.get_reduction(item));
-
-            for (Token &tok: tokens) {
-                m_action[item_name][tok.type()] = c;
+        if (closure.is_reduce_action()) {
+            for (auto &reduct : tableBuilder.get_reduction(closure)) {
+                Cell c = Cell::reduce(reduct);
+                for (Token &tok: tokens) {
+                    m_action[item_name].emplace(tok.type(), c);
+                }
+                m_action[item_name].emplace("$", c);
             }
-            m_action[item_name]["$"] = c;
         }
         else {
+            // reduction feels ok
+            // goto / accepted / empty
             for (Token &tok: tokens) {
-                m_action[item_name][tok.type()] = Cell::shift(TableBuilder::get_shift(tok.type(), item));
+                m_action[item_name].emplace(
+                    tok.type(), Cell::shift(TableBuilder::get_shift(tok.type(), closure))
+                );
             }
         }
         if (item_name == "1")
-            m_action[item_name]["$"] = Cell {Action::accepted, ""};
+            m_action[item_name].emplace("$", Cell {Action::accepted, ""});
     }
 
     // make goto table
@@ -39,23 +49,22 @@ void LR_zero::build_table() {
         std::string item_name = item.label();
         for (const auto &rules: production_rules) {
             std::string label = rules.first;
-            m_action[item_name][label] = Cell::goTo(TableBuilder::get_goto(label, item));
+            m_action[item_name].emplace(label, Cell::goTo(TableBuilder::get_goto(label, item)));
         }
     }
 
-    // flat map
-    flat_map = tableBuilder.flat_prod;
 }
 
 void LR_zero::build_graph(){
 
+    // use flat map here instead of prod rules?
     if (production_rules.empty()) {
         return ;
     }
     int j = 0;
     Rule axiom_rule = production_rules[Token::Axiom].at(0);
     Item axiom (axiom_rule);
-    Closure i0 = make_closure(j++, axiom);
+    Closure i0 = make_closure(std::to_string(j++), axiom);
 
     std::vector<Closure> stack;
 
@@ -69,7 +78,7 @@ void LR_zero::build_graph(){
 
             while(not current_item.done()) {
                 current_item.next();
-                Closure newest_clos = make_closure(j++, current_item);
+                Closure newest_clos = make_closure(std::to_string(j++), current_item);
 
                 if (newest_clos.empty()) {
                     break ;
@@ -77,7 +86,7 @@ void LR_zero::build_graph(){
 
                 if (auto it = std::find(m_graph.begin(), m_graph.end(), newest_clos);
                         it == m_graph.end()
-                        ) {
+                ) {
                     m_graph.push_back(newest_clos);
                     // add newest_clos to processing stack
                     stack.push_back(newest_clos);
@@ -85,10 +94,10 @@ void LR_zero::build_graph(){
             }
 
             // once rule is fully read, make final state, add transitions
-            Closure final_state = Closure::last_state(j++, current_item);
+            Closure final_state = Closure::last_state(std::to_string(j++), current_item);
             if (auto it = std::find(m_graph.begin(), m_graph.end(), final_state);
                     it == m_graph.end()
-                    ) {
+            ) {
                 // add the new item to closures
                 m_graph.push_back(final_state);
             }
@@ -101,8 +110,8 @@ void LR_zero::build_graph(){
         for (Item i: c) {
             Token tok = i.readNext();
             for (const Closure& other_c: m_graph) {
-                if (auto it = std::find(other_c.cbegin(), other_c.cend(), i);
-                        it != other_c.cend() and not tok.value().empty()
+                if (auto it = std::find(other_c.begin(), other_c.end(), i);
+                        it != other_c.end() and not tok.value().empty()
                         ) {
                     c.add_transition(tok, other_c.label());
                 }
@@ -111,9 +120,9 @@ void LR_zero::build_graph(){
     }
 }
 
-Closure LR_zero::make_closure(int id, Item &current_item) {
+Closure LR_zero::make_closure(const std::string& name, Item &current_item) {
 
-    Closure output(id);
+    Closure output(name);
 
     // this is where the magic happens
     Token token = current_item.read();
@@ -165,6 +174,8 @@ Closure LR_zero::make_closure(int id, Item &current_item) {
 Frame LR_zero::membership(const TokenList &w) {
     using namespace parsetree;
 
+    export_graph("/home/omar/projects/parselibcpp/data_rc/g.dot");
+
     TokenList word = w;
     word.emplace_back("End", "$");
 
@@ -175,29 +186,34 @@ Frame LR_zero::membership(const TokenList &w) {
     stack.push_back(TokenNode::make_token("Begin", "^")); // start token
     positions.push_back(current_state);
 
-    auto it = word.begin();
-    while (it != word.end()) {
-        Cell next_step = m_action[current_state][it->type()];
+    auto word_it = word.begin();
+    while (word_it != word.end()) {
+        auto next_steps = m_action[current_state].equal_range(word_it->type());
+        for(auto it = next_steps.first; it != next_steps.second; it++) {
+            auto next_step = it->second;
 
-        if (next_step.action == Action::shift) {
-            stack.push_back(parsetree::TokenNode::make_token(it->type(), it->value()));
-            positions.push_back(next_step.item);
-            current_state = next_step.item;
-            it++;
-        }
-        else if (next_step.action == Action::reduce) {
-            reduce_fn(stack, positions, next_step);
-            const auto &current_token = stack.back()->nodetype;
-            current_state = positions.back();
-            const auto &goto_pose = m_action[current_state][current_token];
-            positions.push_back(goto_pose.item);
-            current_state = positions.back();
-        }
-        else if (next_step.action == Action::accepted) {
-            return {stack.back()};
-        }
-        else {
-            throw std::runtime_error("Something bad happened, empty action/goto Cell");
+            if (next_step.action == Action::shift) {
+                stack.push_back(parsetree::TokenNode::make_token(word_it->type(), word_it->value()));
+                positions.push_back(next_step.item);
+                current_state = next_step.item;
+                word_it++;
+            } else if (next_step.action == Action::reduce) {
+                reduce_fn(stack, positions, next_step);
+                const auto &current_token = stack.back()->nodetype;
+                current_state = positions.back();
+                auto action_state = m_action[current_state];
+                const auto &goto_pose_range = action_state.equal_range(current_token);
+                for(auto goto_it = goto_pose_range.first; goto_it != goto_pose_range.second; ++goto_it) {
+                    // wtf is this ??
+                    const auto &goto_pose = goto_it->second;
+                    positions.push_back(goto_pose.item);
+                }
+                current_state = positions.back();
+            } else if (next_step.action == Action::accepted) {
+                return {stack.back()};
+            } else {
+                throw std::runtime_error("Something bad happened, empty action/goto Cell");
+            }
         }
     }
     return stack;
@@ -221,39 +237,34 @@ Frame LR_zero::membership(const TokenList &w) {
      *      throw exception with cool error tracing
      * loop
      */
-
-    /*
-     * Note : since grammar is normalized, no need for a vectorNode data struct
-     * just use bin, unit and token:
-     *      token for simple shifts
-     *      unit for 1st order reduct
-     *      bin for 2nd order reduct
-     * output is handled through same pipeline
-     */
 }
 
 void LR_zero::reduce_fn(Frame &stack, StrVect &positions, const LR_zero::Cell &next_step) {
     using namespace parsetree;
 
-    int idx = std::stoi(next_step.item);
-    auto r = flat_map[idx];
-
-    if (r.second.empty() or r.second.size() >= stack.size()) {
-        throw std::runtime_error("Rule empty or Rule size larger than stack content");
-    }
-
-    auto knode = NodePtrVect();
-    for (const auto& n: r.second) {
-        const auto& token = stack.back();
-        if (n.ctype() != token->nodetype) {
-            // should get better error tracking
-            throw std::runtime_error("nodetype is different than rule type");
+    auto range = flat_map.equal_range(next_step.item);
+    for (auto it = range.first; it != range.second; ++it) {
+        const auto& r = it->second;
+        if (r.empty() or r.size() >= stack.size()) {
+            continue;
         }
-        knode.push_back(token);
-        positions.pop_back();
-        stack.pop_back();
+
+        auto knode = NodePtrVect();
+        for (const auto& n: r) {
+            const auto& token = stack.back();
+            if (n.cvalue() != token->nodetype) {
+                // should get better error tracking
+                continue;
+            }
+            knode.push_back(token);
+            positions.pop_back();
+            stack.pop_back();
+        }
+        stack.push_back(KNode::make_knode(next_step.item, knode));
+        return;
     }
-    stack.push_back(KNode::make_knode(r.first, knode));
+    throw std::runtime_error("Rule empty or Rule size larger than stack content");
+//    throw std::runtime_error("nodetype is different than rule type");
 }
 
 }
