@@ -86,8 +86,10 @@ namespace parselib::parsers {
             out << "<table><th><td></td>";
             for (const auto &tok: lrZero.tokens)
                 out << "<td>" << tok.cvalue() << "</td>";
+            out << "<td> $ </td>";
             for (const auto &tok: lrZero.production_rules)
-                out << "<td>" << tok.first << "</td>";
+                if (tok.first != Token::Axiom)
+                    out << "<td>" << tok.first << "</td>";
             out << "</th>";
 
             // render table body
@@ -101,7 +103,15 @@ namespace parselib::parsers {
                     }
                     out << "</td>";
                 }
+                auto eof_action_range = act.second.equal_range("$");
+                out << "<td>";
+                for (auto cell_it = eof_action_range.first; cell_it != eof_action_range.second; ++cell_it) {
+                    out << cell_it->second.to_string() << "<br/>";
+                }
+                out << "</td>";
                 for (const auto &tok: lrZero.production_rules) {
+                    if (tok.first == Token::Axiom)
+                        continue;
                     auto multi_cell = act.second.equal_range(tok.first);
                     out << "<td>";
                     for (auto cell_it = multi_cell.first; cell_it != multi_cell.second; ++cell_it) {
@@ -121,15 +131,15 @@ namespace parselib::parsers {
 //            }
 //            out << std::endl;
 
-            int i = 0;
-            for (const auto &p: lrZero.flat_map) {
-                std::stringstream ss2;
-                for (const auto &r: p.second) {
-                    ss2 << r << " ";
-                }
-                out << i++ << " " << p.first << " : " << ss2.str() << std::endl;
-                ss.clear();
-            }
+//            int i = 0;
+//            for (const auto &p: lrZero.flat_map) {
+//                std::stringstream ss2;
+//                for (const auto &r: p.second) {
+//                    ss2 << r << " ";
+//                }
+//                out << i++ << " " << p.first << " : " << ss2.str() << std::endl;
+//                ss.clear();
+//            }
 
             return out;
         }

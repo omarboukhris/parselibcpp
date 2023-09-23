@@ -22,13 +22,21 @@ void LR_zero::build_table() {
     for (const Closure &closure: m_graph) {
         std::string item_name = closure.label();
         m_action[item_name] = {};
-        if (closure.is_reduce_action()) {
+        if (item_name == "1") {
+            m_action[item_name].emplace("$", Cell{Action::accepted, ""});
+//            for (Token &tok: tokens) {
+//                m_action[item_name].emplace(tok.type(), Cell{Action::none, ""});
+//            }
+//            // maybe add non terminals ? or remove both ?
+//            // test and see
+        }
+        else if (closure.is_reduce_action()) {
             for (auto &reduct : tableBuilder.get_reduction(closure)) {
                 Cell c = Cell::reduce(reduct);
                 for (Token &tok: tokens) {
                     m_action[item_name].emplace(tok.type(), c);
                 }
-                m_action[item_name].emplace("$", c);
+//                m_action[item_name].emplace("$", Cell{Action::none, ""});
             }
         }
         else {
@@ -40,8 +48,6 @@ void LR_zero::build_table() {
                 );
             }
         }
-        if (item_name == "1")
-            m_action[item_name].emplace("$", Cell {Action::accepted, ""});
     }
 
     // make goto table
@@ -49,7 +55,10 @@ void LR_zero::build_table() {
         std::string item_name = item.label();
         for (const auto &rules: production_rules) {
             std::string label = rules.first;
-            m_action[item_name].emplace(label, Cell::goTo(TableBuilder::get_goto(label, item)));
+            if (std::string c_label = TableBuilder::get_goto(label, item);
+                label != Token::Axiom and not c_label.empty()) {
+                m_action[item_name].emplace(label, Cell::goTo(TableBuilder::get_goto(label, item)));
+            }
         }
     }
 
@@ -150,7 +159,7 @@ Closure LR_zero::make_closure(const std::string& name, Item &current_item) {
 
         // if rule unprocessed
         auto itRule = std::find(processed.begin(), processed.end(), rulename) ;
-        if (itRule == processed.end()) {
+        if (itRule == processed.end() and not rulename.empty()) {
             // put rule tokens in queue for processing
             for (const Rule& rule: production_rules[rulename]) {
                 Item new_item (rule);
