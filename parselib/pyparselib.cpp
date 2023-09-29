@@ -5,15 +5,8 @@ namespace parselib {
 
 extern "C" {
 	
-	ParseSession* new_session(int logLevel) {
-		switch (logLevel) {
-			case 0:
-			return new ParseSession(utils::LogLevel::LogNone) ;
-			case 1:
-			return new ParseSession(utils::LogLevel::LogBasic) ;
-			default:
-			return new ParseSession(utils::LogLevel::LogAll) ;
-		}
+	ParseSession* new_session(int) {
+        return new ParseSession() ;
 	}
 
 	void load_grammar(ParseSession* session, const char* filepath, bool verb) {

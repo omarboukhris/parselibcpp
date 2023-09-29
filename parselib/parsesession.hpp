@@ -23,7 +23,7 @@ std::string processnodename (std::string name) ;
 class ParseSession {
 public :
 
-	explicit ParseSession (utils::LogLevel logLevel=utils::LogLevel::LogBasic) ;
+	explicit ParseSession () ;
 	~ParseSession() = default;
 
 	/*!

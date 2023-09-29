@@ -7,28 +7,31 @@ namespace grammaroperators {
 
 PatternsMap GenericGrammarTokenizer::grammartokens = {
 	//PREPROCESSOR
-	{R"(\%(import|include) "(.+)(/([^/]+))?\.grm")",	"IMPORT"},
+	{R"(\%import "(.+)(/([^/]+))?\.grm")",	"IMPORT"},
 
 	//KEYWORDS
-	{"(//|\\;).*",                      "LINECOMMENT"},
+	{R"((//|\;|\-\-).*)",             "LINECOMMENT"},
 	{R"(''|"")",                       Token::Empty},
-	{Token::Axiom,                           Token::Axiom},
+	{Token::Axiom,                     Token::Axiom},
 
 	// SPECIAL OPERATORS
-	{R"((\_\_list\_\_|\[\]))",       "LIST"},
-	{"\\!",                             "EXCL"},
-	{"s\\:",                            "STR"},
-	{R"(\(".*"\)|\('.*'\))",       "REGEX"},
-	{R"(".*"|'.*')",                   "AREGEX"}, //a for anonymous
-	{"(\\->|\\=)",                      "EQUAL"},
-	{"\\,",                             "COMMA"},
-	{"\\|",                             "OR"},
-	{"\\(",                             "LPAR"},
-	{"\\)",                             "RPAR"},
+    {R"((\_\_list\_\_|\[\]))",       "LIST"}, // deprecated once the listop is implemented
+    // list_node=list(elm_node, sep=tok.)
+    {R"([a-zA-Z_]\w*=)"                          // label : parent node
+     R"(list\([a-zA-Z_]\w*, )"                       // element node
+     R"(sep=[a-zA-Z_]\w*\.\))",        "LISTOP"}, // separator
+	{"\\!",                          "EXCL"},
+	{R"(([a-zA-Z_]\w*=)?s\:)",        "STR"},
+	{R"(\(".*"\)|\('.*'\))",        "REGEX"},
+	{R"((\->|\=))",                 "EQUAL"},
+	{"\\,",                         "COMMA"},
+	{"\\|",                            "OR"},
+	{"\\(",                          "LPAR"},
+	{"\\)",                          "RPAR"},
 
 	//OPERANDS
 	{R"(([a-zA-Z_]\w*=)?[a-zA-Z0-9_]\w*\.)",    Token::Terminal},
-	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",       Token::NonTerminal}
+	{"([a-zA-Z_]\\w*=)?[a-zA-Z0-9_]\\w*",    Token::NonTerminal}
 } ;
 
 PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {

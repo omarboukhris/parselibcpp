@@ -149,14 +149,17 @@ void SequentialParser::check_right_side() {
 			parsedtokens[j].value() = utils::clean_if_terminal(parsedtokens[j].value()) ;
 		}
 
-		if (parsedtokens[j].type() == std::string("STR")) {
+        if (parsedtokens[j].type() == std::string("STR")) {
 			add_to_str_rules(j) ;
 			add_to_keeper(j) ;
-		} else if (parsedtokens[j].type() == "LIST") {
-			make_list() ;
-		} else if (parsedtokens[j].type() == "AREGEX") {
-			make_regex(j) ; //couille ici
-		} else if (parsedtokens[j].type() == "EXCL") {
+		}
+        else if (parsedtokens[j].type() == "LIST") {
+            make_list() ;
+        }
+        else if (parsedtokens[j].type() == "LISTOP") {
+            make_list_op() ;
+        }
+        else if (parsedtokens[j].type() == "EXCL") {
 			
 			// naming process
 			std::string label = parsedtokens[j+1].value() ;
@@ -165,7 +168,8 @@ void SequentialParser::check_right_side() {
 
 			process_label (label, label) ;
 			add_to_keeper(j) ;
-		} else {
+		}
+        else {
 			if (parsedtokens[j].value().find('=') != std::string::npos) {
 				//naming process
 				StrVect out = utils::split(parsedtokens[j].value(), "=") ;
@@ -211,6 +215,12 @@ void SequentialParser::process_label(const std::string& label, const std::string
 	}
 }
 
+void SequentialParser::make_list_op() {
+    // parse parent node, element node and separator out of regex
+    // add rule parent node = element | element + parent node
+    // add element node = element | element sep element node
+}
+
 void SequentialParser::make_list(){
     /// note : try not to use epsilone rules when they can be avoided
     /// they needlessly inflate the grammar and thus processing time
@@ -218,23 +228,6 @@ void SequentialParser::make_list(){
 //	Token eps (std::string("''"), std::string(Token::Empty)) ;
 	production_rules[current_rule].back() = {thisnode, thisnode} ;
 //	production_rules[current_rule].push_back({eps}) ;
-}
-
-void SequentialParser::make_regex(size_t j) {
-	std::string regex = 
-	//utils::escapeRegex( //escapeRegex gives weird results
-	parsedtokens[j].value().substr(
-		1,
-		parsedtokens[j].value().length()-2
-	) ; //eliminate the ["..."]
-	// 	) ;
-	
-	std::string label = "__" + current_rule + "[" + regex + "]__" ;
-
-	tokens.emplace_back(regex, label) ;
-
-	Token thisnode (label, Token::Terminal) ;
-	production_rules = add_operand_to_current_rule(thisnode) ;
 }
 
 ProductionRules SequentialParser::add_operand_to_current_rule(const Token& tok) {

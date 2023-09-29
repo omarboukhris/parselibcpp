@@ -47,13 +47,12 @@ private :
 
 	void make_list() ;
 
-	void make_regex(size_t j) ;
-		
+    void make_list_op();
+
 	/// add to keeper to tell the parser to save this node's content
 	void add_to_keeper(size_t j) ;
 
 	void add_to_str_rules(size_t j) ;
-
 } ;
 
 } // namespace parselib::parsers

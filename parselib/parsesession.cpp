@@ -11,11 +11,13 @@
 
 namespace parselib {
 
-ParseSession::ParseSession(utils::LogLevel logLevel) {
+    // TODO : look for info method calls
+ParseSession::ParseSession() {
 	grammar   = Grammar() ;
 	parser    = std::make_shared<parsers::CYK> (parsers::CYK()) ;
 	tokenizer = lexer::Lexer () ;
-	logger    = std::make_shared<utils::Logger>(logLevel) ;
+    auto x = utils::ConsoleLogger("ParseSession");
+	logger    = std::make_shared<utils::ConsoleLogger>(x) ;
 }
 
 std::string processnodename(std::string name) {

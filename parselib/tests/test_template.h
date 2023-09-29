@@ -32,7 +32,7 @@ protected:
     }
 
     void setup(const std::string& filename, bool verbose = true) {
-        auto logger = std::make_shared<utils::Logger>(utils::Logger::LogLevel::LogAll) ;
+        auto logger = std::make_shared<utils::ConsoleLogger>(utils::ConsoleLogger("LogTest")) ;
 
         utils::PreprocPtr preproc (new utils::OnePassPreprocessor()) ;
         parsers::GenericGrammarParser ggp (preproc, logger) ;

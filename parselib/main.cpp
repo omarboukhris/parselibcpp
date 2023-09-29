@@ -36,7 +36,7 @@ int main(int argc, char** argv){
 	Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
 
 	// change LogNone to LogBasic if needed
-	pl::ParseSession parsesession (LogLevel::LogNone) ;
+	pl::ParseSession parsesession ;
     //*
 	if (argvlex.get("--gsrc") != "False") {
 	//parse argument

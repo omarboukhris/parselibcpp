@@ -123,13 +123,6 @@ namespace parselib::parsers {
             }
             out << "</table>>];" << std::endl;
             out << "}" << std::endl;
-//            // print action and goto tables
-//            for (const auto &act: lrZero.m_action) {
-//                for (const auto &m: act.second) {
-//                    out << "state " << act.first << " reads " << m.first << " action " << m.second.to_string() << std::endl;
-//                }
-//            }
-//            out << std::endl;
 
 //            int i = 0;
 //            for (const auto &p: lrZero.flat_map) {

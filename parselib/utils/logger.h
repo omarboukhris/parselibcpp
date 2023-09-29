@@ -1,46 +1,28 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once
 
 #include <string>
 #include <memory>
+#include <chrono>
+#include <utility>
 
-namespace parselib {
+namespace parselib::utils {
 
-namespace utils {
-
-class Logger
+class ConsoleLogger
 {
 public:
 
-	enum class LogLevel {
-		LogNone,
-		LogBasic,
-		LogAll
-	};
+    ConsoleLogger() = default;
+    explicit ConsoleLogger(std::string c) : component(std::move(c)) {}
 
-	Logger(LogLevel logLevel=LogLevel::LogNone);
+    void info(const std::string &content) const;
 
-	void log_basic_info(const std::string &content) ;
-	void log_all_info (const std::string &content) ;
+    void warn(const std::string &content) const;
 
-	void log_basic_err (const std::string &content) ;
-	void log_all_err  (const std::string &content) ;
+    void err (const std::string &content) const ;
 
-private:
-
-	inline void log_mile(const std::string &content, const LogLevel &level);
-
-	inline void log_error(const std::string& content, const LogLevel &level);
-
-private:
-	LogLevel m_log_level;
+    std::string component;
 };
 
-using LogLevel = Logger::LogLevel;
-using LoggerPtr = std::shared_ptr<Logger> ;
+using LoggerPtr = std::shared_ptr<ConsoleLogger> ;
 
 }
-
-}
-
-#endif // LOGGER_H

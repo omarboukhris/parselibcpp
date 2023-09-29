@@ -262,18 +262,6 @@ namespace parselib {
                     << " [label=\"" << t_pair.first << "\"];" << std::endl;
             }
 
-//            out << "name : " << c.m_label << std::endl;
-//            for (const Item &it: c.m_items) {
-//                out << "\t" << it << std::endl;
-//            }
-//            if (c.m_transitions.empty())
-//                return out;
-//
-//            out << "\ttransitions : ";
-//            for (const auto &t_pair: c.m_transitions) {
-//                out << "(" << t_pair.first << " -> " << t_pair.second << ")" << " ";
-//            }
-//            out << std::endl;
             out << ss.str() ;
             return out;
         }

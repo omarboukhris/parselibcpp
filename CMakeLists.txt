@@ -46,6 +46,7 @@ file(GLOB HEADER_FILES
 	parselib/operations/*.hpp
 	parselib/operations/*.h
 	parselib/utils/*.hpp
+	parselib/utils/*.h
 	parselib/parsers/*.hpp
 	parselib/parsesession.hpp
 )
