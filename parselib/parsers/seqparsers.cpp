@@ -157,7 +157,7 @@ void SequentialParser::check_right_side() {
             make_list() ;
         }
         else if (parsedtokens[j].type() == "LISTOP") {
-            make_list_op() ;
+            make_list_op(j) ;
         }
         else if (parsedtokens[j].type() == "EXCL") {
 			
@@ -215,10 +215,11 @@ void SequentialParser::process_label(const std::string& label, const std::string
 	}
 }
 
-void SequentialParser::make_list_op() {
+void SequentialParser::make_list_op(size_t j) {
     // parse parent node, element node and separator out of regex
     // add rule parent node = element | element + parent node
     // add element node = element | element sep element node
+    // dev in debug
 }
 
 void SequentialParser::make_list(){
@@ -254,7 +255,7 @@ void SequentialParser::add_to_keeper(size_t j) {
 
 void SequentialParser::add_to_str_rules(size_t j) {
 	std::string nodename = utils::clean_if_terminal(parsedtokens[j + 1].value()) ;
-    StrVect &strnode = strnodes[current_rule];
+    StrVect &strnode = strnodes[current_rule]; // str_node should be set instead of vect
 	// add to strnodes
 	if (std::find(strnode.begin(), strnode.end(), nodename) == strnode.end()) {
 		strnode.push_back(nodename) ;

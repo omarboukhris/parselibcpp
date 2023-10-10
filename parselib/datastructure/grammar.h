@@ -38,6 +38,13 @@ public :
 	 */
 	void makegrammar (const TokenList& tokenizedgrammar, const TokenList& grammartokens) ;
 
+    friend std::ostream &operator<<(std::ostream &out, Grammar str) {
+        out << str.getstr();
+        return out;
+    }
+
+    bool isTokenList(const std::string &parent, const std::string &sub_node);
+
 public:
 
 	bool inKeeperKeys (const std::string &toktype) ;

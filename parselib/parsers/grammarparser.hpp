@@ -21,17 +21,10 @@ protected:
 	utils::LoggerPtr logger;
 
 public:
-	/*!
-	 * \brief GenericGrammarParser constructor
-	 * \param preproc shared pointer of preprocessor object
-	 */
+    /// \brief GenericGrammarParser constructor
 	GenericGrammarParser (utils::PreprocPtr &preproc, utils::LoggerPtr &logger) ;
 
-	/*!
-	 * \brief lex a grammar from textual form to tokenized
-	 * \param txt_grammar : raw textual grammar source code filename
-	 * \param verbose true to make it talk. false by default
-	 */
+    /// \brief lex a grammar from textual form to tokenized
 	Grammar parse (std::string filename, bool verbose=false, bool splits=false) ;
 } ;
 

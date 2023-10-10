@@ -20,6 +20,10 @@ ParseSession::ParseSession() {
 	logger    = std::make_shared<utils::ConsoleLogger>(x) ;
 }
 
+/*!
+ * \brief eliminates the last char of a string iTreePtrf it's a dot (.)
+ * \param name : node name to process
+ */
 std::string processnodename(std::string name) {
 	if (name.back() == '.') {
 		name.pop_back() ;
@@ -27,6 +31,11 @@ std::string processnodename(std::string name) {
 	return name ;
 }
 
+/*!
+ * \brief builds the instance by loading
+ * the grammar from a text file
+ * \param filename : string path to file containing text to load
+ */
 void ParseSession::load_grammar(const std::string &filename, bool verbose) {
 	utils::PreprocPtr preproc (new utils::OnePassPreprocessor()) ;
 	parsers::GenericGrammarParser ggp (preproc, logger) ;
@@ -38,79 +47,74 @@ void ParseSession::load_grammar(const std::string &filename, bool verbose) {
 
 }
 
+/*!
+ * \brief process_and_store_json processes input file into json output
+ * \param filename        input filename
+ * \param output_filename output json filename
+ * \param verbose         self explanatory
+ * \param index           frame index to use as a solution
+ */
 pt::ptree ParseSession::parse(const parsetree::TreePtr& code, const std::string& parent) {
-	using Map = std::map<std::string, pt::ptree> ;
-	if (code->size() == 0) {
-		return {} ;
-	}
+    using Map = std::map<std::string, pt::ptree>;
+    if (code->size() == 0) {
+        return {};
+    }
 
-	Map map = Map() ;
+    Map map = Map();
 
-	for (parsetree::Tree::Token& element : code->tokens()) {
+    for (parsetree::Tree::Token &element: code->tokens()) {
 
-		if (element.first == Token::Axiom) {
+        if (element.first == Token::Axiom) {
+            return parse(element.second, Token::Axiom);
+        }
 
-			return parse (element.second, Token::Axiom) ;
-		}
-		
-		element.first = processnodename(element.first) ;
+        element.first = processnodename(element.first);
 
-		//-----------------------------------------------
-		// part that handles labels replacement (aliases)
-		if (grammar.inLabelsKeys(parent)) {
+        //-----------------------------------------------
+        // part that handles labels replacement (aliases)
+        std::string node_label = element.first;
+        if (grammar.inLabelsKeys(parent)) {
+            auto &label_map = grammar.labels[parent];
+            if (label_map.find(node_label) != label_map.end()) {
+                node_label = label_map[node_label];
+            }
+        } //element.first is type, .second is val
 
-			for (const auto &subitem : grammar.labels[parent]) {
+        //-----------------------------------------------
+        // check if element.first in keeper - storing in output data format : pt::ptree
+        if (grammar.inKeeperKeys(node_label)) {
+            //-------------------------------------------------
+            // part handling str tokens
+            if (grammar.keyIsStr(parent, element.first)) {
+                std::string out_elementstr = element.second->strUnfold();
+                pt::ptree tmp;
+                tmp.put("", out_elementstr);
+                map[node_label].push_back(std::make_pair("", tmp));
+            }
+            //-------------------------------------------------
+            // part handling savable tokens as structs
+            else if (grammar.isTokenSavable(parent, node_label)) {
+                pt::ptree tmp;
 
-				std::string subkey = subitem.first ;
+                if (element.second->type() == parsetree::Tree::NodeType::Branch) {
+                    tmp = parse(element.second, element.first);
+                } else { // terminal node
+                    tmp.put("", element.second->val());
+                }
+                map[node_label].push_back(std::make_pair("", tmp));
+            }
+        }
+    }
 
-				if (element.first == subkey) { //element type in label[parent]
-
-					element.first = grammar.labels[parent][element.first] ;
-					break ;
-				}
-			}
-		} //element.first is type, .second is val
-
-
-		//-----------------------------------------------
-		// check if element.first in keeper - storing in output data format : pt::ptree
-		if (grammar.inKeeperKeys(element.first)) {
-
-			//-------------------------------------------------
-			// part handling str tokens
-			if (grammar.keyIsStr(parent, element.first)) {
-				std::string out_elementstr = element.second->strUnfold () ;
-				pt::ptree tmp ;
-				tmp.put ("", out_elementstr) ;
-				map[element.first].push_back(std::make_pair("", tmp)) ;
-			}
-			//-------------------------------------------------
-			// part handling savable tokens as structs
-			else if (grammar.isTokenSavable(parent, element.first)) {
-
-				if (element.second->type() == parsetree::Tree::NodeType::Branch) {
-					parsetree::TreePtr &param = element.second;
-					pt::ptree tmp = parse(param, element.first) ;
-					map[element.first].push_back(std::make_pair("", tmp)) ;
-				}
-				else { // terminal node
-					pt::ptree tmp  ;
-					tmp.put ("", element.second->val()) ;
-					map[element.first].push_back(std::make_pair("", tmp)) ;
-				}
-			}
-		}
-	}
-
-	//-------------------------------------------------
-	// save map in pt::ptree
-	pt::ptree out = pt::ptree() ;
-	for (const auto &item : map) {
-		std::string key = item.first ;
-		pt::ptree tmp = item.second ;
-		out.add_child(key, tmp) ;
-	}
-	return out ;
+    //-------------------------------------------------
+    // save map in pt::ptree
+    pt::ptree out = pt::ptree();
+    for (const auto &item: map) {
+        std::string key = item.first;
+        pt::ptree tmp = item.second;
+        out.add_child(key, tmp);
+    }
+    return out;
 }
 
 pt::ptree ParseSession::to_ptree(const parsetree::TreePtr& tree) {
@@ -142,6 +146,13 @@ pt::ptree ParseSession::to_ptree(const parsetree::TreePtr& tree) {
 	return out ;
 }
 
+/*!
+ * \brief parses source code in filename, unfolds the parse tree and optionnaly prints it
+ * \param filename : string path to file containing text to load
+ * \param verbose : bool
+ * True (by default) to print results, otherwise False
+ * \return boost ptree containing the parsed savable data or empty result if an error occured
+ */
 pt::ptree ParseSession::process_source_to_ptree(const std::string &filename, bool verbose, size_t index) {
 
     std::string source = utils::get_text_file_content(filename);
@@ -154,7 +165,7 @@ pt::ptree ParseSession::process_source_to_ptree(const std::string &filename, boo
     if (result.empty()) {
         if (verbose) {
             // x should point errors out if parsing failed
-            utils::Printer::showerr("Empty result : no parse tree found, no error tracking possible");
+            logger->err("Empty result : no parse tree found, no error tracking possible");
         }
         return {};
     } else {
@@ -169,28 +180,34 @@ pt::ptree ParseSession::process_source_to_ptree(const std::string &filename, boo
             if (verbose) {
                 std::stringstream ss;
                 pt::json_parser::write_json(ss, output);
-                utils::Printer::showinfo(ss.str());
+                logger->info(ss.str());
             }
             return output;
         } else { // handle error
             std::fstream fstr(filename + ".log", std::fstream::out);
 
             if (fstr.is_open()) {
-                utils::Printer::showerr("Parsing went wrong, check : " + filename + ".log");
+                logger->err("Parsing went wrong, check : " + filename + ".log");
                 auto sus_tok = result.back();
                 std::stringstream ss;
                 ss << sus_tok->unfold();
-                utils::Printer::showerr("Broken token seems to be <" + ss.str() + ">");
+                logger->err("Broken token seems to be <" + ss.str() + ">");
                 fstr << result[index]->unfold();
                 fstr.close();
             } else {
-                utils::Printer::showerr("Could not open log file stream.");
+                logger->err("Could not open log file stream.");
             }
             return {};
         }
     }
 }
 
+/*!
+ * \brief process_to_json processes input file into json string output
+ * \param filename        input filename
+ * \param verbose         self explanatory
+ * \param index           frame index to use as a solution
+ */
 std::string ParseSession::process_to_json(const std::string &filename, bool verbose, size_t index) {
     pt::ptree out = process_source_to_ptree(filename, verbose, index) ;
     std::stringstream ss;

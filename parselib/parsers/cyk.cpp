@@ -15,7 +15,7 @@ namespace parselib::parsers {
 std::string CYK::getstrmat (const CYKMatrix& cykmat) {
 	//print html matrix here
 	std::stringstream ss ;
-    ss << "<html><head><title>CYK Debug</title></head><body><table>";
+    ss << "<html><head><title>CYK Debug</title></head><body><table border='1'>";
 	for (const Row& row : cykmat) {
         ss << "<tr>";
         for (const Frame& frame : row) {

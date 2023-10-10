@@ -123,7 +123,7 @@ bool Grammar::keyIsStr(const string &parent, const string &toktype) {
         strnodes.find(parent) != strnodes.end() and
         std::any_of(strnodes[parent].begin(), strnodes[parent].end(), [&](const auto &x) {
             return x == toktype;
-    });
+        });
 }
 
 bool Grammar::isTokenSavable(const string &parent, const string &child) {
@@ -200,5 +200,16 @@ string Grammar::getstr () {
 	return ss.str() ;
 }
 
+bool Grammar::isTokenList(const string &parent, const std::string &sub_node) {
+    return
+        list_map.find(parent) != list_map.end() and
+        std::any_of(
+            list_map[parent].begin(),
+            list_map[parent].end(),
+            [&](const auto &x) {
+                return x == sub_node;
+            }
+        );
+}
 
 }

@@ -147,6 +147,7 @@ namespace parselib {
     typedef std::vector<std::string> StrVect;
     typedef std::map<std::string, StrVect> StrMap;
     typedef std::map<std::string, StrVect> KeepingList;
+    typedef std::map<std::string, StrVect> ListMap;
 
     typedef std::map<std::string, std::string> LabelReplacement;
     typedef std::map<std::string, LabelReplacement> LabelReplacementMap;
@@ -156,6 +157,7 @@ namespace parselib {
 
         StrMap strnodes;
         KeepingList keeper;
+        ListMap list_map;
 
         LabelReplacementMap labels;
 

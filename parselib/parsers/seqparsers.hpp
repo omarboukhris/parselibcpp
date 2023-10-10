@@ -47,7 +47,7 @@ private :
 
 	void make_list() ;
 
-    void make_list_op();
+    void make_list_op(size_t j);
 
 	/// add to keeper to tell the parser to save this node's content
 	void add_to_keeper(size_t j) ;

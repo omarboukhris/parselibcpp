@@ -19,13 +19,22 @@ using namespace std ;
 using namespace grammaroperators ;
 using namespace utils ;
 
-
+/*!
+ * \brief GenericGrammarParser constructor
+ * \param preproc shared pointer of preprocessor object
+ * \param logger shared pointer of logger object
+ */
 GenericGrammarParser::GenericGrammarParser (PreprocPtr &preproc, LoggerPtr &logger) {
 	//preprocessor class
 	this->preproc = preproc ;
 	this->logger  = logger  ;
 }
 
+/*!
+ * \brief lex a grammar from textual form to tokenized
+ * \param txt_grammar : raw textual grammar source code filename
+ * \param verbose true to make it talk. false by default
+ */
 Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool splits) {
 	Grammar out_grammar = Grammar() ;
 	preproc->addToQueue (filename) ;
