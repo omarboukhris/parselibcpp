@@ -47,7 +47,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool sp
         logger->info("now processing : " + filename);
 
 		std::string source = utils::get_text_file_content (filename) ;
-		
+
 		//tokenize grammar source
 		lexer::Lexer lang (GenericGrammarTokenizer::grammartokens) ;
 		lang.tokenize(source, verbose, splits);

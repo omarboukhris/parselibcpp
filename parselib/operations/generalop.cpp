@@ -17,9 +17,7 @@ PatternsMap GenericGrammarTokenizer::grammartokens = {
 	// SPECIAL OPERATORS
     {R"((\_\_list\_\_|\[\]))",       "LIST"}, // deprecated once the listop is implemented
     // list_node=list(elm_node, sep=tok.)
-    {R"([a-zA-Z_]\w*=)"                          // label : parent node
-     R"(list\([a-zA-Z_]\w*, )"                       // element node
-     R"(sep=[a-zA-Z_]\w*\.\))",        "LISTOP"}, // separator
+    {R"(\w+\=list\((\w+\=)?\w+(\.)?\, \w+\.\))", "LISTOP"}, // separator
 	{"\\!",                          "EXCL"},
 	{R"(([a-zA-Z_]\w*=)?s\:)",        "STR"},
 	{R"(\(".*"\)|\('.*'\))",        "REGEX"},
@@ -39,7 +37,7 @@ PatternsMap GenericGrammarTokenizer::genericgrammarprodrules = {
 	{"AXIOM EQUAL NONTERMINAL",                         Token::Axiom},
 	{"TERMINAL REGEX",                                  "TOKEN"},
 	{"NONTERMINAL EQUAL",                               "LSIDE"},
-	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY", "RSIDE"},
+	{"EXCL|STR|LIST|AREGEX|TERMINAL|NONTERMINAL|EMPTY|LISTOP", "RSIDE"},
 	{"OR", "OR"},
 } ;
 

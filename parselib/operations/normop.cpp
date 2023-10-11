@@ -209,6 +209,8 @@ std::set<std::string> getnullables (const Grammar& grammar) {
  * \return grammar 
  */
 Grammar getunitrelation (Grammar grammar) {
+    /* this introduces major perf issues -- probably too much units ?? should be fixed
+    // current fix: reverting to previous unit computation
 	std::set<std::string> nullables = getnullables (grammar) ;
 
 	ProductionRules production_rules = grammar.production_rules ;
@@ -235,6 +237,82 @@ Grammar getunitrelation (Grammar grammar) {
             }
 		}
 	}
+    //*/
+
+    auto nullables = getnullables (grammar) ;
+
+    ProductionRules production_rules = grammar.production_rules ;
+
+    Grammar::UnitRelation unitrelation = Grammar::UnitRelation() ;
+
+    StrList unitkeylist = StrList() ;
+    //first pass
+    for (const auto& item : production_rules) {
+        std::string key = item.first ;
+        Rules rules = item.second ;
+
+        for (Rule rule : rules) {
+            if (rule.size() != 1) {
+                continue ;
+            }
+            StrList epsOrTerminal = StrList({"EMPTY", "TERMINAL"}) ;
+            bool isruleunit = (
+                    (std::find(epsOrTerminal.begin(), epsOrTerminal.end(), rule[0].type()) == epsOrTerminal.end())
+            ) ;
+            if (isruleunit) {
+                if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
+                    unitrelation[key].push_back (rule[0].value()) ;
+                } else {
+                    unitrelation[key] = StrList({rule[0].value()}) ;
+                    unitkeylist.push_back(key);
+                }
+            }
+        }
+    }
+
+    //second pass
+    for (const auto& item : production_rules) {
+        std::string key = item.first ;
+        Rules rules = item.second ;
+
+        for (Rule rule : rules) {
+            if (rule.size() != 2) {
+                continue ;
+            }
+//            bool isruleunit = (std::find(nullables.begin(), nullables.end(), rule[0].value()) != nullables.end()) ;
+            bool isruleunit = nullables.find(rule[0].value()) != nullables.end() ;
+            if (isruleunit) {
+                if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
+                    unitrelation[key].push_back (rule[1].value()) ;
+                } else {
+                    unitrelation[key] = StrList({rule[1].value()}) ;
+                    unitkeylist.push_back(key);
+                }
+            }
+            isruleunit = nullables.find(rule[1].value()) != nullables.end() ;
+            if (isruleunit) {
+                if (std::find(unitkeylist.begin(), unitkeylist.end(), key) != unitkeylist.end()) {
+                    unitrelation[key].push_back (rule[0].value()) ;
+                } else {
+                    unitrelation[key] = StrList({rule[0].value()}) ;
+                    unitkeylist.push_back(key);
+                }
+            }
+        }
+    }
+
+    Grammar::UnitRelation outunit = Grammar::UnitRelation () ;
+    for (const auto& item : unitrelation) {
+        std::string key = item.first ;
+        StrList unitrel = item.second ;
+        outunit[key] = StrList () ;
+        for (const std::string& unit : unitrel) {
+            if (std::find(outunit[key].begin(), outunit[key].end(), unit) == outunit[key].end()) {
+                //key doesn't exist
+                outunit[key].push_back(unit);
+            }
+        }
+    }
 
  	grammar.unitrelation = unitrelation;
 	return grammar ;

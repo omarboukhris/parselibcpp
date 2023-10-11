@@ -219,7 +219,8 @@ Frame LR_zero::membership(const TokenList &w) {
                 }
                 current_state = positions.back();
             } else if (next_step.action == Action::accepted) {
-                return {stack.back()};
+//                return {stack.back()};
+                return {};
             } else {
                 throw std::runtime_error("Something bad happened, empty action/goto Cell");
             }

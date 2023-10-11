@@ -12,6 +12,11 @@ inline void DEBUG_OUT(const std::string& x) {
 
 namespace parselib::parsers {
 
+/*!
+ * \brief getstrmat grossly prints CYK matrix into a string
+ * \param cykmat  CYK matrix
+ * \return string representing the matrix
+ */
 std::string CYK::getstrmat (const CYKMatrix& cykmat) {
 	//print html matrix here
 	std::stringstream ss ;
@@ -39,14 +44,18 @@ Row cartesianprod(const Frame& A, const Frame& B) {
 	for (const parsetree::NodePtr& a : A) {
 		for (const parsetree::NodePtr& b : B) {
 			Frame ab = Frame() ;
-			ab.push_back(a);
-            ab.push_back(b);
+			ab.append(a);
+            ab.append(b);
 			AB.push_back (ab) ;
 		}
 	}
 	return AB ;
 }
 
+/*!
+ * \brief CYK constructor
+ * \param grammar  Grammar to use for parsing
+ */
 CYK::CYK (const Grammar &grammar) {
 	production_rules = grammar.production_rules ;
 	unitrelation = grammar.unitrelation ;
@@ -55,14 +64,17 @@ CYK::CYK (const Grammar &grammar) {
 Frame operator+(const Frame& f1, const Frame& f2){
 	Frame f = f1 ;
 	for (const parsetree::NodePtr& node : f2) {
-		f.push_back(node);
+		f.append(node);
 	}
 	return f ;
 }
 
 /*!
- * \brief test membership of a word in a grammar
+ * \brief membership method checks if word is part of the language
+ * test membership of a word in a grammar
  * STABLE AF, DON'T TOUCH
+ * \param word  is a list of tokens
+ * \return Frame containing parse trees
  */
 Frame CYK::membership (const TokenList &word) {
 	size_t n = word.size() ;
@@ -88,6 +100,7 @@ Frame CYK::membership (const TokenList &word) {
 					continue ;
 				}
 
+//				Frame rulenames = getbinproductions (AB, std::numeric_limits<int>::max()) ;
 				Frame rulenames = getbinproductions (AB) ;
 				P[l][i] = P[l][i] + rulenames ;
 				P[l][i] = P[l][i] + invUnitRelation (rulenames) ;
@@ -108,6 +121,8 @@ Frame CYK::membership (const TokenList &word) {
 
 /*!
  * \brief returns last well parsed nodes in the CYKMatrix
+ * \param mat    the broken CYK matrix
+ * \return Frame containing the right nodes
  */
 Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
 	Frame output;
@@ -124,7 +139,7 @@ Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
 		i++ ;
 	}
 	if (o_j)
-		output.push_back(mat.at(0).at(o_j-1).at(0));
+		output.append(mat.at(0).at(o_j-1).at(0));
 
 	return output;
 }
@@ -132,6 +147,9 @@ Frame CYK::getBrokenNodes (const CYKMatrix &mat) {
 
 /*!
  * \brief get terminal nodes for the cyk table + parse tree
+ * used for initialization
+ * \param token to process
+ * \return Frame containing the appropriate nodes
  */
 Frame CYK::getterminal (Token token) {
     using namespace parsetree;
@@ -149,7 +167,7 @@ Frame CYK::getterminal (Token token) {
 				rule[0].type() == Token::Terminal
 			) {
 				NodePtr node = TokenNode::make_token(key, token.value());
-				terminals.push_back (node) ;
+				terminals.append(node) ;
 			}
 		}
 	}
@@ -159,6 +177,8 @@ Frame CYK::getterminal (Token token) {
 /*!
  * \brief returns all well parsed nodes with key "axiom"
  * on the last frame of the CYKMatrix
+ * \param nodes  Frame containing final nodes of the CYK matrix
+ * \return Frame containing the right axiom nodes
  */
 Frame CYK::getAxiomNodes(const Frame& nodes){
 	Frame axiomnodes = Frame() ;
@@ -167,14 +187,17 @@ Frame CYK::getAxiomNodes(const Frame& nodes){
 			node->nodetype == production_rules[Token::Axiom][0][0].value())
 		{
 			//production_rules[Token::Axiom][0][0].val :
-			axiomnodes.push_back (node) ;
+			axiomnodes.append(node) ;
 		}
 	}
 	return axiomnodes ;
 }
 
 /*!
- * \brief get a list of binarized production rules in a frame
+ * \brief getbinproductions return frame with binary production rules
+ * \param AB CYK matrix row
+ * \param MAX Maximum frame height, otherwise, solutions might overflow
+ * \return Frame containing binary rules
  */
 Frame CYK::getbinproductions(const Row& AB, const int MAX) {
 	StrVect keys = StrVect() ;
@@ -189,7 +212,7 @@ Frame CYK::getbinproductions(const Row& AB, const int MAX) {
 		for (const parsetree::NodePtr& rulename : rulenames) {
 			//add node for parse tree here
 			if (i++<MAX)
-    			bins.push_back (rulename) ;
+    			bins.append(rulename) ;
 		}
 	}
 // 	#return list (set(bins))
@@ -199,6 +222,8 @@ Frame CYK::getbinproductions(const Row& AB, const int MAX) {
 /*!
  * \brief returns a list of valid nodes corresponding
  * to the rules being inspected in frame "line"
+ * \param line being inspected
+ * \return frame with the rules
  */
 Frame CYK::getrulenames(Frame line) {
     using namespace parsetree;
@@ -218,7 +243,7 @@ Frame CYK::getrulenames(Frame line) {
 			if (rule[0].value() == line[0]->nodetype &&
 				rule[1].value() == line[1]->nodetype) {
 				NodePtr node = BinNode::make_bin(key, line[0], line[1]);
-				rulenames.push_back (node) ;
+				rulenames.append(node) ;
 			}
 		}
 	}
@@ -227,9 +252,28 @@ Frame CYK::getrulenames(Frame line) {
 
 /*!
  * \brief get inverse unit relation for the parse tree
+ * \param M Frame to get inverse unit relation from
+ * \return Frame containing inverse unit relation production rules
  */
 Frame CYK::invUnitRelation(const Frame& M) {
-	// this can be done better
+        Frame rulenames = Frame () ;
+        for (const parsetree::NodePtr& node : M) {
+            for (const auto& item : unitrelation) {
+                std::string key = item.first ;
+                StrList units = item.second ;
+                if (std::find(units.begin(), units.end(), node->nodetype) != units.end()) {
+                    parsetree::NodePtr nodeOut = std::make_shared<parsetree::UnitNode>(
+                            parsetree::UnitNode (key, node)) ;
+                    rulenames.push_back (nodeOut) ;
+                }
+            }
+        }
+        return rulenames ;
+
+}
+/* // got perf regression here - investigate
+{
+    // this can be done better
 	// refactor unitrelation as inverse unit graph : done
 	// use it to probe for non-cyclic unit relations : wip
 	// use todo_ queue and processed queues to avoid resp. recursion and cycles : wip
@@ -246,12 +290,12 @@ Frame CYK::invUnitRelation(const Frame& M) {
         if (unitrelation.find(node->nodetype) != unitrelation.end()) {
             for (const auto& unitkey : unitrelation[node->nodetype]) {
                 NodePtr nodeOut = UnitNode::make_unit(unitkey, node) ;
-                rulenames.push_back (nodeOut) ;
+                rulenames.append(nodeOut) ;
             }
         }
     }
 	return rulenames ;
 }
-
+//*/
 } // namespace parselib
 

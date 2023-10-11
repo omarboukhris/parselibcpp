@@ -6,7 +6,21 @@
 
 namespace parselib {
 
-typedef std::vector<parsetree::NodePtr> Frame ;
+//typedef std::vector<parsetree::NodePtr> Frame ;
+//*
+class Frame: public std::vector<parsetree::NodePtr> {
+private:
+    std::set<parsetree::NodePtr> existing_nodes;
+
+public:
+    inline void append(const parsetree::NodePtr &node) {
+        if (existing_nodes.find(node) == existing_nodes.end()) {
+            this->push_back(node);
+            existing_nodes.emplace(node);
+        }
+    }
+};
+//*/
 typedef std::vector<Frame> Row ;
 typedef std::vector<Row> CYKMatrix ;
 

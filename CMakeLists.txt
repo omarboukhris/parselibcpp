@@ -9,13 +9,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # to activate O3 optimizations
-#if(NOT CMAKE_BUILD_TYPE)
-#	set(CMAKE_BUILD_TYPE Release)
-#endif()
+#message(BUILD TYPE="${CMAKE_BUILD_TYPE}")
+if(NOT CMAKE_BUILD_TYPE)
+#	message(SET RELEASE)
+	set(CMAKE_BUILD_TYPE Release)
+endif()
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 ########################### gtest
 include(FetchContent)
@@ -58,8 +60,8 @@ file(GLOB TEST_FILES
 #############################
 ### parselib depends on boost
 #############################
-set(Boost_USE_STATIC_LIBS OFF) 
-set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 
 FIND_PACKAGE( Boost 1.40 COMPONENTS regex system filesystem REQUIRED )

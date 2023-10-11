@@ -144,15 +144,24 @@ void SequentialParser::check_right_side() {
 	}
 
 	while (i < grammar.size() && grammar[i].type() == "RSIDE") {
+        // or LISTOP ?? validate listop as regexin general op
 
 		if (parsedtokens[j].type() == Token::Terminal) {
 			parsedtokens[j].value() = utils::clean_if_terminal(parsedtokens[j].value()) ;
 		}
 
-        if (parsedtokens[j].type() == std::string("STR")) {
+        if (parsedtokens[j].type() == "STR") {
+            // some nice refactoring is possible here
 			add_to_str_rules(j) ;
 			add_to_keeper(j) ;
-		}
+
+            if (auto out = utils::split(parsedtokens[j].value(), "=");
+                out.size() == 2
+            ) {
+                auto label = out[0] ;
+                process_label(label, parsedtokens[j+1].value()) ;
+            }
+        }
         else if (parsedtokens[j].type() == "LIST") {
             make_list() ;
         }
@@ -160,7 +169,6 @@ void SequentialParser::check_right_side() {
             make_list_op(j) ;
         }
         else if (parsedtokens[j].type() == "EXCL") {
-			
 			// naming process
 			std::string label = parsedtokens[j+1].value() ;
 			label = utils::clean_if_terminal(label) ;
@@ -169,23 +177,21 @@ void SequentialParser::check_right_side() {
 			process_label (label, label) ;
 			add_to_keeper(j) ;
 		}
-        else {
+        else { // terminal/ non terminal node
 			if (parsedtokens[j].value().find('=') != std::string::npos) {
 				//naming process
-				StrVect out = utils::split(parsedtokens[j].value(), "=") ;
-				std::string label, operand ;
-				
-				if (out.size() == 2) {
-					label = out[0] ;
-					operand = out[1] ;
+				if (auto out = utils::split(parsedtokens[j].value(), "=") ;
+                    out.size() == 2
+                ) {
+					auto label = out[0] ;
+					auto operand = out[1] ;
+                    parsedtokens[j].value() = operand ;
+                    process_label(label, operand) ;
 				} else {
 					//error happened
-					return ;
+                    return;
+//                    throw std::runtime_error("Node renaming operator failed catastrophically");
 				}
-
-				parsedtokens[j].value() = operand ;
-
-				process_label(label, operand) ;
 			}
 			
 			production_rules = add_operand_to_current_rule(parsedtokens[j]) ;
@@ -220,6 +226,7 @@ void SequentialParser::make_list_op(size_t j) {
     // add rule parent node = element | element + parent node
     // add element node = element | element sep element node
     // dev in debug
+    std::cout << "got list_op" << parsedtokens[j].value() << std::endl;
 }
 
 void SequentialParser::make_list(){
