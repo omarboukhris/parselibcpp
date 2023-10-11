@@ -32,8 +32,8 @@ int main(int argc, char** argv){
 	ArgvLex argvlex (arglist) ;
 
 	bool verbose = (argvlex.get("-v") == "True") ;
-	Printer::showinfo("verbose : " + argvlex.get("-v"));
-	Printer::showinfo("gsrc    : " + argvlex.get("--gsrc"));
+    GlobalConsoleLogger::info("verbose : " + argvlex.get("-v"));
+    GlobalConsoleLogger::info("gsrc    : " + argvlex.get("--gsrc"));
 
 	// change LogNone to LogBasic if needed
 	pl::ParseSession parsesession ;
@@ -48,11 +48,11 @@ int main(int argc, char** argv){
 
 			// a source code have been provided
 			std::string sourcefilename = argvlex.get("--src") ;
-			Printer::showinfo("now processing source code : " + sourcefilename);
+            GlobalConsoleLogger::info("now processing source code : " + sourcefilename);
 
 			pt::ptree out = parsesession.process_source_to_ptree(sourcefilename, verbose);
 
-			Printer::showinfo("written json to : " + sourcefilename + ".json") ;
+            GlobalConsoleLogger::info("written json to : " + sourcefilename + ".json") ;
 			pt::write_json(sourcefilename+".json", out) ;
 
 		} else if (argvlex.get("--ext") != "False" && argvlex.get("--dir") != "False") {
@@ -62,9 +62,9 @@ int main(int argc, char** argv){
 			FileGlober fileglober (argvlex.get("--dir"), argvlex.get("--ext")) ;
 
 			for (const std::string &sourcefilename : fileglober.glob()) {
-				Printer::showinfo("now processing source code : " + sourcefilename);
+                GlobalConsoleLogger::info("now processing source code : " + sourcefilename);
                 parsesession.process_and_store_json(sourcefilename, sourcefilename + ".json", verbose);
-				Printer::showinfo("written json to : " + sourcefilename + ".json") ;
+                GlobalConsoleLogger::info("written json to : " + sourcefilename + ".json") ;
 			}
 		}
 	} else {

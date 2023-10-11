@@ -16,7 +16,7 @@ using namespace std ;
 string get_text_file_content (const string &filename) {
 	ifstream filestream (filename) ;
 	if (!filestream.is_open()) {
-		utils::Printer::showerr("can't read file : " + filename);
+        utils::GlobalConsoleLogger::error("can't read file : " + filename);
 		return "" ;
 	}
 	

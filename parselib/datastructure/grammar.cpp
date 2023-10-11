@@ -171,7 +171,7 @@ void Grammar::exportToFile(const string &filename) {
 	ss += "}" ;
 	std::ofstream filestream (filename + ".dot") ;
 	if (!filestream.is_open ()) {
-		utils::Printer::showerr("(exportToFile) Can't open file " + filename + ".dot");
+        utils::GlobalConsoleLogger::error("(exportToFile) Can't open file " + filename + ".dot");
 		return ;
 	}
 	filestream << ss ;

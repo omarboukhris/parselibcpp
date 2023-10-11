@@ -59,14 +59,24 @@ protected :
 	std::string ext ;
 } ;
 
-class Printer {
+class GlobalConsoleLogger {
 public :
-	static void showinfo (const std::string& str) {
-		std::cout << "(info) " << str << std::endl ;
-	}
+    static inline void info (const std::string& str) {
+        auto t = ::std::chrono::system_clock::now();
+        auto ss_time = std::chrono::system_clock::to_time_t(t);
+        std::cout << "(info) [" << std::strtok(std::ctime(&ss_time), "\n") << "\b] : " << str << std::endl;
+    }
 
-	static void showerr (const std::string& str) {
-		std::cerr << "(error) " << str << std::endl ;
+    static inline void warn (const std::string& str) {
+        auto t = ::std::chrono::system_clock::now();
+        auto ss_time = std::chrono::system_clock::to_time_t(t);
+        std::cout << "(warn) [" << std::strtok(std::ctime(&ss_time), "\n") << "\b] : " << str << std::endl;
+    }
+
+    static inline void error (const std::string& str) {
+        auto t = ::std::chrono::system_clock::now();
+        auto ss_time = std::chrono::system_clock::to_time_t(t);
+        std::cerr << "(error) [" << std::strtok(std::ctime(&ss_time), "\n") << "\b] : " << str << std::endl;
 	}
 } ;
 

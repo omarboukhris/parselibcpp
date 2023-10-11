@@ -100,8 +100,8 @@ Frame CYK::membership (const TokenList &word) {
 					continue ;
 				}
 
-//				Frame rulenames = getbinproductions (AB, std::numeric_limits<int>::max()) ;
-				Frame rulenames = getbinproductions (AB) ;
+				Frame rulenames = getbinproductions (AB, std::numeric_limits<int>::max()) ;
+//				Frame rulenames = getbinproductions (AB) ;
 				P[l][i] = P[l][i] + rulenames ;
 				P[l][i] = P[l][i] + invUnitRelation (rulenames) ;
 			}

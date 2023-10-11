@@ -43,7 +43,7 @@ Grammar GenericGrammarParser::parse (std::string filename, bool verbose, bool sp
 
 		filename = preproc->queue[0] ;
 
-//		utils::Printer::showinfo("now processing : " + filename);
+//		utils::GlobalConsoleLogger::info("now processing : " + filename);
         logger->info("now processing : " + filename);
 
 		std::string source = utils::get_text_file_content (filename) ;
